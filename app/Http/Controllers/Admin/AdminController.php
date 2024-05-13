@@ -42,11 +42,11 @@ class AdminController extends Controller
         
     }
     public function update(AdminUpdateRequest $request , Admin $admin){
-        $data = $request->except('_token','_method');
-        Admin::where('ID',$request->ID)->update($data);
         dd($request);
+        $data = $request->except('_token','_method');
+        $admin->update($data);
         
-        return redirect()->route('Admin.Admin.profile')->with('success' , 'Admin Updated Successfully');
+        return redirect()->route('Admin.profile', $admin->id)->with('success' , 'Admin Updated Successfully');
         
     }
     public function delete(Admin $admin){

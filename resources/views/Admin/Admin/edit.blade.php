@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="container-fluid py-4">
-        <form action="{{ Route('Admins.update',$admin->ID) }}" method="post">
+        <form action="{{ route('Admins.update',$admin->ID) }}" method="post">
             @csrf
             @method('PUT')
             <div class="row">
@@ -113,7 +113,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <a href="{{ Route('Admins.index')}}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                        <a href="{{ route('Admins.index')}}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
                                     </div>
                                 </div>
                             </div>

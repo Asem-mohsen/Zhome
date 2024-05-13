@@ -31,10 +31,10 @@ Route::prefix('Admins')->name('Admins.')->group(function(){
 Route::prefix('Roles')->name('Roles.')->group(function(){
     Route::controller(RolesController::class)->group(function(){
         Route::get('/', 'index')->name('index');
-        Route::get('/{Role}/Role', 'show')->name('Role');
+        Route::get('/{role}/edit', 'edit')->name('edit');
         Route::get('/create', 'create')->name('create');
         Route::post('/store', 'store')->name('store');
-        Route::put('/{Role}/update', 'update')->name('update');
-        Route::delete('/{Role}/delete', 'delete')->name('delete');
+        Route::put('/{role}/update', 'update')->name('update');
+        Route::delete('/{role}/delete', 'delete')->name('delete');
     });
 });

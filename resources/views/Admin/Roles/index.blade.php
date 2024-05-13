@@ -30,7 +30,7 @@
                                 </td>
                                 <td>{{ $adminCounts[$Role->ID] }}</td>
                                 <td>
-                                    <a href="{{ Route('Roles.Role',$Role->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View Role">
+                                    <a href="{{ Route('Roles.edit',$Role->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View Role">
                                         Check
                                     </a>
                                 </td>
