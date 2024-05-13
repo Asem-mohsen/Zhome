@@ -64,13 +64,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ Route('Admins.roles')}}" class="nav-link">
+              <a href="{{ Route('Roles.index')}}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Roles</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="{{ Route('Admins.roles.create')}}" class="nav-link">
+              <a href="{{ Route('Roles.create')}}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Add New Role</p>
               </a>

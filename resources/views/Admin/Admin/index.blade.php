@@ -3,6 +3,8 @@
 
 @section('Content')
 
+
+@include('Admin.Components.Msg')
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -52,6 +54,9 @@
                                 <td>
                                     <a href="{{ Route('Admins.profile',$Admin->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
                                         Check
+                                    </a>
+                                    <a href="{{ Route('Admins.edit',$Admin->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                        Edit
                                     </a>
                                 </td>
                             </tr>

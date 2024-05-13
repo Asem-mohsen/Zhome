@@ -20,11 +20,21 @@ Route::controller(UserController::class)->prefix('Users')->name('Users.')->group
 Route::prefix('Admins')->name('Admins.')->group(function(){
     Route::controller(AdminController::class)->group(function(){
         Route::get('/', 'index')->name('index');
+        Route::get('/{admin}/edit', 'edit')->name('edit');
         Route::get('/{admin}/profile', 'profile')->name('profile');
         Route::get('/create', 'create')->name('create');
+        Route::post('/store', 'store')->name('store');
+        Route::put('/{admin}/update', 'update')->name('update');
+        Route::delete('/{admin}/delete', 'delete')->name('delete');
     });
+});
+Route::prefix('Roles')->name('Roles.')->group(function(){
     Route::controller(RolesController::class)->group(function(){
-        Route::get('/Roles', 'index')->name('roles');
-        Route::get('/Roles/create', 'create')->name('roles.create');
+        Route::get('/', 'index')->name('index');
+        Route::get('/{Role}/Role', 'show')->name('Role');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/store', 'store')->name('store');
+        Route::put('/{Role}/update', 'update')->name('update');
+        Route::delete('/{Role}/delete', 'delete')->name('delete');
     });
 });

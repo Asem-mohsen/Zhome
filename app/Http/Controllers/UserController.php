@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     public function index(){
-        $Users = DB::table('user')->get();
+        $Users = User::all();
         return view('Admin.Users.index', compact('Users'));
     }
 

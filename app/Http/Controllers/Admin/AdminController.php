@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AddAdminRequest;
+use App\Http\Requests\Admin\AdminUpdateRequest;
 use App\Models\Admin;
+use App\Models\Roles;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
 
@@ -12,11 +16,40 @@ class AdminController extends Controller
 {
     public function index(){
         
-        $Admins = DB::table('admin')->leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')->select('admin.*', 'adminrole.Role')->get();
+        $Admins = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')->select('admin.*', 'adminrole.Role')->get();
         return view('Admin.Admin.index' , compact('Admins'));
     }
     public function profile(Admin $admin){
-        $Roles= DB::table('adminrole')->select('Role')->where('ID', $admin->RoleID)->first();
+        $Roles= Roles::select('Role')->where('ID', $admin->RoleID)->first();
         return view('Admin.Admin.profile', compact('admin','Roles'));
+    }
+
+    public function create(){
+        $Roles = Roles::all();
+        return view('Admin.Admin.create', compact('Roles'));
+    }
+    public function store(AddAdminRequest $request){
+        $data = $request->except('_token','_method','Country');
+        $data['Password'] = Hash::make($request->Password);
+        Admin::create($data);
+
+        return redirect()->route('Admins.index')->with('success', 'Admin Added Successfully');
+    }
+    public function edit(Admin $admin){
+        $admin = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')->select('admin.*', 'adminrole.Role')->where('adminrole.ID', $admin->RoleID)->first();
+        $Roles = Roles::all();
+        return view('Admin.Admin.edit' ,compact('admin','Roles'));
+        
+    }
+    public function update(AdminUpdateRequest $request , Admin $admin){
+        $data = $request->except('_token','_method');
+        Admin::where('ID',$request->ID)->update($data);
+        dd($request);
+        
+        return redirect()->route('Admin.Admin.profile')->with('success' , 'Admin Updated Successfully');
+        
+    }
+    public function delete(Admin $admin){
+        
     }
 }
