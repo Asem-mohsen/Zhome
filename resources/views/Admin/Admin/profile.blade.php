@@ -3,6 +3,7 @@
 
     @section('Content')
 
+    @include('Admin.Components.Msg')
     <div class="card shadow-lg mx-4 card-profile-bottom">
         <div class="card-body p-3">
             <div class="row gx-4">
@@ -116,7 +117,7 @@
                             <div class="justify-content-center row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <button type="submit" name="Update" class="btn btn-md btn-success w-100 mt-4 mb-0">Update </button>
+                                        <a href="{{ route('Admins.edit',$admin->ID) }}" class="btn btn-md btn-success w-100 mt-4 mb-0" > Edit</a>
                                     </div>
                                 </div>
                                 <div class="col-md-4">

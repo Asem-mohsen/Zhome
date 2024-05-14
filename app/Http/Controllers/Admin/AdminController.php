@@ -36,20 +36,25 @@ class AdminController extends Controller
         return redirect()->route('Admins.index')->with('success', 'Admin Added Successfully');
     }
     public function edit(Admin $admin){
-        $admin = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')->select('admin.*', 'adminrole.Role')->where('adminrole.ID', $admin->RoleID)->first();
+        $admin = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')
+                        ->select('admin.*', 'adminrole.Role')
+                        ->where('adminrole.ID', $admin->RoleID)
+                        ->where('admin.ID', $admin->ID)
+                        ->first();
         $Roles = Roles::all();
         return view('Admin.Admin.edit' ,compact('admin','Roles'));
-        
     }
     public function update(AdminUpdateRequest $request , Admin $admin){
-        dd($request);
         $data = $request->except('_token','_method');
-        $admin->update($data);
+
+        $admin::where('ID', $admin->ID)->update($data);
         
-        return redirect()->route('Admin.profile', $admin->id)->with('success' , 'Admin Updated Successfully');
+        return redirect()->route('Admins.profile', $admin->ID)->with('success' , 'Admin Updated Successfully');
         
     }
-    public function delete(Admin $admin){
+    public function destroy(Request $request , Admin $admin){
         
+        $admin::where('ID', $admin->ID)->delete();
+        return redirect()->route('Admins.index')->with('success', 'Admin Deleted Successfully');
     }
 }
