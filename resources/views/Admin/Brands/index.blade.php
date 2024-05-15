@@ -45,10 +45,10 @@
                                     <form action="">
                                         <ul class="d-flex list-unstyled p-0 m-0">
                                             <li>
-                                                <a href="" class="text-white font-weight-bold">Edit</a>
+                                                <a href="{{ route('Brands.edit' , $Brand->ID ) }}" class="text-white font-weight-bold">Edit</a>
                                             </li>
                                             <li>
-                                                <a href="" class="text-white font-weight-bold">Delete</a>
+                                                <a href="{{ route('Brands.delete', $Brand->ID ) }}" class="text-white font-weight-bold">Delete</a>
                                             </li>
                                         </ul>
                                     </form>
@@ -63,15 +63,3 @@
 </div>
 
 @endsection
-
-@section('Js')
-    <!-- Page specific script -->
-    <script>
-        $(function () {
-            $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
-    </script>
-@stop
