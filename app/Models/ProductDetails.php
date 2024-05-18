@@ -5,15 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class ProductDetails extends Model
 {
     use HasFactory;
-    protected $table = 'category';
+    protected $table   = 'productdetails';
     protected $guarded = [];
 
-    public function subcategories()
+    public function productsDetails()
     {
-        return $this->hasMany(Subcategory::class, 'MainCategoryID', 'ID');
+        return $this->hasMany(Product::class, 'ID', 'ProductID');
     }
-
 }

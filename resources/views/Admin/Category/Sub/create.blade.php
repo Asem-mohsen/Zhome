@@ -1,50 +1,49 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Add Platform')
+@section('Title' , 'Add Sub-Category')
 
 @section('Content')
 
-    @include('Admin.Components.Msg')
+@include('Admin.Components.Msg')
 
-
-    <form action="{{ route('Platform.store') }}" enctype="multipart/form-data" method="post">
+    <form action="{{ route('Category.Subcategory.store' , $category->ID) }}" enctype="multipart/form-data" method="post">
         @csrf
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <p class="mb-0">Add New Platform</p>
+                            <p class="mb-0">Add New Subcategory</p>
                             <button class="btn btn-primary btn-sm ms-auto m-2">Add</button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <p class="text-uppercase text-sm">Platform Information</p>
+                        <p class="text-uppercase text-sm">Subcategroy Information</p>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Platform-name" class="form-control-label">Platform Name</label>
-                                    <input class="form-control" type="text" id="Platform-name" name="Platform" required>
+                                    <label for="Subcategory-name" class="form-control-label">Subcategory Name -EN-</label>
+                                    <input class="form-control" type="text" id="Subcategory-name" name="SubName" required>
                                 </div>
-                                @error('Platform')
+                                @error('SubName')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="VideoURL" class="form-control-label">Video URL</label>
-                                    <input class="form-control" type="text" id="VideoURL" name="VideoURL" required>
+                                    <label for="ArabicName" class="form-control-label">Subcategory Name -AR-</label>
+                                    <input class="form-control" type="text" id="ArabicName" name="SubArabicName" required>
                                 </div>
-                                @error('VideoURL')
+                                @error('SubArabicName')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="Brand-logo">Platform Logo</label>
+                                    <label for="Brand-logo">Subcategory Image</label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" name="image" class="custom-file-input" id="Platform-logo">
-                                            <label class="custom-file-label" for="Platform-logo">Choose file</label>
+                                            <input type="file" name="image" class="custom-file-input" id="Subcategory-logo">
+                                            <label class="custom-file-label" for="Subcategory-logo">Choose file</label>
                                         </div>
                                         <div class="input-group-append">
                                             <span class="input-group-text">Upload</span>
@@ -57,46 +56,23 @@
                             </div>
                         </div>
 
-                        <p class="text-uppercase text-sm">Platform Descriptions</p>
+                        <p class="text-uppercase text-sm">Subcategory Descriptions</p>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Main-Description">Main Description</label>
-                                    <textarea class="form-control" rows="3" name="MainDescription" id="Main-Description" placeholder="Enter ..."></textarea>
+                                    <label for="Description">Description</label>
+                                    <textarea class="form-control" rows="3" name="SubDescription" id="Description" placeholder="Enter ..." ></textarea>
                                 </div>
-                                @error('MainDescription')
+                                @error('SubDescription')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Main-Description-AR">Main Description -ar-</label>
+                                    <label for="Main-Description-AR">Description -AR-</label>
                                     <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ..."></textarea>
                                 </div>
                                 @error('ArabicDescription')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <p class="text-uppercase text-sm">Platform FAQ</p>
-                        <hr class="horizontal dark">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="Question">Question</label>
-                                    <textarea class="form-control" rows="3" name="Question" id="Question" placeholder="Enter ..."></textarea>
-                                </div>
-                                @error('Question')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="Answer">Answer</label>
-                                    <textarea class="form-control" rows="3" name="Answer" id="Answer" placeholder="Enter ..."></textarea>
-                                </div>
-                                @error('Answer')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -111,7 +87,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <a href="{{ route('Platform.index')}}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                    <a href="{{ route('Category.show', $category->ID ) }}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
                                 </div>
                             </div>
                         </div>
@@ -122,6 +98,7 @@
     </form>
 
 @endsection
+
 
 @section('Js')
     <script>

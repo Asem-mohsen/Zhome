@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Platform extends Model
 {
     use HasFactory;
+    
+    protected $table = 'platform';
+    protected $guarded = [];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'productplatform', 'PlatformID', 'ProductID');
+    }
+
 }

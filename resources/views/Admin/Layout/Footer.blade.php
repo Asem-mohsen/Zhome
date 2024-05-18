@@ -4,7 +4,7 @@
     <script src="{{ asset('Admin/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
-    $.widget.bridge('uibutton', $.ui.button)
+        $.widget.bridge('uibutton', $.ui.button)
     </script>
     <!-- Bootstrap 4 -->
     <script src="{{ asset('Admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -39,6 +39,8 @@
     <script src="{{ asset('Admin/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
     <script src="{{ asset('Admin/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
     <script src="{{ asset('Admin/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+    <!-- File Input -->
+    <script src="{{ asset('Admin/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('Admin/dist/js/adminlte.js') }}"></script>
     <!-- AdminLTE for demo purposes -->

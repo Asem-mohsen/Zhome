@@ -1,49 +1,50 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Add Category')
+@section('Title' , 'Edit ' . $subcategory->SubName)
 
 @section('Content')
 
 @include('Admin.Components.Msg')
 
-    <form action="{{ route('Category.store') }}" enctype="multipart/form-data" method="post">
+    <form action="{{ route('Category.Subcategory.update' , $subcategory->ID) }}" enctype="multipart/form-data" method="post">
         @csrf
+        @method('PUT')
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <p class="mb-0">Add New Category</p>
-                            <button class="btn btn-primary btn-sm ms-auto m-2">Add</button>
+                            <p class="mb-0">Edit {{$subcategory->SubName}} </p>
+                            <button class="btn btn-primary btn-sm ms-auto m-2">Edit</button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <p class="text-uppercase text-sm">Category Information</p>
+                        <p class="text-uppercase text-sm">Subcategroy Information</p>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Category-name" class="form-control-label">Category Name -EN-</label>
-                                    <input class="form-control" type="text" id="Category-name" name="Category" required>
+                                    <label for="Subcategory-name" class="form-control-label">Subcategory Name -EN-</label>
+                                    <input class="form-control" type="text" id="Subcategory-name" name="SubName" value="{{$subcategory->SubName}}" required>
                                 </div>
-                                @error('Category')
+                                @error('SubName')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="ArabicName" class="form-control-label">Category Name -AR-</label>
-                                    <input class="form-control" type="text" id="ArabicName" name="ArabicName" required>
+                                    <label for="ArabicName" class="form-control-label">Subcategory Name -AR-</label>
+                                    <input class="form-control" type="text" id="ArabicName" name="SubArabicName" value="{{$subcategory->SubArabicName}}" required>
                                 </div>
-                                @error('ArabicName')
+                                @error('SubArabicName')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="Brand-logo">Category Image</label>
+                                    <label for="Brand-logo">Subcategory Image</label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" name="image" class="custom-file-input" id="Category-logo">
-                                            <label class="custom-file-label" for="Category-logo">Choose file</label>
+                                            <input type="file" name="image" class="custom-file-input" id="Subcategory-logo">
+                                            <label class="custom-file-label" for="Subcategory-logo">Choose file</label>
                                         </div>
                                         <div class="input-group-append">
                                             <span class="input-group-text">Upload</span>
@@ -56,41 +57,23 @@
                             </div>
                         </div>
 
-                        <p class="text-uppercase text-sm">Category Descriptions</p>
+                        <p class="text-uppercase text-sm">Subcategory Descriptions</p>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Description">Description</label>
-                                    <textarea class="form-control" rows="3" name="Description" id="Description" placeholder="Enter ..." ></textarea>
+                                    <textarea class="form-control" rows="3" name="SubDescription" id="Description" placeholder="Enter ..." >{{$subcategory->SubDescription}}</textarea>
                                 </div>
-                                @error('Description')
+                                @error('SubDescription')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description-AR">Description -AR-</label>
-                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ..."></textarea>
+                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ...">{{$subcategory->ArabicDescription}}</textarea>
                                 </div>
                                 @error('ArabicDescription')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="OtherDescription">Other Description</label>
-                                    <textarea class="form-control" rows="3" name="OtherDescription" id="OtherDescription" placeholder="Enter ..." ></textarea>
-                                </div>
-                                @error('OtherDescription')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="OtherArabicDescription">Other Description -AR-</label>
-                                    <textarea class="form-control" rows="3" name="OtherArabicDescription" id="OtherArabicDescription" placeholder="Enter ..."></textarea>
-                                </div>
-                                @error('OtherArabicDescription')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -100,12 +83,12 @@
                         <div class="justify-content-center row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-md btn-success w-100 mt-4 mb-0">Add</button>
+                                    <button type="submit" class="btn btn-md btn-success w-100 mt-4 mb-0">Update</button>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <a href="{{ route('Category.index')}}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                    <a href="{{ route('Category.show', $subcategory->MainCategoryID ) }}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +99,6 @@
     </form>
 
 @endsection
-
 
 @section('Js')
     <script>

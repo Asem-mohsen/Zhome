@@ -5,50 +5,32 @@
 
 @include('Admin.Components.Msg')
 
-<style>
-    
-    .Brand-Box p {
-        top: 0;
-        font-size: 33px;
-    }
-    .Brand-Box:hover .overlay{
-        transition:all 0.4s;
-        opacity: 1;
-        background-color: rgb(37 37 37 / 73%);
-    }
-    .Brand-Box:hover p{
-        transition:all 0.4s;
-        opacity:0;
-    }
-    .Brand-Box ul{
-        gap:20px;
-    }
-    .overlay{
-        top: 0;
-        opacity: 0;
-    }
-    .overlay a{
-        font-size: 26px; 
-    }
-</style>
+
 <div class="row">
     <div class="col-12">
         <div class="card">
+            {{-- Buttons --}}
+            <div class="btn-group w-fit pb-0 pl-3 pt-3">
+                <a href="{{ route('Brands.create') }}" class="btn btn-primary p-2"><i class="fa-solid fa-plus"></i>Add New Brand</a>
+                <a href="" class="btn btn-secondary p-2"><i class="fa-solid fa-box-archive"></i>Archive</a>
+            </div>
             <div class="card-body">
                 <div class="row">
                     @foreach ($Brands as $Brand)
                         <div class="col-md-2">
                             <div class="Brand-Box position-relative mb-3">
                                 <img src="{{ asset('Admin/dist/img/photo1.png') }}" alt="" class="w-100">
-                                <p class="position-absolute top-0 d-flex align-items-center justify-content-center w-100 h-100 text-white m-0">{{ $Brand->Brand }}</p>
+                                <p class="position-absolute top-0 d-flex align-items-center justify-content-center w-100 h-100 text-white m-0 brand-title">{{ $Brand->Brand }}</p>
                                 <div class="overlay position-absolute w-100 h-100">
-                                    <form action="">
-                                        <ul class="d-flex list-unstyled p-0 m-0">
+                                    <form action="{{ route('Brands.delete' , $Brand->ID )}}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <ul class="d-flex list-unstyled p-0 m-0 justify-content-around align-items-baseline brand-list">
                                             <li>
                                                 <a href="{{ route('Brands.edit' , $Brand->ID ) }}" class="text-white font-weight-bold">Edit</a>
                                             </li>
                                             <li>
-                                                <a href="{{ route('Brands.delete', $Brand->ID ) }}" class="text-white font-weight-bold">Delete</a>
+                                                <button class="border-0 bg-transparent p-0 text-white font-weight-bold">Delete</button>
                                             </li>
                                         </ul>
                                     </form>

@@ -14,7 +14,7 @@
                 <div class="col-auto my-auto">
                     <div class="h-100">
                     <h5 class="mb-1">
-                      {{ 'Current Admin Name' }}
+                        {{ 'Current Admin Name' }}
                     </h5>
                     <p class="mb-0 font-weight-bold text-sm">
                         {{ 'Current Admin Role' }}
@@ -54,10 +54,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header pb-0">
+                        <div class="card-header">
                             <div class="d-flex align-items-center">
                                 <p class="mb-0">Add New Admin</p>
-                                <button class="btn btn-primary btn-sm ms-auto">Add</button>
+                                <button class="btn btn-primary btn-sm ms-auto m-2">Add</button>
                             </div>
                         </div>
                         <div class="card-body">
