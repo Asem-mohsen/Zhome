@@ -12,6 +12,7 @@ use App\Models\Brand;
 use App\Http\Requests\Admin\AddProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Http\Services\Media;
+use App\Models\ProductFeatures;
 
 class ProductController extends Controller
 {
@@ -19,7 +20,18 @@ class ProductController extends Controller
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
         return view('Admin.Products.index' , compact('products'));
     }
-
+    
+    public function create(){
+        $products   = Product::all();
+        $brands     = Brand::all();
+        $platforms  = Platform::all();
+        $categories = Category::all();
+        $subs       = Subcategory::all();
+        $features   = ProductFeatures::all();
+        
+        return view('Admin.Products.create' , compact('products','brands','platforms','categories','subs','features'));
+    }
+    
     public function show(){
         $products = Product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features'])->get();
         return view('Admin.Products.show' , compact('products'));
