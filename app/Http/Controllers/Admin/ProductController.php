@@ -32,6 +32,12 @@ class ProductController extends Controller
         return view('Admin.Products.create' , compact('products','brands','platforms','categories','subs','features'));
     }
     
+    public function getSubcategories($categoryId)
+    {
+        $subcategories = SubCategory::where('MainCategoryID', $categoryId)->get();
+        return response()->json($subcategories);
+    }
+
     public function show(){
         $products = Product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features'])->get();
         return view('Admin.Products.show' , compact('products'));

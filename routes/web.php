@@ -49,6 +49,7 @@ Route::prefix('Products')->name('Products.')->group(function(){
         Route::get('/{product}/edit', 'edit')->name('edit');
         Route::get('/{product}/show', 'show')->name('show');
         Route::get('/create', 'create')->name('create');
+        Route::get('/subcategories/{categoryId}', 'getSubcategories')->name('getSubcategories');
         Route::post('/store', 'store')->name('store');
         Route::put('/{product}/update', 'update')->name('update');
         Route::delete('/{product}/delete', 'destroy')->name('delete');
