@@ -14,7 +14,7 @@
     @include('Admin.Components.Msg')
 
     <div class="container-fluid py-4">
-        <form action="post" method="post" enctype="multipart/form-data">
+        <form id="productForm" action="{{ route('Products.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             <div class="row">
                 <div class="col-md-8">
@@ -37,6 +37,19 @@
                                                 <input class="form-control" type="text" id="Name" autocomplete="off"
                                                     name="Name" required>
                                             </div>
+                                            @error('Name')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="example-text-input" class="form-control-label">Arabic Name</label>
+                                                <input class="form-control" type="text" id="Name" autocomplete="off"
+                                                    name="ArabicName">
+                                            </div>
+                                            @error('ArabicName')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -45,13 +58,19 @@
                                                 <input class="form-control" type="number" id="Quantity"
                                                     inputmode="numeric" name="Quantity" autocomplete="off">
                                             </div>
+                                            @error('Quantity')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="example-text-input" class="form-control-label">Price</label>
                                                 <input class="form-control" type="number" id="ProductPrice"
                                                     inputmode="numeric" name="Price" autocomplete="off">
                                             </div>
+                                            @error('Price')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-check mb-3">
@@ -66,6 +85,9 @@
                                                 <input type="number" class="form-control" id="price"
                                                     name="InstallationCost">
                                             </div>
+                                            @error('InstallationCost')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                         <div class="col-lg-6">
@@ -77,6 +99,9 @@
                                                 </div>
                                                 <input type="text" class="form-control" value="Is Product" disabled>
                                             </div>
+                                            @error('IsBundle')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-lg-6">
                                             <div class="input-group mb-4">
@@ -87,6 +112,9 @@
                                                 </div>
                                                 <input type="text" class="form-control" value="Is Bundle" disabled>
                                             </div>
+                                            @error('IsBundle')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -99,14 +127,20 @@
                                                     @endforeach
                                                 </select>
                                             </div>
+                                            @error('Categories')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="subCategorySelect">SubCategory</label>
-                                                <select name="SubCategory" id="subCategorySelect" class="form-control" disabled>
+                                                <select name="SubCategoryID" id="subCategorySelect" class="form-control" disabled>
                                                     <option value="" hidden selected>Select SubCategory</option>
                                                 </select>
                                             </div>
+                                            @error('SubCategoryID')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <!-- Platforms -->
                                         <div class="col-md-12">
@@ -114,7 +148,7 @@
                                             <div class="cards" id="PlatformsAddProduct">
                                                 @foreach ($platforms as $platform)
                                                     <label class="CatCard" style="--card-width: 165px; --card-height:140px;">
-                                                        <input class="card__input PlatformSelect" name="Platform[]"
+                                                        <input class="card__input PlatformSelect" name="PlatformID[]"
                                                             type="checkbox" value="{{ $platform->ID }}" />
                                                         <div class="card__body platform">
                                                             <img src="{{ asset('Admin/dist/img/Background.jpg') }}"
@@ -124,6 +158,9 @@
                                                     </label>
                                                 @endforeach
                                             </div>
+                                            @error('PlatformID')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <!-- Brands -->
                                         <div class="col-md-12">
@@ -133,7 +170,7 @@
                                                 @foreach ($brands as $brand)
                                                     <label class="CatCard"
                                                         style="--card-height: 100px;--card-width: 100px;">
-                                                        <input class="card__input BrandSelectBox" name="Brand"
+                                                        <input class="card__input BrandSelectBox" name="BrandID"
                                                             type="radio" value="{{ $brand->ID }}" />
                                                         <div class="card__body">
                                                             <div class="ImgDiv"
@@ -143,6 +180,9 @@
                                                     </label>
                                                 @endforeach
                                             </div>
+                                            @error('BrandID')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                         <hr class="horizontal dark">
@@ -213,7 +253,9 @@
                                                     </label>
                                                 </div>
                                             </div>
-
+                                            @error('Technology')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -228,33 +270,28 @@
                                                 <label for="Description" class="form-control-label">Description</label>
                                                 <textarea class="form-control" id="Description" name="Description" required></textarea>
                                             </div>
+                                            @error('Description')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="Description" class="form-control-label">Arabic
+                                                <label for="ArabicDescription" class="form-control-label">Arabic
                                                     Description</label>
                                                 <textarea class="form-control" id="ArabicDescription" name="ArabicDescription" required></textarea>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="DescriptionTwo" class="form-control-label">Other Description
-                                                    (if applicable)</label>
-                                                <textarea class="form-control" id="DescriptionTwo" name="OtherDescription"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="DescriptionTwo" class="form-control-label">Other Arabic
-                                                    Description (if applicable)</label>
-                                                <textarea class="form-control" id="DescriptionArabicTwo" name="OtherArabicDescription"></textarea>
-                                            </div>
+                                            @error('ArabicDescription')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="Expert" class="form-control-label">Expert Review</label>
                                                 <textarea class="form-control" id="Expert" name="Evaluation" required></textarea>
                                             </div>
+                                            @error('Evaluation')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -262,6 +299,9 @@
                                                     Review</label>
                                                 <textarea class="form-control" id="ArabicExpert" name="ArabicEvaluation" required></textarea>
                                             </div>
+                                            @error('ArabicEvaluation')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -269,13 +309,19 @@
                                                 <input class="form-control" type="text" id="Title" name="Title"
                                                     required>
                                             </div>
+                                            @error('Title')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="OtherTitle" class="form-control-label">Other Title</label>
                                                 <input class="form-control" type="text" id="OtherTitle"
-                                                    name="OtherTitle" required>
+                                                    name="Title2" required>
                                             </div>
+                                            @error('Title2')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -283,14 +329,20 @@
                                                 <input class="form-control" type="text" id="ArabicTitle"
                                                     name="ArabicTitle" required>
                                             </div>
+                                            @error('ArabicTitle')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="OtherTitle" class="form-control-label">Other Arabic
+                                                <label for="OtherArabicTitle" class="form-control-label">Other Arabic
                                                     Title</label>
                                                 <input class="form-control" type="text" id="OtherArabicTitle"
-                                                    name="OtherArabicTitle" required>
+                                                    name="ArabicTitle2" required>
                                             </div>
+                                            @error('ArabicTitle2')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -304,6 +356,9 @@
                                                 <input type="number" class="form-control" id="Width"
                                                     name="Width">
                                             </div>
+                                            @error('Width')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -311,6 +366,9 @@
                                                 <input class="form-control" type="number" id="Height"
                                                     name="Height">
                                             </div>
+                                            @error('Height')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -318,6 +376,9 @@
                                                 <input class="form-control" type="number" id="Length"
                                                     name="Length">
                                             </div>
+                                            @error('Length')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
@@ -329,6 +390,9 @@
                                                 <label for="Color" class="form-control-label">Color</label>
                                                 <input type="color" class="color-input" name="Color">
                                             </div>
+                                            @error('Color')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div id="addRemoveColor" class="mb-5">
                                             <span id="addColorSpan"><i class="fa-solid fa-plus"></i></span>
@@ -343,13 +407,19 @@
                                                 <input class="form-control" type="number" id="Capacity"
                                                     name="Capacity">
                                             </div>
+                                            @error('Capacity')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="Power" class="form-control-label">Power Consumption</label>
                                                 <input class="form-control" type="number" id="Power"
-                                                    name="Power">
+                                                    name="PowerConsumption">
                                             </div>
+                                            @error('PowerConsumption')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -357,6 +427,9 @@
                                                 <input class="form-control" type="number" id="Weight"
                                                     name="Weight">
                                             </div>
+                                            @error('Weight')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </section>
@@ -372,6 +445,9 @@
                                                 <input type="file" class="form-control" id="MainImage"
                                                     name="MainImage" accept=".jpg, .jpeg, .png">
                                             </div>
+                                            @error('MainImage')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -379,6 +455,9 @@
                                                 <input type="file" class="form-control" id="CoverImage"
                                                     name="CoverImage" accept=".jpg, .jpeg, .png">
                                             </div>
+                                            @error('CoverImage')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -386,6 +465,9 @@
                                                 <input type="file" class="form-control" id="OtherImage" multiple
                                                     name="OtherImages[]" accept=".jpg, .jpeg, .png">
                                             </div>
+                                            @error('OtherImage')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -393,6 +475,9 @@
                                                 <input type="text" class="form-control" id="Video"
                                                     name="Video">
                                             </div>
+                                            @error('Video')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </section>
@@ -407,7 +492,7 @@
                                                 @foreach ($features as $feature)
                                                     <label class="CatCard"
                                                         style="--card-width: 165px; --card-height:140px;">
-                                                        <input class="card__input FeatureSelectBox" name="Feature[]"
+                                                        <input class="card__input FeatureSelectBox" name="FeatureID[]"
                                                             type="checkbox" value="{{ $feature->ID }}" />
                                                         <div class="card__body"
                                                             style="border: 1px solid #eeee;height:92px !important;">
@@ -419,6 +504,9 @@
                                                     </label>
                                                 @endforeach
                                             </div>
+                                            @error('FeatureID')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <hr class="horizontal dark">
@@ -429,12 +517,18 @@
                                                 <label for="Question" class="form-control-label">Question</label>
                                                 <textarea class="form-control QuestionsTextarea" id="Question" name="Question[]" required></textarea>
                                             </div>
+                                            @error('Question')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="Answer" class="form-control-label">Answer</label>
                                                 <textarea class="form-control AnswersTextarea" name="Answer[]" required></textarea>
                                             </div>
+                                            @error('Answer')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         <a id="add-div-btn" class="btn bg-gradient-light mb-0" style="margin-left: 14px;width: 31%;">Add New FAQ</a>
                                         <div id="div-container" class="mt-5"></div> <!-- Added class to div-container -->
@@ -595,4 +689,14 @@
         }
     </script>
 
+<script>
+
+
+$(document).ready(function() {
+    $('a[role="menuitem"][href="#finish"]').on('click', function(event) {
+        event.preventDefault(); 
+        $('#productForm').submit();
+    });
+});
+</script>
 @endsection

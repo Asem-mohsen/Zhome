@@ -38,9 +38,12 @@ class Product extends Model
 
     public function features()
     {
-        return $this->hasMany(ProductFeatures::class, 'ProductID' , 'ID');
+        return $this->hasMany(Features::class, 'ProductID' , 'ID');
     }
-
+    public function productfeatures()
+    {
+        return $this->belongsToMany(Features::class, 'productfeature' ,'ProductID' , 'FeatureID');
+    }
     public function faqs()
     {
         return $this->hasMany(ProductFAQ::class, 'ProductID', 'ID');
@@ -50,4 +53,17 @@ class Product extends Model
     {
         return $this->hasMany(ProductImages::class, 'ProductID', 'ID');
     }
+
+    protected static function booted()
+    {
+        static::deleting(function ($product) {
+            $product->platforms()->delete();
+            $product->faqs()->delete();
+            $product->images()->delete();
+            $product->technologies()->delete();
+            $product->productfeatures()->delete();
+        });
+    }
+
+    
 }

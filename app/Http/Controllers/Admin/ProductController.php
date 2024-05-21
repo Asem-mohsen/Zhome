@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductImages;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Subcategory;
@@ -13,9 +14,12 @@ use App\Models\ProductDetails;
 use App\Http\Requests\Admin\AddProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Http\Services\Media;
+use App\Models\ProductFaq;
 use App\Models\ProductFeatures;
+use App\Models\Features;
 use App\Models\ProductPlatforms;
 use App\Models\ProductTechnology;
+use App\Models\ProductEvaluation;
 
 
 class ProductController extends Controller
@@ -31,7 +35,7 @@ class ProductController extends Controller
         $platforms  = Platform::all();
         $categories = Category::all();
         $subs       = Subcategory::all();
-        $features   = ProductFeatures::all();
+        $features   = Features::all();
 
         return view('Admin.Products.create' , compact('products','brands','platforms','categories','subs','features'));
     }
@@ -47,40 +51,109 @@ class ProductController extends Controller
         $mainImageName = Media::upload($request->file('MainImage'), 'Admin\dist\img\web\Products\MainImage');
         $coverImageName = Media::upload($request->file('CoverImage'), 'Admin\dist\img\web\Products\CoverImage');
 
-        $otherImagesNames = [];
-        if ($request->hasFile('OtherImages')) {
-            foreach ($request->file('OtherImages') as $otherImage) {
-                $otherImagesNames[] = Media::upload($otherImage, 'Admin\dist\img\web\Products\OtherImages');
-            }
-        }
-
-        $productData           = $request->except('MainImage','CoverImage','OtherImages','_token','_method');
-        $productDetailsData    = $request->only('');
-        $productPlatformsData  = $request->only('Platform');
+        $productData           = $request->only('Name','ArabicName','Description','ArabicDescription','Price','Quantity','InstallationCost','SubCategoryID','BrandID','IsBundle');
+        $productDetailsData    = $request->only('Title','Title2','ArabicTitle','ArabicTitle2','Video','Width','Height','Length','Color','Capacity','PowerConsumption','Weight');
+        $productPlatformsData  = $request->only('PlatformID');
         $productTechnologyData = $request->only('Technology');
-
+        $productFeatureData    = $request->only('FeatureID');
+        $productFAQData        = $request->only('Question','Answer');
+        $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
+        
         // Create Product
         $productData['MainImage'] = $mainImageName;
         $product = Product::create($productData);
 
+        // Create ProductImages 
+        $productImagesData['ProductID'] = $product->id;
+        if ($request->hasFile('OtherImages')) {
+            foreach ($request->file('OtherImages') as $otherImage) {
+                $otherImagesName = Media::upload($otherImage, 'Admin\dist\img\web\Products\OtherImages');
+                $productImagesData['Image'] = $otherImagesName;
+                ProductImages::create($productImagesData);
+            }
+        }
+        
         // Create ProductDetails
         $productDetailsData['ProductID'] = $product->id;
         $productDetailsData['CoverImage'] = $coverImageName;
-        $productDetails = ProductDetails::create($productDetailsData);
+        ProductDetails::create($productDetailsData);
 
         // Create ProductPlatforms
         $productPlatformsData['ProductID'] = $product->id;
-        $producPlatforms = ProductPlatforms::create($productPlatformsData);
-
+        foreach ($request->PlatformID as $platforms) {
+            $productPlatformsData['PlatformID'] = $platforms;
+            ProductPlatforms::create($productPlatformsData);
+        }
+        
         // Create ProductTechnology
         $productTechnologyData['ProductID'] = $product->id;
-        $producTechnology = ProductTechnology::create($productTechnologyData);
+        foreach ($request->Technology as $Technology) {
+            $productTechnologyData['Technology'] = $Technology;
+            ProductTechnology::create($productTechnologyData);
+        }
 
-        return redirect()->route('Product.index')->with('success', 'Product Added Successfully');
+        // Create Feature
+        $productFeatureData['ProductID'] = $product->id;
+        foreach ($request->FeatureID as $Feature) {
+            $productFeatureData['FeatureID'] = $Feature;
+            ProductFeatures::create($productFeatureData);
+        }
+        
+        // Create Product Evaluation
+        $productEvaluationData['ProductID'] = $product->id;
+        ProductEvaluation::create($productEvaluationData);
+        
+        // Create Product FAQ
+        $productFAQData['ProductID'] = $product->id;
+        $questions = $request->Question;
+        $answers = $request->Answer;
+
+        if (count($questions) === count($answers)) {
+            foreach ($questions as $index => $question) {
+                $faqData = [
+                    'Question' => $question,
+                    'Answer' => $answers[$index],
+                        'ProductID' => $product->id,
+                    ];
+                    ProductFaq::create($faqData);
+            }
+        } else {
+            return redirect()->back()->with('success', 'The number of questions and answers do not match.');
+        }
+            
+        return redirect()->route('Products.index')->with('success', 'Product Added Successfully');
     }
 
-    public function show(){
-        $products = Product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features'])->get();
+    public function show(Product $product){
+        $products = $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features'])->get();
         return view('Admin.Products.show' , compact('products'));
+    }
+
+    public function destroy(Product $product){
+
+        // Delete platforms
+        ProductPlatforms::where('ProductID',$product->ID)->delete();
+
+        // Delete related FAQs
+        ProductFaq::where('ProductID',$product->ID)->delete();
+    
+        // Delete related images
+        ProductImages::where('ProductID',$product->ID)->delete();
+    
+        // Delete related technologies
+        ProductTechnology::where('ProductID',$product->ID)->delete();
+    
+        // Delete related features
+        ProductFeatures::where('ProductID',$product->ID)->delete();
+        
+        // Delete related Details
+        ProductDetails::where('ProductID',$product->ID)->delete();
+        
+        // Delete related Evaluations
+        ProductEvaluation::where('ProductID',$product->ID)->delete();
+        
+        $product->where('ID',$product->ID)->delete();
+        
+        return redirect()->back()->with('success', 'product Deleted Successfully');
     }
 }
