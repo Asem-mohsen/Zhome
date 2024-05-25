@@ -18,7 +18,7 @@ class Product extends Model
 
     public function platforms()
     {
-        return $this->belongsToMany(Platform::class,'productplatform' ,'ProductID', 'PlatformID');
+        return $this->belongsToMany(Platform::class,'productplatform' ,'ProductID', 'PlatformID' ,'ID', 'ID');
     }
 
     public function subcategory()
@@ -28,7 +28,7 @@ class Product extends Model
 
     public function productDetails()
     {
-        return $this->belongsTo(ProductDetails::class, 'ProductID', 'ID');
+        return $this->hasOne(ProductDetails::class, 'ProductID','ID');
     }
 
     public function technologies()
@@ -38,7 +38,12 @@ class Product extends Model
 
     public function features()
     {
-        return $this->hasMany(ProductFeatures::class, 'ProductID' , 'ID');
+        return $this->belongsToMany(Features::class, 'productfeature' ,'ProductID' , 'FeatureID','ID', 'ID');
+    }
+
+    public function collections()
+    {
+        return $this->belongsToMany(Collection::class,'collectionproducts' ,'ProductID', 'CollectionID','ID', 'ID');
     }
 
     public function faqs()
@@ -49,5 +54,18 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImages::class, 'ProductID', 'ID');
+    }
+
+    public function sale()
+    {
+        return $this->hasOne(Sale::class, 'ProductID', 'ID');
+    }
+
+    public function evaluations(){
+        return $this->hasOne(ProductEvaluation::class, 'ProductID' , 'ID');
+    }
+
+    public function orders(){
+        return $this->hasMany(ShopOrders::class, 'ProductID' ,'ID');
     }
 }

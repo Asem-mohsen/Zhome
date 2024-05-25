@@ -70,6 +70,7 @@ class RolesController extends Controller
             
         return redirect()->route('Roles.edit' , $role->ID)->with('success', 'Role updated successfully');
     }
+    
     public function destroy(Roles $role , Accessability $accessability){
         
         $admins = Admin::where('RoleID','=', $role->ID)->count();

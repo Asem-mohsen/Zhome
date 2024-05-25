@@ -50,9 +50,16 @@
                                 </td>
                                 <td>{{ $product->brand->Brand }}</td>
                                 <td>
-                                    @foreach($product->platforms as $platform)
-                                        <li>{{ $platform->Platform }}</li>
-                                    @endforeach
+                                    <div class="Platform-index">
+                                        @foreach($product->platforms as $platform)
+                                            <a href="{{route('Platform.edit' , $platform->ID )}}">
+                                                <div class="platform">
+                                                    <img src="{{ asset('Admin/dist/img/boxed-bg.png') }}" alt="{{$platform->Platform}}">
+                                                    <p>{{$platform->Platform}}</p>
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="d-flex flex-column justify-content-center text-center px-2 py-1">

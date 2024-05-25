@@ -14,7 +14,7 @@ class Platform extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'productplatform', 'PlatformID', 'ProductID');
+        return $this->belongsToMany(Product::class, 'productplatform', 'PlatformID', 'ProductID','ID', 'ID');
     }
 
 }

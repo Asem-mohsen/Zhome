@@ -13,6 +13,6 @@ class ProductDetails extends Model
 
     public function productsDetails()
     {
-        return $this->hasMany(Product::class, 'ID', 'ProductID');
+        return $this->belongsTo(Product::class ,'ProductID' ,'ID');
     }
 }
