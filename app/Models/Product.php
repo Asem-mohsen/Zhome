@@ -38,20 +38,12 @@ class Product extends Model
 
     public function features()
     {
-<<<<<<< HEAD
         return $this->belongsToMany(Features::class, 'productfeature' ,'ProductID' , 'FeatureID','ID', 'ID');
     }
 
     public function collections()
     {
         return $this->belongsToMany(Collection::class,'collectionproducts' ,'ProductID', 'CollectionID','ID', 'ID');
-=======
-        return $this->hasMany(Features::class, 'ProductID' , 'ID');
-    }
-    public function productfeatures()
-    {
-        return $this->belongsToMany(Features::class, 'productfeature' ,'ProductID' , 'FeatureID');
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
     }
     public function faqs()
     {
@@ -63,7 +55,6 @@ class Product extends Model
         return $this->hasMany(ProductImages::class, 'ProductID', 'ID');
     }
 
-<<<<<<< HEAD
     public function sale()
     {
         return $this->hasOne(Sale::class, 'ProductID', 'ID');
@@ -77,18 +68,3 @@ class Product extends Model
         return $this->hasMany(ShopOrders::class, 'ProductID' ,'ID');
     }
 }
-=======
-    protected static function booted()
-    {
-        static::deleting(function ($product) {
-            $product->platforms()->delete();
-            $product->faqs()->delete();
-            $product->images()->delete();
-            $product->technologies()->delete();
-            $product->productfeatures()->delete();
-        });
-    }
-
-    
-}
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
