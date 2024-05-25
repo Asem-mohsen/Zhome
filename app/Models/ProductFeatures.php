@@ -12,4 +12,8 @@ class ProductFeatures extends Model
     protected $table = 'productfeature';
     protected $guarded = [];
 
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProductEvaluation extends Model
 {
     use HasFactory;
+<<<<<<< HEAD
     protected $table = 'expertevaluation';
     protected $guarded = [];
 
@@ -17,3 +18,9 @@ class ProductEvaluation extends Model
 
     }
 }
+=======
+
+    protected $table = 'expertevaluation';
+    protected $guarded = [];
+}
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03

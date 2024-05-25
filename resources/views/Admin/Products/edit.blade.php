@@ -13,7 +13,11 @@
 @include('Admin.Components.Msg')
 
 <div class="container-fluid py-4">
+<<<<<<< HEAD
     <form id="productForm" action="{{ route('Products.update' ,$product->ID) }}" method="post" enctype="multipart/form-data">
+=======
+    <form id="productForm" action="{{ route('Products.update') }}" method="post" enctype="multipart/form-data">
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
         @method('PUT')
         @csrf
         <div class="row">
@@ -75,7 +79,11 @@
                                     <div class="col-md-12">
                                         <div class="form-check mb-3">
                                             <label>
+<<<<<<< HEAD
                                                 <input type="checkbox" class="form-check-input" id="hasInstallments" @checked($product->InstallationCost != NULL)
+=======
+                                                <input type="checkbox" class="form-check-input" id="hasInstallments" @checked($product->InstallationCost != NULL) 
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                     name="hasInstallments" onchange="togglePriceInput()">
                                                 Has Installation Cost ?
                                             </label>
@@ -122,7 +130,11 @@
                                             <select name="Categories" id="categorySelect" class="form-control">
                                                 <option hidden disabled selected>Select Category</option>
                                                 @foreach ($categories as $category)
+<<<<<<< HEAD
                                                     <option value="{{ $category->ID }}" @selected($product->subcategory->category->ID == $product->subcategory->MainCategoryID) > {{ $category->Category }} </option>
+=======
+                                                    <option value="{{ $category->ID }}" @selected($product->category->ID == $product->$subcategory->MainCategoryID) > {{ $category->Category }} </option>
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                 @endforeach
                                             </select>
                                         </div>
@@ -147,7 +159,11 @@
                                         <div class="cards" id="PlatformsAddProduct">
                                             @foreach ($platforms as $platform)
                                                 <label class="CatCard" style="--card-width: 165px; --card-height:140px;">
+<<<<<<< HEAD
                                                     <input class="card__input PlatformSelect" name="PlatformID[]"  @if($product->platforms->pluck('ID')->contains($platform->ID)) checked @endif
+=======
+                                                    <input class="card__input PlatformSelect" name="PlatformID[]"  @checked($product->PlatformID == $platform->ID)
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         type="checkbox" value="{{ $platform->ID }}" />
                                                     <div class="card__body platform">
                                                         <img src="{{ asset('Admin/dist/img/Background.jpg') }}"
@@ -198,7 +214,11 @@
                                             <div class="cards tech-card">
                                                 <label class="CatCard"
                                                     style="--card-height: 100px;--card-width: 100px;">
+<<<<<<< HEAD
                                                     <input class="card__input TechBoxSelection" name="Technology[]" @checked($technologies->contains('Technology', 'Wifi'))
+=======
+                                                    <input class="card__input TechBoxSelection" name="Technology[]" @checked ($product->Technology == "Wifi")
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         type="checkbox" value="Wifi" />
                                                     <div class="card__body">
                                                         <header class="card__body-header">
@@ -208,7 +228,11 @@
                                                 </label>
                                                 <label class="CatCard"
                                                     style="--card-height: 100px;--card-width: 100px;">
+<<<<<<< HEAD
                                                     <input class="card__input TechBoxSelection" name="Technology[]" @checked($technologies->contains('Technology', 'Z-Wave'))
+=======
+                                                    <input class="card__input TechBoxSelection" name="Technology[]" @checked ($product->Technology == "Z-Wave")
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         type="checkbox" value="Z-Wave" />
                                                     <div class="card__body">
                                                         <header class="card__body-header">
@@ -218,7 +242,11 @@
                                                 </label>
                                                 <label class="CatCard"
                                                     style="--card-height: 100px;--card-width: 100px;">
+<<<<<<< HEAD
                                                     <input class="card__input TechBoxSelection" name="Technology[]" @checked($technologies->contains('Technology', 'Zigbee'))
+=======
+                                                    <input class="card__input TechBoxSelection" name="Technology[]" @checked ($product->Technology == "Zigbee")
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         type="checkbox" value="Zigbee" />
                                                     <div class="card__body">
                                                         <header class="card__body-header">
@@ -228,7 +256,11 @@
                                                 </label>
                                                 <label class="CatCard"
                                                     style="--card-height: 100px;--card-width: 100px;">
+<<<<<<< HEAD
                                                     <input class="card__input TechBoxSelection" name="Technology[]"  @checked($technologies->contains('Technology', 'Bluetooth'))
+=======
+                                                    <input class="card__input TechBoxSelection" name="Technology[]" @checked ($product->Technology == "Bluetooth")
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         type="checkbox" value="Bluetooth" />
                                                     <div class="card__body">
                                                         <header class="card__body-header">
@@ -238,7 +270,11 @@
                                                 </label>
                                                 <label class="CatCard"
                                                     style="--card-height: 100px;--card-width: 100px;">
+<<<<<<< HEAD
                                                     <input class="card__input TechBoxSelection" name="Technology[]" @checked($technologies->contains('Technology', 'Matter'))
+=======
+                                                    <input class="card__input TechBoxSelection" name="Technology[]" @checked ($product->Technology == "Matter")
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         type="checkbox" value="Matter" />
                                                     <div class="card__body">
                                                         <header class="card__body-header">
@@ -248,7 +284,11 @@
                                                 </label>
                                                 <label class="CatCard"
                                                     style="--card-height: 100px;--card-width: 100px;">
+<<<<<<< HEAD
                                                     <input class="card__input TechBoxSelection" name="Technology[]" @checked($technologies->contains('Technology', 'Thread'))
+=======
+                                                    <input class="card__input TechBoxSelection" name="Technology[]" @checked ($product->Technology == "Thread")
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         type="checkbox" value="Thread" />
                                                     <div class="card__body">
                                                         <header class="card__body-header">
@@ -292,7 +332,11 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="Expert" class="form-control-label">Expert Review</label>
+<<<<<<< HEAD
                                             <textarea class="form-control" id="Expert" name="Evaluation" required>{{$product->evaluations->Evaluation}}</textarea>
+=======
+                                            <textarea class="form-control" id="Expert" name="Evaluation" required>{{$product->productEvaluation->Evaluation}}</textarea>
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                         </div>
                                         @error('Evaluation')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -302,7 +346,11 @@
                                         <div class="form-group">
                                             <label for="Expert" class="form-control-label">Arabic Expert
                                                 Review</label>
+<<<<<<< HEAD
                                             <textarea class="form-control" id="ArabicExpert" name="ArabicEvaluation" required>{{$product->evaluations->ArabicEvaluation}}</textarea>
+=======
+                                            <textarea class="form-control" id="ArabicExpert" name="ArabicEvaluation" required>{{$product->productEvaluation->ArabicEvaluation}}</textarea>
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                         </div>
                                         @error('ArabicEvaluation')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -448,7 +496,11 @@
                                         <div class="form-group">
                                             <label for="MainImage" class="form-control-label">Main Image</label>
                                             <input type="file" class="form-control" id="MainImage"
+<<<<<<< HEAD
                                                 name="MainImage" accept="image/*">
+=======
+                                                name="MainImage" accept=".jpg, .jpeg, .png">
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                         </div>
                                         @error('MainImage')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -458,7 +510,11 @@
                                         <div class="form-group">
                                             <label for="CoverImage" class="form-control-label">Cover Image</label>
                                             <input type="file" class="form-control" id="CoverImage"
+<<<<<<< HEAD
                                                 name="CoverImage" accept="image/*">
+=======
+                                                name="CoverImage" accept=".jpg, .jpeg, .png">
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                         </div>
                                         @error('CoverImage')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -468,7 +524,11 @@
                                         <div class="form-group">
                                             <label class="form-control-label">Other Images</label>
                                             <input type="file" class="form-control" id="OtherImage" multiple
+<<<<<<< HEAD
                                                 name="OtherImages[]" accept="image/*">
+=======
+                                                name="OtherImages[]" accept=".jpg, .jpeg, .png">
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                         </div>
                                         @error('OtherImage')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -477,7 +537,11 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="Video" class="form-control-label">Video</label>
+<<<<<<< HEAD
                                             <input type="text" class="form-control" id="Video" value="{{$product->productDetails->Video}}"
+=======
+                                            <input type="text" class="form-control" id="Video"
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                 name="Video">
                                         </div>
                                         @error('Video')
@@ -495,9 +559,18 @@
                                         <label for="Feature" class="form-control-label">Select Featrues </label>
                                         <div class="cards FeatureSelections features-cards">
                                             @foreach ($features as $feature)
+<<<<<<< HEAD
                                                 <label class="CatCard" style="--card-width: 165px; --card-height:140px;">
                                                     <input class="card__input FeatureSelectBox" name="FeatureID[]" type="checkbox" value="{{ $feature->ID }}" @if($product->features->pluck('ID')->contains($feature->ID)) checked @endif />
                                                     <div class="card__body" style="border: 1px solid #eeee;height:92px !important;">
+=======
+                                                <label class="CatCard"
+                                                    style="--card-width: 165px; --card-height:140px;">
+                                                    <input class="card__input FeatureSelectBox" name="FeatureID[]"
+                                                        type="checkbox" value="{{ $feature->ID }}" />
+                                                    <div class="card__body"
+                                                        style="border: 1px solid #eeee;height:92px !important;">
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                                         <header class="card__body-header p-1">
                                                             <h2 class="card__body-header-title">
                                                                 {{ $feature->Feature }}</h2>
@@ -514,6 +587,7 @@
                                 <hr class="horizontal dark">
                                 <p class="text-uppercase text-sm">FAQ</p>
                                 <div class="row">
+<<<<<<< HEAD
                                     @foreach ( $product->faqs as $faq )
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -534,6 +608,28 @@
                                             @enderror
                                         </div>
                                     @endforeach
+=======
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="Question" class="form-control-label">Question</label>
+                                            <textarea class="form-control QuestionsTextarea" id="Question" name="Question[]" required></textarea>
+                                        </div>
+                                        @error('Question')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="Answer" class="form-control-label">Answer</label>
+                                            <textarea class="form-control AnswersTextarea" name="Answer[]" required></textarea>
+                                        </div>
+                                        @error('Answer')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <a id="add-div-btn" class="btn bg-gradient-light mb-0" style="margin-left: 14px;width: 31%;">Add New FAQ</a>
+                                    <div id="div-container" class="mt-5"></div> <!-- Added class to div-container -->
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                 </div>
                             </section>
                         </div>
@@ -541,7 +637,12 @@
                         <div class="justify-content-center row">
                             <div class="col-md-4">
                                 <div class="form-group">
+<<<<<<< HEAD
                                     <a href="{{ route('Products.index') }}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+=======
+                                    <a href="{{ route('Products.index') }}"
+                                        class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
                                 </div>
                             </div>
                         </div>
@@ -574,6 +675,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="{{ asset('Admin/dist/js/jquery.steps.min.js') }}"></script>
     <script src="{{ asset('Admin/dist/js/wiard-addProduct.js') }} "></script>
+<<<<<<< HEAD
 
     {{-- Get Subcategories --}}
     <script>
@@ -610,6 +712,8 @@
             });
         });
     </script>
+=======
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
 
     <script type="text/javascript">
         function togglePriceInput() {

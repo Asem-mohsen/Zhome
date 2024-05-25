@@ -689,6 +689,7 @@
         }
     </script>
 
+<<<<<<< HEAD
     {{-- Finish Button --}}
     <script>
         $(document).ready(function() {
@@ -699,3 +700,16 @@
         });
     </script>
 @endsection
+=======
+<script>
+
+
+$(document).ready(function() {
+    $('a[role="menuitem"][href="#finish"]').on('click', function(event) {
+        event.preventDefault(); 
+        $('#productForm').submit();
+    });
+});
+</script>
+@endsection
+>>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
