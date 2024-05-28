@@ -17,27 +17,23 @@ use App\Models\ProductDetails;
 use App\Http\Requests\Admin\AddProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Http\Services\Media;
-<<<<<<< HEAD
 use App\Http\Services\SyncChoices;
-=======
-use App\Models\ProductFaq;
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
 use App\Models\ProductFeatures;
-use App\Models\Features;
 use App\Models\ProductPlatforms;
 use App\Models\ProductTechnology;
-<<<<<<< HEAD
-use App\Models\ProductImages;
-=======
-use App\Models\ProductEvaluation;
 
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
 
 class ProductController extends Controller
 {
     public function index(){
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
-        return view('Admin.Products.index' , compact('products'));
+        $platforms = [];
+        foreach($products as $product){
+            $productplatforms = ProductPlatforms::where('ProductID' , $product->ID);
+            $platforms[] = $productplatforms;
+        }
+        
+        return view('Admin.Products.index' , compact('products','platforms'));
     }
 
     public function create(){
@@ -51,13 +47,15 @@ class ProductController extends Controller
         return view('Admin.Products.create' , compact('products','brands','platforms','categories','subs','features'));
     }
 
+    
     public function getSubcategories($categoryId)
     {
         $subcategories = SubCategory::where('MainCategoryID', $categoryId)->get();
         return response()->json($subcategories);
     }
 
-    public function store(AddProductRequest $request){
+    public function store(AddProductRequest $request)
+    {
 
         $mainImageName = Media::upload($request->file('MainImage'), 'Admin\dist\img\web\Products\MainImage');
         $coverImageName = Media::upload($request->file('CoverImage'), 'Admin\dist\img\web\Products\CoverImage');
@@ -69,20 +67,14 @@ class ProductController extends Controller
         $productFeatureData    = $request->only('FeatureID');
         $productFAQData        = $request->only('Question','Answer');
         $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
         // Create Product
         $productData['MainImage'] = $mainImageName;
         $product = Product::create($productData);
 
-<<<<<<< HEAD
-        // Create ProductImages
-=======
+
+
         // Create ProductImages 
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
         $productImagesData['ProductID'] = $product->id;
         if ($request->hasFile('OtherImages')) {
             foreach ($request->file('OtherImages') as $otherImage) {
@@ -91,11 +83,7 @@ class ProductController extends Controller
                 ProductImages::create($productImagesData);
             }
         }
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
         // Create ProductDetails
         $productDetailsData['ProductID'] = $product->id;
         $productDetailsData['CoverImage'] = $coverImageName;
@@ -107,11 +95,7 @@ class ProductController extends Controller
             $productPlatformsData['PlatformID'] = $platforms;
             ProductPlatforms::create($productPlatformsData);
         }
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
         // Create ProductTechnology
         $productTechnologyData['ProductID'] = $product->id;
         foreach ($request->Technology as $Technology) {
@@ -125,19 +109,11 @@ class ProductController extends Controller
             $productFeatureData['FeatureID'] = $Feature;
             ProductFeatures::create($productFeatureData);
         }
-<<<<<<< HEAD
 
         // Create Product Evaluation
         $productEvaluationData['ProductID'] = $product->id;
         ProductEvaluation::create($productEvaluationData);
-
-=======
         
-        // Create Product Evaluation
-        $productEvaluationData['ProductID'] = $product->id;
-        ProductEvaluation::create($productEvaluationData);
-        
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
         // Create Product FAQ
         $productFAQData['ProductID'] = $product->id;
         $questions = $request->Question;
@@ -155,7 +131,6 @@ class ProductController extends Controller
         } else {
             return redirect()->back()->with('success', 'The number of questions and answers do not match.');
         }
-<<<<<<< HEAD
 
         return redirect()->route('Products.index')->with('success', 'Product Added Successfully');
     }
@@ -274,42 +249,7 @@ class ProductController extends Controller
         $product->where('ID',$product->ID)->delete();
 
         return redirect()->back()->with('success', 'product Deleted Successfully');
-=======
             
-        return redirect()->route('Products.index')->with('success', 'Product Added Successfully');
     }
 
-    public function show(Product $product){
-        $products = $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features'])->get();
-        return view('Admin.Products.show' , compact('products'));
->>>>>>> c9ef07c3fb8a08fda4d41df79ae9832660976b03
-    }
-
-    public function destroy(Product $product){
-
-        // Delete platforms
-        ProductPlatforms::where('ProductID',$product->ID)->delete();
-
-        // Delete related FAQs
-        ProductFaq::where('ProductID',$product->ID)->delete();
-    
-        // Delete related images
-        ProductImages::where('ProductID',$product->ID)->delete();
-    
-        // Delete related technologies
-        ProductTechnology::where('ProductID',$product->ID)->delete();
-    
-        // Delete related features
-        ProductFeatures::where('ProductID',$product->ID)->delete();
-        
-        // Delete related Details
-        ProductDetails::where('ProductID',$product->ID)->delete();
-        
-        // Delete related Evaluations
-        ProductEvaluation::where('ProductID',$product->ID)->delete();
-        
-        $product->where('ID',$product->ID)->delete();
-        
-        return redirect()->back()->with('success', 'product Deleted Successfully');
-    }
 }

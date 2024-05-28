@@ -174,6 +174,29 @@
                 </li>
             </ul>
         </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie"></i>
+              <p>
+                  Sales
+                  <i class="right fas fa-angle-left"></i>
+              </p>
+          </a>
+          <ul class="nav nav-treeview">
+              <li class="nav-item">
+                  <a href="{{ route('Sales.index')}}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Sales</p>
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <a href="{{ route('Sales.Promocode.index')}}" class="nav-link">
+                      <i class="far fa-circle nav-icon"></i>
+                      <p>Promocodes</p>
+                  </a>
+              </li>
+          </ul>
+      </li>
         <li class="nav-header">EXAMPLES</li>
         <li class="nav-item">
         <a href="pages/calendar.html" class="nav-link">

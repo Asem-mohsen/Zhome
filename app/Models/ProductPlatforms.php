@@ -4,15 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ProductPlatforms extends Model
+class ProductPlatforms extends Pivot
 {
     use HasFactory;
     protected $table = 'productplatform';
     protected $guarded = [];
 
-    // public function products()
-    // {
-    //     return $this->belongsToMany(Product::class,'productplatform', 'PlatformID', 'ProductID');
-    // }
 }

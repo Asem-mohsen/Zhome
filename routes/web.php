@@ -124,7 +124,8 @@ Route::prefix('Subscribers')->name('Subscribers.')->group(function(){
 Route::prefix('Contact')->name('Contact.')->group(function(){
     Route::controller(ContactController::class)->group(function(){
         Route::get('/', 'index')->name('index');
-        Route::get('/{Contact}/edit', 'edit')->name('edit');
+        Route::get('/{contact}/edit', 'edit')->name('edit');
+        Route::put('/{contact}/update', 'update')->name('update');
     });
 });
 
@@ -132,6 +133,7 @@ Route::prefix('Inventory')->name('Inventory.')->group(function(){
     Route::controller(InventoryController::class)->group(function(){
         Route::get('/', 'index')->name('index');
         Route::get('/{Inventory}/edit', 'edit')->name('edit');
+        Route::patch('/update-quantity', 'update')->name('update');
     });
 });
 
@@ -140,6 +142,8 @@ Route::prefix('Sales')->name('Sales.')->group(function(){
         Route::get('/', 'index')->name('index');
         Route::get('/{sales}/edit', 'edit')->name('edit');
         Route::get('/create', 'create')->name('create');
+        Route::get('/getProductPrice/{productId}', 'getProductPrice')->name('getProductPrice');
+        Route::get('/createGroup', 'createGroup')->name('createGroup');
         Route::post('/store', 'store')->name('store');
         Route::put('/{sales}/update', 'update')->name('update');
         Route::delete('/{sales}/delete', 'destroy')->name('delete');

@@ -31,6 +31,7 @@
                         @php
                             $i = 1;
                         @endphp
+
                         @foreach ($products as $product)
                         
                             <tr>

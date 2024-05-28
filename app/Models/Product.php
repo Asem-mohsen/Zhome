@@ -67,4 +67,10 @@ class Product extends Model
     public function orders(){
         return $this->hasMany(ShopOrders::class, 'ProductID' ,'ID');
     }
+
+    public function orderedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'orders', 'ProductID', 'UserID' , 'ID' , 'ID')->withPivot('Quantity');
+    }
+    
 }
