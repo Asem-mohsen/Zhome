@@ -35,11 +35,11 @@
                                     @php
                                         $i = 1;
                                     @endphp
-                                    @foreach($promocodes as $promocode)
+                                    @foreach($promocodesWithUsage as $promocode)
                                             {{-- // Change into Disabled  --}}
                                             {{-- if($TodaysDate >= $Code['EndsIn']){
                                                 $CodeID = $Code['ID'];
-                                                $UpdateStatus = mysqli_query($con, "UPDATE promocode SET Status = 0 WHERE ID = $CodeID");    
+                                                $UpdateStatus = mysqli_query($con, "UPDATE promocode SET Status = 0 WHERE ID = $CodeID");
                                             }
                                         ?> --}}
                                         <tr id="row-{{$promocode->ID}}">
@@ -59,8 +59,8 @@
                                             <td>
                                                 <p class="text-xs font-weight-bold mb-0">{{ date('Md,Y' , strtotime($promocode->created_at)) }}</p>
                                             </td>
-                                            <td class="align-middle text-center">
-                                                <span class="text-secondary text-xs font-weight-bold"{{$promocode->AvailableFor . " Days"}}></span>
+                                            <td>
+                                                <span class="text-secondary text-xs font-weight-bold">{{ $promocode->AvailableFor . " Days"}}</span>
                                             </td>
                                             <td>
                                                 @if($promocode->Status == 1 )
@@ -73,17 +73,15 @@
                                                 <span class="text-secondary text-xs font-weight-bold">{{date('Md,Y' , strtotime($promocode->EndsIn))}}</span>
                                             </td>
                                             <td>
-                                                <span class="text-secondary text-xs font-weight-bold">{{$countUsed }}</span>
+                                                <span class="text-secondary text-xs font-weight-bold">{{$promocode->countUsed }}</span>
                                             </td>
-                                            <td>
-                                                <a href="{{route('Sales.Promocode.edit' , $promocode->ID)}}" class="btn btn-success">Edit</a>
-                                            
-                                                <from action="{{route('Sales.Promocode.delete' , $promocode->ID)}}" method="post">
-                                                    @method('DELETE')
+                                            <td class="d-flex justify-content-around align-items-baseline">
+                                                <a href="{{route('Sales.Promocode.edit' , $promocode->ID)}}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">Edit</a>
+                                                <form action="{{route('Sales.Promocode.delete' , $promocode->ID)}}" method="post">
                                                     @csrf
-
-                                                    <button class="btn btn-danger">Remove</button>
-                                                </from>
+                                                    @method('DELETE')
+                                                    <button type="submit" class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs">Remove</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach

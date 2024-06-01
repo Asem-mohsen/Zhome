@@ -43,8 +43,9 @@ class Product extends Model
 
     public function collections()
     {
-        return $this->belongsToMany(Collection::class,'collectionproducts' ,'ProductID', 'CollectionID','ID', 'ID');
+        return $this->belongsToMany(Collections::class,'collectionproducts' ,'ProductID', 'CollectionID','ID', 'ID');
     }
+
     public function faqs()
     {
         return $this->hasMany(ProductFAQ::class, 'ProductID', 'ID');
@@ -72,5 +73,5 @@ class Product extends Model
     {
         return $this->belongsToMany(User::class, 'orders', 'ProductID', 'UserID' , 'ID' , 'ID')->withPivot('Quantity');
     }
-    
+
 }

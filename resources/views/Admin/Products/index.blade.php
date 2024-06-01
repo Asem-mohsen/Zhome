@@ -41,7 +41,7 @@
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
-                                            <img src="{{ asset('Admin/dist/img/user2-160x160.jpg') }}" class="avatar avatar-sm me-3" alt="{{$product->Name}}">
+                                            <img src="{{ asset("Admin/dist/img/web/Products/MainImage/{$product->MainImage}") }}" class="avatar avatar-sm me-3" alt="{{$product->Name}}">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h5 class="mb-0 text-sm">{{$product->Name}}</h5>
@@ -55,7 +55,7 @@
                                         @foreach($product->platforms as $platform)
                                             <a href="{{route('Platform.edit' , $platform->ID )}}">
                                                 <div class="platform">
-                                                    <img src="{{ asset('Admin/dist/img/boxed-bg.png') }}" alt="{{$platform->Platform}}">
+                                                    <img src="{{ asset("Admin/dist/img/web/Platforms/{$platform->Logo}") }}" alt="{{$platform->Platform}}">
                                                     <p>{{$platform->Platform}}</p>
                                                 </div>
                                             </a>

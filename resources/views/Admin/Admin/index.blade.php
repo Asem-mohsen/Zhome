@@ -9,6 +9,10 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+                {{-- Buttons --}}
+                <div class="btn-group w-fit pb-2">
+                    <a href="{{ route('Admins.create') }}" class="btn btn-dark p-2"><i class="fa-solid fa-plus mr-1"></i>Add New Admin</a>
+                </div>
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -26,7 +30,7 @@
                             $i = 1;
                         @endphp
                         @foreach ($Admins as $Admin)
-                       
+                        
                             <tr>
                                 <td>
                                     {{ $i++ }}

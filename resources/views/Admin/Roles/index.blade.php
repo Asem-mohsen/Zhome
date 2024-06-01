@@ -8,15 +8,19 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
+                {{-- Buttons --}}
+                <div class="btn-group w-fit pb-2">
+                    <a href="{{ route('Roles.create') }}" class="btn btn-dark p-2"><i class="fa-solid fa-plus mr-1"></i>Add New Role</a>
+                </div>
                 <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Role</th>
-                    <th>Number of Admins</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Role</th>
+                            <th>Number of Admins</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @php
                             $i = 1;

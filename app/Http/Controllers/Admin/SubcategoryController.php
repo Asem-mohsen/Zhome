@@ -39,7 +39,10 @@ class SubcategoryController extends Controller
         if($request->hasFile('image')){
             $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Categories\SubCategory');
             $data['image'] = $newImageName;
-            Media::delete(public_path("Admin\dist\img\web\Categories\SubCategory\\{$subcategory->image}"));
+            $oldImagePath = public_path("Admin/dist/img/web/Categories/SubCategory/{$subcategory->image}");
+            if (is_file($oldImagePath)) {
+                Media::delete($oldImagePath);
+            }
         }
 
         Subcategory::where('ID', $subcategory->ID)->update($data);

@@ -18,7 +18,7 @@
                     @foreach ($Platforms as $Platform)
                         <div class="col-md-4">
                             <div class="Platform-box d-flex mb-3">
-                                <img src="{{ asset('Admin/dist/img/photo1.png') }}" alt="" class="platform-image">
+                                <img src="{{ asset("Admin/dist/img/web/Platforms/{$Platform->Logo}") }}" alt="{{$Platform->Platform}}" class="platform-image">
                                 <div class="position-relative w-100">
                                     <p class="d-flex align-items-center justify-content-center m-0 platform-title h-100">{{ $Platform->Platform }}</p>
                                     <div class="overlay position-absolute w-100 h-100">

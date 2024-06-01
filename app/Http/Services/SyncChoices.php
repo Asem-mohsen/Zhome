@@ -5,9 +5,9 @@ namespace App\Http\Services;
 
 class SyncChoices {
 
-    public static function Sync($model , $condition , $newChoices , $ColumnName){
+    public static function Sync($model , $condition , $newChoices , $ColumnName , $mainTable = 'ProductID'){
 
-        $arrayOfChoices = $model::where('ProductID' , $condition)->pluck('ID')->toArray();
+        $arrayOfChoices = $model::where($mainTable , $condition)->pluck('ID')->toArray();
         
         // Choices to delete
         $choicesToDelete = array_diff($arrayOfChoices , $newChoices);
@@ -17,7 +17,7 @@ class SyncChoices {
 
         // Delete the old choices
         if (!empty($choicesToDelete)) {
-            $model::where('ProductID', $condition)->whereIn('ID', $choicesToDelete)->delete();
+            $model::where($mainTable, $condition)->whereIn('ID', $choicesToDelete)->delete();
         }
         
         // Add the new choices
@@ -25,7 +25,7 @@ class SyncChoices {
 
             foreach($choicesToAdd as $choice){
                 $model::create([
-                    'ProductID' => $condition,
+                    $mainTable => $condition,
                     $ColumnName => $choice
                 ]);
             }

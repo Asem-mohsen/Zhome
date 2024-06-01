@@ -21,18 +21,18 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="product-details__image d-flex justify-content-center">
-                                    <img class="img-fluid" src="{{ asset('Admin/dist/img/prod-2.jpg') }}" width="500px" style="max-height: 493px;" alt="{{$product->Name}}" />
-                                    <a href="#" class="product-details__img-popup img-popup" style="position: revert;">
+                                    <img class="img-fluid" src="{{ asset("Admin/dist/img/web/Products/MainImage/{$product->MainImage}") }}" width="500px" style="max-height: 493px;" alt="{{$product->Name}}" />
+                                    <a href="#" class="product-details__img-popup img-popup">
                                         <i class="fa fa-search"></i>
                                     </a>
                                 </div>
 
                                 <div class="additional-images d-flex justify-content-center p-3">
-                                        @foreach ($product->images as $image)
-                                            <div class="additional-image m-2">
-                                                <img class="img-fluid h-100" src="{{ asset('Admin/dist/img/prod-2.jpg') }}" style="width:130px;object-fit: cover;" alt="{{$product->Name}}" />
-                                            </div>
-                                        @endforeach
+                                    @foreach ($product->images as $image)
+                                        <div class="additional-image m-2">
+                                            <img class="img-fluid h-100" src="{{ asset("Admin/dist/img/web/Products/OtherImages/{$image->Image}") }}" style="width:130px;object-fit: cover;" alt="{{$product->Name}}" />
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                             <div class="col-lg-6">
@@ -73,7 +73,7 @@
                                             @foreach($product->platforms as $Platform)
                                                         <a href="{{route('Platform.edit' , $Platform->ID )}}">
                                                             <div class="platform">
-                                                                <img src="{{ asset('Admin/dist/img/boxed-bg.png') }}" alt="{{$Platform->Platform}}">
+                                                                <img src="{{ asset("Admin/dist/img/web/Platforms/{$Platform->Logo}") }}" alt="{{$Platform->Platform}}">
                                                                 <p>{{$Platform->Platform}}</p>
                                                             </div>
                                                         </a>
@@ -90,13 +90,13 @@
                                     </h2>
                                     <div class="Images-ProductsDetails">
                                         <div class="Image-One-ProductDetails fadeInUp">
-                                            <img src="{{ asset('Admin/dist/img/boxed-bg.png') }}" alt="Cover Image">
+                                            <img src="{{ asset("Admin/dist/img/web/Products/CoverImage/{$product->productDetails->CoverImage}") }}" alt="Cover Image">
                                         </div>
                                     </div>
                                     <div class="Text-under-images-ProductDetails pt-5 mt-5">
                                         <div class="text-one-ProductDetails">
                                             <div class="top-text">
-                                                <img src="{{ asset('Admin/dist/img/boxed-bg.png') }}" alt="{{$product->brand->Brand}}">
+                                                <img src="{{ asset("Admin/dist/img/web/Brands/{$product->brand->Logo}") }}" alt="{{$product->brand->Brand}}">
                                                 <h3>Brand</h3>
                                             </div>
                                             <div class="bottom-text">
@@ -116,7 +116,7 @@
                                                     @foreach($product->platforms as $Platform)
                                                         <a href="{{route('Platform.edit' , $Platform->ID )}}">
                                                             <div class="platform">
-                                                                <img src="{{ asset('Admin/dist/img/boxed-bg.png') }}" alt="{{$Platform->Platform}}">
+                                                                <img src="{{ asset("Admin/dist/img/web/Platforms/{$Platform->Logo}") }}" alt="{{$Platform->Platform}}">
                                                                 <p>{{$Platform->Platform}}</p>
                                                             </div>
                                                         </a>

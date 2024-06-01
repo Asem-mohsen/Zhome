@@ -122,7 +122,7 @@
                                             <select name="Categories" id="categorySelect" class="form-control">
                                                 <option hidden disabled selected>Select Category</option>
                                                 @foreach ($categories as $category)
-                                                    <option value="{{ $category->ID }}" @selected($product->category->ID == $product->$subcategory->MainCategoryID) > {{ $category->Category }} </option>
+                                                    <option value="{{ $category->ID }}" @selected($category->ID == $product->subcategory->MainCategoryID) > {{ $category->Category }} </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -172,8 +172,8 @@
                                                     <input class="card__input BrandSelectBox" name="BrandID" @checked ($product->BrandID == $brand->ID)
                                                         type="radio" value="{{ $brand->ID }}" />
                                                     <div class="card__body">
-                                                        <div class="ImgDiv"
-                                                            style="background-image: url(https://zhome.com.eg/Admin/Images/Uploads/{{ $brand->Logo }});">
+                                                        <div class="ImgDiv" style="background-image: url({{ asset('Admin/dist/img/web/Brands/'. $brand->Logo) }});">
+                                                            
                                                         </div>
                                                     </div>
                                                 </label>

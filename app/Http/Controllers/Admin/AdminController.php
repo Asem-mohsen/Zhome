@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class AdminController extends Controller
 {
     public function index(){
-        
+
         $Admins = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')->select('admin.*', 'adminrole.Role')->get();
         return view('Admin.Admin.index' , compact('Admins'));
     }
@@ -30,7 +30,7 @@ class AdminController extends Controller
     }
     public function store(AddAdminRequest $request){
         $data = $request->except('_token','_method','Country');
-        $data['Password'] = Hash::make($request->Password);
+        $data['Password'] = bcrypt($request->Password);
         Admin::create($data);
 
         return redirect()->route('Admins.index')->with('success', 'Admin Added Successfully');
@@ -48,12 +48,12 @@ class AdminController extends Controller
         $data = $request->except('_token','_method');
 
         $admin::where('ID', $admin->ID)->update($data);
-        
+
         return redirect()->route('Admins.profile', $admin->ID)->with('success' , 'Admin Updated Successfully');
-        
+
     }
     public function destroy(Request $request , Admin $admin){
-        
+
         $admin::where('ID', $admin->ID)->delete();
         return redirect()->route('Admins.index')->with('success', 'Admin Deleted Successfully');
     }

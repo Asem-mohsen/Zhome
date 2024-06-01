@@ -37,7 +37,7 @@ class BrandController extends Controller
         $data = $request->except('image', '_token','_method');
         if($request->hasFile('image')){
             $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Brands');
-            $data['Logo'] = $newImageName; // hashed name
+            $data['Logo'] = $newImageName;
             Media::delete(public_path("Admin\dist\img\web\Brands\\{$brand->Logo}"));
         }
         Brand::where('ID' , $brand->ID)->update($data);

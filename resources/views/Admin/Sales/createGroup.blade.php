@@ -28,7 +28,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                      <label>Select Products</label>
+                                        <label>Select Products</label>
                                         <select class="select2bs4 w-100" name="ProductID[]" multiple="multiple" id="product-select" data-placeholder="Select Products">
                                             @foreach ( $products as $product )
                                                 <option value='{{$product->ID}}'>{{$product->Name}}</option>

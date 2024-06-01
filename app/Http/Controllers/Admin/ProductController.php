@@ -137,7 +137,6 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request , Product $product, ProductDetails $details , ProductImages $images){
         $productDetails = $details::where('ProductID' , $product->ID)->first();
-        $otherImages = $images::where('ProductID' , $product->ID)->first();
 
         $productData           = $request->only('Name','ArabicName','Description','ArabicDescription','Price','Quantity','InstallationCost','SubCategoryID','BrandID','IsBundle');
         $productDetailsData    = $request->only('Title','Title2','ArabicTitle','ArabicTitle2','Video','Width','Height','Length','Color','Capacity','PowerConsumption','Weight');
@@ -156,7 +155,10 @@ class ProductController extends Controller
         if($request->hasFile('CoverImage')){
             $coverImageName = Media::upload($request->file('CoverImage') , 'Admin\dist\img\web\Products\CoverImage');
             $data['CoverImage'] = $coverImageName;
-            Media::delete(public_path("Admin\dist\img\web\Products\CoverImage\\{$productDetails->CoverImage}"));
+            $oldCoverImagePath = public_path("Admin/dist/img/web/Products/CoverImage/{$productDetails->CoverImage}");
+            if (is_file($oldCoverImagePath)) {
+                Media::delete($oldCoverImagePath);
+            }
             $productDetailsData['CoverImage'] = $coverImageName;
         }
 
@@ -166,11 +168,19 @@ class ProductController extends Controller
         // Update ProductImages
         $productImagesData['ProductID'] = $product->ID;
         if ($request->hasFile('OtherImages')) {
+            
+            $existingImages = ProductImages::where('ProductID' , $product->ID)->get();
+            foreach ($existingImages as $existingImage) {
+                $oldImagePath = public_path("Admin/dist/img/web/Products/OtherImages/{$existingImage->Image}");
+                if (is_file($oldImagePath)) {
+                    Media::delete($oldImagePath);
+                }
+                $existingImage::where('ProductID' , $product->ID)->delete();
+            }
             foreach ($request->file('OtherImages') as $otherImage) {
-                $otherImagesName = Media::upload($request->file('CoverImage') , 'Admin\dist\img\web\Products\OtherImages');
+                $otherImagesName = Media::upload($otherImage , 'Admin\dist\img\web\Products\OtherImages');
                 $productImagesData['Image'] = $otherImagesName;
-                Media::delete(public_path("Admin\dist\img\web\Products\OtherImages\\{$otherImages->Image}"));
-                ProductImages::where('ProductID' , $product->ID)->update($productImagesData);
+                ProductImages::create($productImagesData);
             }
         }
 

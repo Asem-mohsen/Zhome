@@ -19,8 +19,7 @@
                     @foreach ($Brands as $Brand)
                         <div class="col-md-2">
                             <div class="Brand-Box position-relative mb-3">
-                                <img src="{{ asset('Admin/dist/img/photo1.png') }}" alt="" class="w-100">
-                                <p class="position-absolute top-0 d-flex align-items-center justify-content-center w-100 h-100 text-white m-0 brand-title">{{ $Brand->Brand }}</p>
+                                <img src="{{ asset("Admin/dist/img/web/Brands/{$Brand->Logo}") }}" alt="{{$Brand->Brand}}" class="img h-100 w-100">
                                 <div class="overlay position-absolute w-100 h-100">
                                     <form action="{{ route('Brands.delete' , $Brand->ID )}}" method="post">
                                         @csrf
