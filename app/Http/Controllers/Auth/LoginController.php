@@ -22,6 +22,11 @@ class LoginController extends Controller
 
         return '/home';
     }
+    
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
 
     public function __construct()
     {
@@ -77,8 +82,11 @@ class LoginController extends Controller
     // }
     public function login(Request $request)
     {
-        $validatedData = $this->validateLogin($request);
-
+        $validatedData = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+        $credentials = $this->credentials($request);
         if (method_exists($this, 'hasTooManyLoginAttempts') && $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
             return $this->sendLockoutResponse($request);
@@ -88,18 +96,19 @@ class LoginController extends Controller
         $admin = Admin::where('Email', $request->email)->first();
 
         // Check if the user exists
-        if ($admin && Hash::check($request->password, $admin->Password)) {
-            if (Auth::guard('web')->attempt($this->credentials($request), $request->filled('remember'))) {
-                return $this->sendLoginResponse($request);
-            } else {
-                Auth::guard('admin')->login($admin);
-                // dd($this->sendLoginResponse($request));
-                return $this->sendLoginResponse($request);
-            }
-        } else {
-            $this->incrementLoginAttempts($request);
-            return $this->sendFailedLoginResponse($request);
+        if (Auth::guard('admin')->attempt($credentials, $request->filled('remember'))) {
+            return true;
         }
+        // if ($admin && Hash::check($validatedData['password'], $admin->Password)) {
+        //     // dd($request->password);
+        //     // dd($admin->Password);
+        //     dd(Hash::check($validatedData['password'], $admin->Password) ,Hash::make($validatedData['password']) , $admin->Password );
+        //     Auth::guard('admin')->login($admin, $request->filled('remember'));
+        //     return $this->sendLoginResponse($request);
+        // } else {
+        //     $this->incrementLoginAttempts($request);
+        //     return $this->sendFailedLoginResponse($request);
+        // }
     }
 
     protected function credentials(Request $request)

@@ -21,14 +21,15 @@ use App\Http\Controllers\Admin\ToolsOrdersController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Middleware\AdminMiddleware;
-
+use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Support\Facades\Route;
 
 Route::get('login'  , [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('login' , [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth.admin'])->group(function() {
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::controller(DashboardController::class)->group(function(){
         Route::get('/', 'index')->name('index');
