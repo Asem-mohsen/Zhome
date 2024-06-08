@@ -12,7 +12,6 @@ class AdminMiddleware
     public function handle($request, Closure $next)
     {
         if (!Auth::guard('admin')->check()) {
-            dd("kosomk");
             return redirect('/login');
         }
 

@@ -19,16 +19,33 @@ use App\Http\Controllers\Admin\PromocodeController;
 use App\Http\Controllers\Admin\ShopOrdersController;
 use App\Http\Controllers\Admin\ToolsOrdersController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Auth\LoginController;
 use App\Http\Middleware\AdminMiddleware;
-
+use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('login'  , [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login' , [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::middleware(['auth.admin'])->group(function() {
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+    Route::get('/login', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
+    Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::get('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'register']);
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+Route::middleware('auth.admin')->prefix('admin')->name('admin.')->group(function () {
+
 
     Route::controller(DashboardController::class)->group(function(){
         Route::get('/', 'index')->name('index');
@@ -208,8 +225,6 @@ Route::middleware(['auth.admin'])->group(function() {
             });
         });
     });
-
 });
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+require __DIR__.'/auth.php';

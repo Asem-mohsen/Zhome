@@ -12,20 +12,20 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     protected $table = 'user';
     protected $fillable = [
-        'name',
+        'Name',
         'email',
         'password',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
+        // 'remember_token',
     ];
 
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            // 'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

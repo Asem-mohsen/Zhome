@@ -26,7 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
         $middleware->alias([
-            'auth.admin' => AdminMiddleware::class
+            'auth.admin' => AdminMiddleware::class,
+            'auth' => AdminMiddleware::class
         ]);
     })
 
