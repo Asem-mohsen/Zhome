@@ -20,9 +20,7 @@ use App\Http\Controllers\Admin\ShopOrdersController;
 use App\Http\Controllers\Admin\ToolsOrdersController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Middleware\AdminMiddleware;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Middleware\RedirectIfAuthenticated;
-use App\Http\Controllers\ProfileController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
