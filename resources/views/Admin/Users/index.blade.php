@@ -38,12 +38,12 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{$User->Email}}</td>
+                                <td>{{$User->email}}</td>
                                 <td>{{$User->Phone}}</td>
                                 <td>{{$User->Address}}</td>
                                 <td>{{$User->CreatedAt}}</td>
                                 <td>
-                                    <a href="{{ Route('Users.profile',$User->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
+                                    <a href="{{ Route('Users.profile',$User->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
                                         Check
                                     </a>
                                 </td>

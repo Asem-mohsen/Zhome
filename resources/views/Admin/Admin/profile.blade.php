@@ -66,13 +66,17 @@
                                 <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Email address</label>
-                                    <input class="form-control" type="email" name="Email" value="{{$admin->Email}}">
+                                    <input class="form-control" type="email" name="Email" value="{{$admin->email}}">
                                 </div>
                                 </div>
                                 <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Password</label>
-                                    <input class="form-control" type="password" name="Password" value="">
+                                    @if ($authenticatedAdmin->id == $admin->id)
+                                        <input class="form-control" type="password" name="Password" value="{{$authenticatedAdmin->password}}">
+                                    @else
+                                        <input class="form-control" type="password" name="Password" disabled>
+                                    @endif
                                 </div>
                                 </div>
                                 <div class="col-md-6">
@@ -117,7 +121,7 @@
                             <div class="justify-content-center row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <a href="{{ route('Admins.edit',$admin->ID) }}" class="btn btn-md btn-success w-100 mt-4 mb-0" > Edit</a>
+                                        <a href="{{ route('Admins.edit',$admin->id) }}" class="btn btn-md btn-success w-100 mt-4 mb-0" > Edit</a>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -178,7 +182,7 @@
                             <i class="ni business_briefcase-24 mr-2"></i>{{$Roles->Role}} - Zhome
                             </div>
                             <div>
-                            <i class="ni education_hat mr-2"></i>{{$admin->Email}}
+                            <i class="ni education_hat mr-2"></i>{{$admin->email}}
                             </div>
                         </div>
                         </div>

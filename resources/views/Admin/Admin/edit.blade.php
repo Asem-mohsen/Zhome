@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="container-fluid py-4">
-        <form action="{{ route('Admins.update',$admin->ID) }}" method="post">
+        <form action="{{ route('Admins.update',$admin->id) }}" method="post">
             @csrf
             @method('PUT')
             <div class="row">
@@ -52,7 +52,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Email address</label>
-                                        <input class="form-control" type="email" name="Email" value="{{$admin->Email}}" required>
+                                        <input class="form-control" type="email" name="Email" value="{{$admin->email}}" required>
                                     </div>
                                     @error('Email')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -62,7 +62,7 @@
                                     <label for="example-text-input" class="form-control-label">Role</label>
                                     <select class="form-control" name="RoleID" id="choices-button">
                                         @foreach ($Roles as $Role)
-                                            <option @selected($Role->ID == $admin->RoleID) value="{{ $Role->ID }}">{{ $Role->Role }}</option>
+                                            <option @selected($Role->ID == $admin->roles->ID) value="{{ $Role->ID }}">{{ $Role->Role }}</option>
                                         @endforeach
                                     </select>
                                     @error('Role')

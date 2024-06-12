@@ -13,13 +13,7 @@
             </div>
             <div class="info">
                 <a href="#" class="d-block">
-                    @if (Auth::guard('admin')->check())
-                        <h1>Welcome, {{ Auth::guard('admin')->user()->Name }}</h1>
-                        <p>Email: {{ Auth::guard('admin')->user()->Email }}</p>
-                        <!-- Add more admin details here as needed -->
-                    @else
-                        <p>Admin not logged in</p>
-                    @endif
+                    <p>{{ Auth::guard('admin')->user()->Name }}</p>
                 </a>
             </div>
         </div>

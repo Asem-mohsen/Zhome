@@ -78,7 +78,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Email address</label>
-                                            <input class="form-control" type="email" name="Email" value="{{ $user->Email }}" disabled>
+                                            <input class="form-control" type="email" name="email" value="{{ $user->email }}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -233,7 +233,7 @@
                                 <i class="ni business_briefcase-24 mr-2"></i>{{ $user->Phone }}
                                 </div>
                                 <div>
-                                <i class="ni education_hat mr-2"></i>{{ $user->Email }} 
+                                <i class="ni education_hat mr-2"></i>{{ $user->email }} 
                                 </div>
                             </div>
                             </div>

@@ -1,5 +1,6 @@
 <?php
 
+// Addmin
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -7,7 +8,6 @@ use App\Http\Controllers\Admin\PlatformController;
 use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SubcategoryController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\SubscribersController;
 use App\Http\Controllers\Admin\ContactController;
@@ -19,30 +19,47 @@ use App\Http\Controllers\Admin\PromocodeController;
 use App\Http\Controllers\Admin\ShopOrdersController;
 use App\Http\Controllers\Admin\ToolsOrdersController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\UserMiddleware;
 
+// Authentication
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+
+// User
+use App\Http\Controllers\User\UserController;
+// use App\Http\Controllers\User\ProductController;
+use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\BrandsContoller;
+use App\Http\Controllers\User\PlatformsController;
+use App\Http\Controllers\User\CategoriesController;
+use App\Http\Controllers\User\ToolsController;
+use App\Http\Controllers\User\AboutController;
+use App\Http\Controllers\User\CartContoller;
+use App\Http\Controllers\User\PaymentContoller;
+use App\Http\Controllers\User\ShopController;
+use App\Http\Controllers\User\CheckoutContoller;
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\ServicesController;
+use App\Http\Controllers\User\UserContactController;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
 
-    Route::get('/login', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
-    Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
+Route::middleware('prevent.auth')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'register']);
+});
 
-    Route::get('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [App\Http\Controllers\Auth\RegisteredUserController::class, 'register']);
-
-    
-
+// Admin Routes
 Route::middleware('auth.admin')->group(function () {
 
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    
     Route::controller(DashboardController::class)->group(function(){
         Route::get('/', 'index')->name('index');
     });
@@ -221,6 +238,91 @@ Route::middleware('auth.admin')->group(function () {
             });
         });
     });
+});
+
+Route::controller(HomeController::class)->group(function(){
+    Route::get('/', 'index')->name('index');
+});
+Route::prefix('Shop')->name('Shop.')->group(function(){
+    Route::controller(ShopController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+Route::prefix('Contact')->name('Contact.')->group(function(){
+    Route::controller(ContactController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+Route::prefix('About')->name('About.')->group(function(){
+    Route::controller(AboutController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+
+Route::prefix('Tools')->name('Tools.')->group(function(){
+    Route::controller(ToolsController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+
+Route::prefix('Cart')->name('Cart.')->group(function(){
+    Route::controller(CartContoller::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+Route::prefix('Services')->name('Services.')->group(function(){
+    Route::controller(ServicesController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+Route::prefix('Contact')->name('Contact.')->group(function(){
+    Route::controller(UserContactController::class)->group(function(){
+        Route::get('/', 'index')->name('contact');
+    });
+});
+Route::prefix('Payment')->name('Payment.')->group(function(){
+    Route::controller(PaymentContoller::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+
+Route::prefix('Categories')->name('Categories.')->group(function(){
+    Route::controller(CategoriesController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+        Route::get('/{category}/category', 'show')->name('show');
+    });
+});
+
+Route::prefix('Brands')->name('Brand.')->group(function(){
+    Route::controller(BrandsContoller::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+        Route::get('/{brand}/brand', 'show')->name('show');
+    });
+});
+Route::prefix('Platforms')->name('Platforms.')->group(function(){
+    Route::controller(PlatformsController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+        Route::get('/{platform}/platform', 'show')->name('show');
+    });
+});
+Route::prefix('Checkout')->name('Checkout.')->group(function(){
+    Route::controller(CheckoutContoller::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+    });
+});
+
+// User Routes
+Route::middleware('auth')->group(function () {
+
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    Route::controller(ProfileController::class)->prefix('Profile')->name('Profile.')->group(function(){
+        Route::get('/{user}/profile', 'profile')->name('profile');
+        Route::get('/', 'index')->name('index');
+        Route::put('/{user}/update', 'update')->name('update');
+        Route::delete('/{user}/delete', 'destroy')->name('delete');
+    });
+
 });
 
 require __DIR__.'/auth.php';

@@ -45,7 +45,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{$Admin->Email}}</td>
+                                <td>{{$Admin->email}}</td>
                                 <td>{{$Admin->Role}}</td>
                                 <td>{{$Admin->Phone}}</td>
                                 <td>
@@ -56,13 +56,17 @@
                                     @endif
                                 </td>
                                 <td class="d-flex justify-content-around align-items-baseline">
-                                    <a href="{{ route('Admins.profile',$Admin->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
-                                        Check
+                                    <a href="{{ route('Admins.profile',$Admin->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
+                                        @if ($authenticatedAdmin->id == $Admin->id)
+                                            View your profile
+                                        @else
+                                            Check
+                                        @endif
                                     </a>
-                                    <a href="{{ route('Admins.edit',$Admin->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                    <a href="{{ route('Admins.edit',$Admin->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
                                         Edit
                                     </a>
-                                    <form action="{{ route('Admins.delete' ,$Admin->ID )}}" method="post">
+                                    <form action="{{ route('Admins.delete' ,$Admin->id )}}" method="post">
                                         @csrf
                                         @method('DELETE')
                                         <button  class="border-0 bg-transparent p-0 text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete">

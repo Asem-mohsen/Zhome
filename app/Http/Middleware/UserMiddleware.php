@@ -15,7 +15,6 @@ class UserMiddleware
         if (Auth::guard('web')->check()) {
             return $next($request);
         }
-        dd(Auth::guard('web')->check());
         return redirect()->route('login');
     }
 }

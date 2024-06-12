@@ -10,6 +10,7 @@ use App\Models\Roles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 class AdminController extends Controller
@@ -17,11 +18,13 @@ class AdminController extends Controller
     public function index(){
 
         $Admins = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')->select('admin.*', 'adminrole.Role')->get();
-        return view('Admin.Admin.index' , compact('Admins'));
+        $authenticatedAdmin = Auth::guard('admin')->user();
+        return view('Admin.Admin.index' , compact('Admins' , 'authenticatedAdmin'));
     }
     public function profile(Admin $admin){
         $Roles= Roles::select('Role')->where('ID', $admin->RoleID)->first();
-        return view('Admin.Admin.profile', compact('admin','Roles'));
+        $authenticatedAdmin = Auth::guard('admin')->user();
+        return view('Admin.Admin.profile', compact('admin','Roles','authenticatedAdmin'));
     }
 
     public function create(){
@@ -36,25 +39,21 @@ class AdminController extends Controller
         return redirect()->route('Admins.index')->with('success', 'Admin Added Successfully');
     }
     public function edit(Admin $admin){
-        $admin = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')
-                        ->select('admin.*', 'adminrole.Role')
-                        ->where('adminrole.ID', $admin->RoleID)
-                        ->where('admin.ID', $admin->ID)
-                        ->first();
+        $admin = Admin::with('roles')->where('id' , $admin->id)->first();
         $Roles = Roles::all();
         return view('Admin.Admin.edit' ,compact('admin','Roles'));
     }
     public function update(AdminUpdateRequest $request , Admin $admin){
         $data = $request->except('_token','_method');
 
-        $admin::where('ID', $admin->ID)->update($data);
+        $admin::where('id', $admin->id)->update($data);
 
         return redirect()->route('Admins.profile', $admin->ID)->with('success' , 'Admin Updated Successfully');
 
     }
     public function destroy(Request $request , Admin $admin){
 
-        $admin::where('ID', $admin->ID)->delete();
+        $admin::where('id', $admin->id)->delete();
         return redirect()->route('Admins.index')->with('success', 'Admin Deleted Successfully');
     }
 }

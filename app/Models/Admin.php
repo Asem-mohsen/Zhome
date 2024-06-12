@@ -28,4 +28,10 @@ class Admin extends Authenticatable
         'password' => 'hashed',
     ];
     protected $hidden = ['password', 'remember_token'];
+
+    public function roles(){
+        
+        return $this->belongsTo(Roles::class, 'RoleID','ID');
+        
+    }
 }
