@@ -1,6 +1,6 @@
 <?php
 
-// Addmin
+// Admin
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -26,7 +26,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 
 // User
 use App\Http\Controllers\User\UserController;
-// use App\Http\Controllers\User\ProductController;
+use App\Http\Controllers\User\UserProductController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\BrandsContoller;
 use App\Http\Controllers\User\PlatformsController;
@@ -40,12 +40,20 @@ use App\Http\Controllers\User\CheckoutContoller;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\ServicesController;
 use App\Http\Controllers\User\UserContactController;
+
+use App\Http\Controllers\LanguageController;
+
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+// Language
+Route::get('language/{locale}', function ($locale) {
+    if (array_key_exists($locale, config('app.languages'))) {
+        Session::put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('language');
 
 
 Route::middleware('prevent.auth')->group(function () {
@@ -59,9 +67,9 @@ Route::middleware('prevent.auth')->group(function () {
 Route::middleware('auth.admin')->group(function () {
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    
+
     Route::controller(DashboardController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
+        Route::get('/Dashboard', 'index')->name('Dashboard.index');
     });
 
     Route::controller(UserController::class)->prefix('Users')->name('Users.')->group(function(){
@@ -250,7 +258,7 @@ Route::prefix('Shop')->name('Shop.')->group(function(){
 });
 Route::prefix('Contact')->name('Contact.')->group(function(){
     Route::controller(ContactController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
+        Route::get('/ContactUs', 'contact')->name('contact');
     });
 });
 Route::prefix('About')->name('About.')->group(function(){
@@ -262,6 +270,13 @@ Route::prefix('About')->name('About.')->group(function(){
 Route::prefix('Tools')->name('Tools.')->group(function(){
     Route::controller(ToolsController::class)->group(function(){
         Route::get('/', 'index')->name('index');
+        Route::post('/store', 'store')->name('store');
+    });
+});
+
+Route::prefix('Product')->name('Product.')->group(function(){
+    Route::controller(ProductController::class)->group(function(){
+        Route::get('/{product}/Product', 'userShow')->name('show');
     });
 });
 
@@ -275,11 +290,7 @@ Route::prefix('Services')->name('Services.')->group(function(){
         Route::get('/', 'index')->name('index');
     });
 });
-Route::prefix('Contact')->name('Contact.')->group(function(){
-    Route::controller(UserContactController::class)->group(function(){
-        Route::get('/', 'index')->name('contact');
-    });
-});
+
 Route::prefix('Payment')->name('Payment.')->group(function(){
     Route::controller(PaymentContoller::class)->group(function(){
         Route::get('/', 'index')->name('index');
@@ -287,21 +298,21 @@ Route::prefix('Payment')->name('Payment.')->group(function(){
 });
 
 Route::prefix('Categories')->name('Categories.')->group(function(){
-    Route::controller(CategoriesController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
+    Route::controller(CategoryController::class)->group(function(){
+        Route::get('/', 'userIndex')->name('index');
         Route::get('/{category}/category', 'show')->name('show');
     });
 });
 
 Route::prefix('Brands')->name('Brand.')->group(function(){
-    Route::controller(BrandsContoller::class)->group(function(){
-        Route::get('/', 'index')->name('index');
+    Route::controller(BrandController::class)->group(function(){
+        Route::get('/Brands', 'userIndex')->name('index');
         Route::get('/{brand}/brand', 'show')->name('show');
     });
 });
 Route::prefix('Platforms')->name('Platforms.')->group(function(){
-    Route::controller(PlatformsController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
+    Route::controller(PlatformController::class)->group(function(){
+        Route::get('/', 'userIndex')->name('user.index');
         Route::get('/{platform}/platform', 'show')->name('show');
     });
 });
@@ -316,9 +327,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-    Route::controller(ProfileController::class)->prefix('Profile')->name('Profile.')->group(function(){
-        Route::get('/{user}/profile', 'profile')->name('profile');
-        Route::get('/', 'index')->name('index');
+    Route::controller(UserController::class)->prefix('Profile')->name('Profile.')->group(function(){
+        Route::get('/{user}/profile', 'userProfile')->name('profile');
+        Route::get('/{user}/edit', 'userProfile')->name('edit');
         Route::put('/{user}/update', 'update')->name('update');
         Route::delete('/{user}/delete', 'destroy')->name('delete');
     });

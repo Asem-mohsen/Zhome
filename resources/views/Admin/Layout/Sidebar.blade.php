@@ -35,7 +35,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 {{-- Dashboard --}}
                 <li class="nav-item">
-                    <a href="{{route('index')}}" class="nav-link {{ request()->routeIs('index') ? 'active' : '' }}">
+                    <a href="{{route('Dashboard.index')}}" class="nav-link {{ request()->routeIs('index') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
@@ -44,7 +44,7 @@
                 </li>
                 {{-- Website --}}
                 <li class="nav-item">
-                    <a href="" class="nav-link ">
+                    <a href="{{route('index')}}" class="nav-link ">
                         <i class="nav-icon fa-solid fa-desktop"></i>
                         <p>
                             Website

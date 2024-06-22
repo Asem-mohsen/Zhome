@@ -19,6 +19,7 @@ div {
 html{
   scroll-behavior: smooth;
 }
+
 /* Navbar */
 a {
   cursor: pointer;
@@ -85,7 +86,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         transform: translateY(0px) !important;
     }
     nav.navbar {
-        padding: 0; 
+        padding: 0;
     }
     .navbar-light .navbar-nav .nav-link {
         color: #343333;
@@ -96,7 +97,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     .navbar-light .navbar-nav .nav-link.nav-button:hover  {
          background-color: #49909f;
     }
-    
+
     .navbar-light .topbar-one__right.list-unstyled .nav-icon i {
         color: #343333;
     }
@@ -111,7 +112,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     }
 
     ul.navbar-nav {
-         margin-left: 0; 
+         margin-left: 0;
         gap: 16px;
         text-align: center;
     }
@@ -158,7 +159,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
             display: grid !important;
             justify-content: stretch;
     }
-    
+
     .header-navigation.ShopNav ul.navigation-box > li:hover > .submenu, .top-wrapper > li:hover>.submenu {
         display: none !important;
     }
@@ -233,7 +234,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         transition: all .6s ease-out;
         background: linear-gradient(to right, transparent 50%, var(--Maincolor) 50%);
         background-size: 200% 100%;
-        background-position: right bottom; 
+        background-position: right bottom;
     }
     .JoinUs {
         color: white !important;
@@ -275,13 +276,13 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     }
     #wizard-p-7 .row {
         display: grid;
-         gap: 0; 
+         gap: 0;
     }
     #wizard-p-7 .form-group {
-     width: 100%; 
+     width: 100%;
     }
     #wizard-p-7 .FileType.form-control {
-     width: 100% !important; 
+     width: 100% !important;
      margin-bottom: 20px;
     }
     #wizard-p-7 .form-group img{
@@ -296,7 +297,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     }
     /*Brands Page*/
     .PlatformSection {
-         display: block !important; 
+         display: block !important;
     }
     .customer-logos .platform img {
         width: 70px !important;
@@ -316,7 +317,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         width: fit-content !important;
     }
     .Category-Product {
-        display: grid !important; 
+        display: grid !important;
         text-align: center;
         margin-top: 20px;
         justify-content: center !important;
@@ -334,7 +335,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     /*Shop Categories Filter*/
     .SellingProduct-Separated {
 
-         gap: 0px !important; 
+         gap: 0px !important;
         margin: 40px 0 !important;
         flex-wrap: wrap;
         padding: 16px !important;
@@ -366,7 +367,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     .CatInfo .CatInfo-Desc .CategoryInMobile{
         display:grid !important;
     }
-    
+
     .shop-category p.Desc {
         width: -webkit-fill-available !important;
         margin: auto;
@@ -391,18 +392,18 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     .ToolOnlineShop{
         width: auto !important;
     }
-    
+
     .product-details .product-details__image .MainUpperImage{
       height: 200px  !important;
       object-fit: contain  !important;
       object-position: center;
     }
 
-    
-    
+
+
     /*Nav New Design*/
     .ShopNavMainDiv{
-        display: block ; 
+        display: block ;
     }
     a.BrandName{
         padding: 21px 11px;
@@ -440,7 +441,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         font-size: 13px !important;
         font-weight: bold;
     }
-    
+
     .FilterTransform #applyFilterBtn {
         padding: 15px !important;
         border-radius: 5px !important;
@@ -469,7 +470,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         /*display:none;*/
         width: -webkit-fill-available;
         margin-bottom: 10px;
-        text-align: center; 
+        text-align: center;
     }
     .FilterTransform #applyFilterBtn:hover{
          background-color: #1c839a;
@@ -479,14 +480,14 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     .menu-list.checkbox-list#BrandsExamples{
         display: flex;
         justify-content: center;
-        flex-wrap: wrap; 
+        flex-wrap: wrap;
     }
     .checkbox-list#PlatformsExamples{
         display: flex;
         flex-wrap: wrap;
     }
     .checkbox-list#TechnologiesExamples{
-        display: grid;  
+        display: grid;
         grid-template-columns: repeat(2,1fr);
     }
     .FilterTransform #applyFilterBtn{
@@ -507,8 +508,8 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
        margin: 0px 20px !important;
         justify-content: center !important;
     }
-    
-    
+
+
     .ShopNowInCart a{
         margin-top: 25px !important;
         margin: auto;
@@ -525,7 +526,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
     .container .col-lg-12 .ShopNowInCart {
         margin-top: 27px !important;
         height: auto !important;
-        
+
     }
 
 }
@@ -577,7 +578,7 @@ span.count{
 }
 .cart-dropdown {
     display: none;
-    position: fixed; 
+    position: fixed;
     top: 308px;
     right: 56px;
     background-color: #fff;
@@ -652,7 +653,7 @@ span.count{
 div.dropbuttons{
     display: flex;
     justify-content: center;
-    gap: 6px;    
+    gap: 6px;
 }
 button.ContinuetoCheckoutDrop{
     margin: auto;
@@ -720,7 +721,7 @@ a.ZhomeName{
     margin-bottom: 83px;
     padding: 40px;
     background-color: #dddddd3d;
-    
+
     .heading {
         text-align: left;
         color: #343333;
@@ -865,7 +866,7 @@ a.ZhomeName{
     }
     .card-body .Box-Sizes{
         display:grid;
-        grid-template-areas: 
+        grid-template-areas:
         "Start1 Start2 Start3"
         "Start1 Start4 Start5";
         width: 100%;
@@ -1482,7 +1483,7 @@ a.HomeImageInButton i{
     width: fit-content;
     margin: auto;
 }
-#Boxes .box a:hover{ 
+#Boxes .box a:hover{
     transition: all 0.4s;
     background-color: #154352;
     color: white;
@@ -2252,7 +2253,7 @@ section.MainFooter {
 .copyright .Lang {
   margin-top: 20px;
 }
-.copyright .Lang button {
+.copyright .Lang a {
   border: 1px solid #a8a8a8;
   border-radius: 35px;
   padding: 7px 24px;
@@ -2262,15 +2263,14 @@ section.MainFooter {
     place-items: center;
     gap: 13px;
 }
-.copyright .Lang button img {
+.copyright .Lang a img {
   width: 30px;
   height: 30px;
 }
 .copyright .copy {
   margin-top: 30px;
 }
-.copyright .copy p {
-}
+
 .copyright .Icons {
   margin-top: 30px;
 }
@@ -2358,14 +2358,12 @@ section.shop-background {
     align-items: center;
         margin-bottom: 35px;
 }
-#shop-background{ 
-   position: relative; 
+#shop-background{
+   position: relative;
    height: 100% !important;;
 }
 #shop-background .background-image{
-    background-image:url('https://zhome.com.eg/Admin/Images/Uploads/AlexaImage2.jpg');
     width: 100%;
-    background-image: url(https://zhome.com.eg/Admin/Images/Uploads/AlexaImage2.jpg);
     height: 73vh;
     background-size: cover;
     position: relative;
@@ -2701,7 +2699,7 @@ a#BuildHomeCta{
   border-radius: 4px;
   box-shadow: 6px 5px 10px 0px #e3e3e3;
   overflow: hidden;
-  
+
 }
 .SubCategory-OnlineShop .ToTheSubPage .box-shop{
     width: 110px;
@@ -2738,7 +2736,7 @@ h1#ShopByCategory {
     justify-items: center;
     gap: 12px;
     justify-content: center;
-  
+
 }
 .category-shop img {
   width: 100px;
@@ -2851,7 +2849,7 @@ h1#ShopByCategory {
   padding: 13px;
   border-radius: 10px;
   font-size: 30px;
-  
+
 }
 .Onsale {
   background: var(--MainColor);
@@ -2982,7 +2980,7 @@ color: white;
 }
 .Category-Product a{
   font-size: 15px;
-} 
+}
 .Category-Product a:hover i{
   transition: 0.5s ease-out;
   transform: translateX(16px);
@@ -3148,25 +3146,25 @@ table.cart-table td {
   border-style: none solid solid none;
 }
 
-table.cart-table tr:first-child td:first-child { 
-  border-top-left-radius: 10px; 
+table.cart-table tr:first-child td:first-child {
+  border-top-left-radius: 10px;
 }
 table.cart-table tr:first-child td:last-child {
-  border-top-right-radius: 10px; 
+  border-top-right-radius: 10px;
 }
 
 table.cart-table tr:last-child td:first-child {
-  border-bottom-left-radius: 10px; 
+  border-bottom-left-radius: 10px;
 }
 table.cart-table tr:last-child td:last-child {
-  border-bottom-right-radius: 10px; 
+  border-bottom-right-radius: 10px;
 }
 
 table.cart-table tr:first-child td {
-  border-top-style: solid; 
+  border-top-style: solid;
 }
 table.cart-table tr td:first-child {
-  border-left-style: solid; 
+  border-left-style: solid;
 }
 .topping .CartandCount{
   display: flex;
@@ -3202,7 +3200,7 @@ align-items: self-end;
   gap: 10px;
   justify-content: center;
   border-bottom: 1px solid #efefef;
-  padding-bottom: 10px;  
+  padding-bottom: 10px;
 }
 .PromocodeInput input{
     width: 250px;
@@ -3377,7 +3375,7 @@ div.Checkout .Summery h4{
 }
 
 div.Checkout .Summery li{
-  
+
 }
 div.Checkout .Summery li:not(:first-of-type){
   margin-left: 20px;
@@ -3427,7 +3425,7 @@ div.PayNow button.PayButton{
 
 section#wizard-p-0{
    height: auto;
-} 
+}
 /* Platforms */
 .notSilder{
   border: none;
@@ -3645,7 +3643,7 @@ button.btn-link{
   margin-top: 0;
 }
 .More-Tool{
-  
+
 }
 .More-Tool h2{
   margin-top: 90px;
@@ -4052,7 +4050,7 @@ button.NextButton {
     height: 100%;
     border: 2px solid #fff;
     border-radius: 30px;
-} 
+}
 
 .img__btn span {
     position: absolute;
@@ -4208,9 +4206,10 @@ div.sign-in label{
   gap:10px;
 }
 .Platform-flex-img{
-  filter: brightness(1.1);
-  width: 40px !important;
-  height: 40px;
+    filter: brightness(1.1);
+    width: 40px !important;
+    height: 40px;
+    padding: 3px;
 }
 
 .Success-div {
@@ -4228,10 +4227,10 @@ div.sign-in label{
 .Success-div div.Success-invoice{
        margin-top: 40px;
         border: 1px solid #eee;
-        box-shadow: 0px 8px 7px 11px #f8f8f8; 
+        box-shadow: 0px 8px 7px 11px #f8f8f8;
 }
 .Success-div div.Success-invoice .invoice{
-    
+
 }
 .Success-div div.Success-invoice  .Invoice-items ul{
     margin:0px;
@@ -4289,7 +4288,7 @@ button#downloadButton{
     align-items: center;
 }
 .BookingCard h3{
-    
+
 }
 .BookingCard .BookingCard-Photo{
     display: grid;
@@ -4301,7 +4300,7 @@ button#downloadButton{
     width: 150px;
     height: 150px;
     border-radius: 0;
-}       
+}
 .BookingCard .BookingCard-Photo p{
     font-size: 24px;
     font-weight: bold;
@@ -4352,7 +4351,7 @@ button#downloadButton{
                 width: 90%; /* Adjust width as needed for smaller screens */
             }
         }
-            
+
 
         /*.close-btn {*/
         /*    position: absolute;*/
@@ -4456,8 +4455,8 @@ button#downloadButton{
 .subscriptions .ButtonSubscripe{
         background-color: var(--MainColor);
     border-color: var(--MainColor);
-    
-} 
+
+}
 .subscriptions span.asterisk {
     display:none !important;
 }
@@ -4475,7 +4474,7 @@ button#downloadButton{
     position: absolute;
     right: 0;
     top: -3px;
-}        
+}
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -4966,7 +4965,7 @@ div.BundlesButton{
     height: 60px;
     background-size: cover;
     background-position: center;
- } 
+ }
  div.BundlesButton a{
      width: -webkit-fill-available;
     color: white;
@@ -4977,7 +4976,7 @@ div.BundlesButton{
         align-items: center;
             /*padding: 10px;*/
 
- } 
+ }
  div.BundlesButton a:hover{
     transition-duration: 0.4s;
     background-color: #00000052;
@@ -4986,7 +4985,7 @@ div.BundlesButton{
     font-weight: bold;
     justify-content: center;
     /*padding-left: 49px;*/
-    
+
 }
 .no-products-message{
     display: block;
@@ -5057,55 +5056,55 @@ div.BundlesButton{
     .ControlHome .svg2 {
       left: 775px !important;
     }
-    
+
     .ControlHome .svg3 {
-    
+
       left: 583px !important;
-    
+
     }
-    
+
     .ControlHome .svg4 {
-    
+
           left: 943px!important;
-    
+
     }
-    
+
     .ControlHome .svg5 {
-    
+
           left: 1157px !important;
-    
+
     }
-    
+
     .ControlHome .svg6 {
           left: 1024px !important;
     }
-    
+
     .ControlHome .svg7 {
           left: 1428px !important;
     }
-    
+
     .ControlHome .svg8 {
-    
+
       left: 844px !important;
-    
+
     }
-    
+
     .ControlHome .svg9 {
          left: 476px !important;
     }
-    
+
     .ControlHome .svg10 {
       left: 774px !important;
     }
-    
+
     .ControlHome .svg11 {
       left: 517px !important;
     }
-    
+
     .ControlHome .svg12 {
       left: 540px !important;
     }
-    
+
     .ControlHome .svg13 {
       left: 430px !important;
     }
@@ -5127,7 +5126,7 @@ div.BundlesButton{
     }
     #Zhomecontent section.auth .col-md-6.box.details{
         display:none !important;
-        
+
     }
     #Zhomecontent section.auth .wrapper{
         display: flex;
@@ -5166,7 +5165,7 @@ div.BundlesButton{
         background-position: center !important;
         height: 652px !important;
     }
-    
+
     [class*="slider-one__slider-"] {
     padding-top: 134px !important;
     }
@@ -5198,7 +5197,7 @@ div.BundlesButton{
         border-radius: 5px !important;
         margin-left: 0!important;
     }
-    
+
     .Images-Home div.Image-Two img {
         display:none !important;
     }
@@ -5226,7 +5225,7 @@ div.BundlesButton{
         border-radius: 5px !important;
          width: -webkit-fill-available;
         height: 270px !important;
-         top: 0px !important; 
+         top: 0px !important;
     }
     .card .Big-size {
          display: block !important;
@@ -5253,7 +5252,7 @@ div.BundlesButton{
     }
     .four-small-boxes {
         display: none;
-    } 
+    }
     #StartYourSystem .swiper-slide {
         margin-right: 0 !important;
         background-position: center;
@@ -5268,7 +5267,7 @@ div.BundlesButton{
     }
     #StartYourSystem .swiper-container {
         width: 100%;
-        padding:0px; 
+        padding:0px;
         overflow: hidden;
     }
         #StartYourSystem .swiper-slide a{
@@ -5330,7 +5329,7 @@ div.BundlesButton{
         width: auto !important;
     }
     .Platfroms h3 {
-         margin-right: 0px !important; 
+         margin-right: 0px !important;
         font-size: 26px !important;
     }
     .Platfroms .Platform-home {

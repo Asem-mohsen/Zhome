@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <!-- Schema.org Markup -->
@@ -13,7 +13,7 @@
         "description": "Zhome is the first Egyptian smart home marketplace"
       }
     </script>
-    
+
     <meta charset="utf-8" />
     <meta name="viewport"     content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description"  content="Zhome is the expert for all connected life products. We are the First complete platform and solution provider for products and services that make your home smarter and your life more connected!"/>
@@ -32,7 +32,7 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!--Library of flags icons-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
-    
+
     <!-- Price Slider Range -->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- End Price Slider Range -->
@@ -59,11 +59,11 @@
     <link rel="stylesheet" href="{{ asset('UI/css/style.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/Main.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/Navbar.css')}}">
-    <?php //if($initialLanguage == 'ar'){ ?>
-            <!--Arabic Style-->
-            {{-- <link rel="stylesheet" href="{{ asset('UI/css/ArabicStyle.css')}}"> --}}
-    <?php //} ?>
-    
+    @if(App::getLocale() == 'ar')
+        <!--Arabic Style-->
+        <link rel="stylesheet" href="{{ asset('UI/css/ArabicStyle.css')}}">
+    @endif
+
     <!--Google API SignIn Authitication and 2nd is youtube API-->
     <?php
         echo '<script src="https://accounts.google.com/gsi/client" async defer></script>';
@@ -72,8 +72,8 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 </head>
-<body>
 
+<body class="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
     @yield('Css')
 
@@ -83,13 +83,13 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        
+
         gtag('config', 'G-CD5EZ20T9R');
         </script>
 
         {{-- Loader --}}
         <div id="loader-container">
-            <div id="logo-container">  
+            <div id="logo-container">
                 <img src="{{asset('UI/imgs/Logos/LogoZhome.png')}}" alt="Zhome logo" id="logo">
             </div>
             <div id="loader" style="display:none;"></div>
@@ -98,7 +98,7 @@
         @include('User.layout.Nav')
 
         @yield('Content')
-        
+
         <style>
             .JoinUs {
                 color: white !important;
@@ -110,7 +110,7 @@
                 background-size: 200% 100%;
                 background-position: right bottom;
             }
-        
+
             .JoinUs:hover {
                 background-position: left bottom;
             }

@@ -20,6 +20,16 @@ class BrandController extends Controller
         return view('Admin.Brands.create');
     }
 
+    public function userIndex()
+    {
+        $brandIds = Brand::distinct()->pluck('ID');
+        $brands   = Brand::with('products')
+                    ->whereIn('ID', $brandIds)
+                    ->get();
+
+        return view('User.Brands.index' , compact('brands'));
+    }
+
     public function store(AddBrandRequest $request){
         $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Brands');
         $data = $request->except('image','_token','_method');
@@ -51,6 +61,6 @@ class BrandController extends Controller
         Media::delete(public_path("Admin\dist\img\web\Brands\\{$brand->Logo}"));
         $brand::where('ID', $brand->ID)->delete();
         return redirect()->route('Brands.index')->with('success', 'Brand Deleted Successfully');
-        
+
     }
 }

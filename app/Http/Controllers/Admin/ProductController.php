@@ -223,6 +223,13 @@ class ProductController extends Controller
         return view('Admin.Products.show' , compact('product'));
     }
 
+    public function userShow(Product $product)
+    {
+        $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations' , 'productDetails'])->first();
+        $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
+        return view('User.Product.show' , compact('product' , 'products'));
+    }
+
     public function edit(Product $product){
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations' , 'productDetails'])->findOrFail($product->ID);
         $brands     = Brand::all();

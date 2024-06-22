@@ -16,11 +16,12 @@ class Brand extends Model
         'MainDescription',
         'OtherDescription',
         'MainArabic',
-        'OtherArabicDescription',	
+        'OtherArabicDescription',
     ];
 
     public function products()
     {
         return $this->hasMany(Product::class, 'BrandID', 'ID');
     }
+    
 }

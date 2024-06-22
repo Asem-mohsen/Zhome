@@ -7,12 +7,12 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="page-title text-white">{{ __('en.Zhome')}}</h1>
+                <h1 class="page-title text-white">{{ __('messages.Zhome')}}</h1>
                 <div class="breadcrumbs">
                 <span class="item">
-                    <a href="{{route('index')}}" class="text-white" >{{ __('en.Home')}} /</a>
+                    <a href="{{route('index')}}" class="text-white" >{{ __('messages.Home')}} /</a>
                 </span>
-                <span class="item text-white" >{{ __('en.AboutUs')}}</span>
+                <span class="item text-white" >{{ __('messages.AboutUs')}}</span>
                 </div>
             </div>
         </div>
@@ -23,21 +23,21 @@
 <section>
     <div class="container">
         <div class="block-title text-center">
-            <p class="block-title__tag-line">{{ __('en.AboutUs')}}</p>
+            <p class="block-title__tag-line">{{ __('messages.AboutUs')}}</p>
             <h2 class="block-title__title">
-                {{ __('en.TheFirstEgyptian')}} </br>
-                {{ __('en.SmartHomeMarketplace')}}
+                {{ __('messages.TheFirstEgyptian')}} </br>
+                {{ __('messages.SmartHomeMarketplace')}}
             </h2>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="about-three__content">
-                    <h3 class="about-three__content-title">{{ __('en.Established')}} 2019</h3>
+                    <h3 class="about-three__content-title">{{ __('messages.Established')}} 2019</h3>
                     <p class="about-three__content-text">
-                    <a href="{{route('Contact.contact')}}" style="color: #154352;">{{ __('en.Zhome')}} </a>
-                        {{ __('en.WhyZhomeText')}}
+                    <a href="{{route('Contact.contact')}}" style="color: #154352;">{{ __('messages.Zhome')}} </a>
+                        {{ __('messages.WhyZhomeText')}}
                         </br></br>
-                        <a href="{{route('Contact.contact')}}" style="color: #154352;">{{ __('en.Zhome')}} </a> {{ __('en.WhyZhomeText2')}} 
+                        <a href="{{route('Contact.contact')}}" style="color: #154352;">{{ __('messages.Zhome')}} </a> {{ __('messages.WhyZhomeText2')}} 
                     </p>
                 </div>
             </div>
@@ -59,7 +59,7 @@
                 <span class="counter">500</span>
             </div>
             <div class="funfact-one__text">
-                <span class="text-uppercase">{{ __('en.Product')}}</span>
+                <span class="text-uppercase">{{ __('messages.Product')}}</span>
             </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
                 
             </div>
             <div class="funfact-one__text">
-                <span class="text-uppercase">{{ __('en.Markets')}}</span>
+                <span class="text-uppercase">{{ __('messages.Markets')}}</span>
             </div>
             </div>
         </div>
@@ -90,7 +90,7 @@
                         <span class="counter">400</span>k
                     </div>
                     <div class="funfact-one__text">
-                        <span class="text-uppercase">{{ __('en.Users')}}</span>
+                        <span class="text-uppercase">{{ __('messages.Users')}}</span>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
                     
                 </div>
                 <div class="funfact-one__text">
-                    <span class="text-uppercase">{{ __('en.Orders')}}</span>
+                    <span class="text-uppercase">{{ __('messages.Orders')}}</span>
                     
                 </div>
                 </div>
@@ -120,24 +120,24 @@
 <section>
     <div class="container">
         <div class="block-title text-center">
-            <p class="block-title__tag-line text-center">{{ __('en.Why')}}</p>
-            <h2 style="text-align: center;">{{ __('en.Zhome')}}</h2>
+            <p class="block-title__tag-line text-center">{{ __('messages.Why')}}</p>
+            <h2 style="text-align: center;">{{ __('messages.Zhome')}}</h2>
         </div>
         <div class="Cards-contact">
             <div class="card-contact-left">
                 <img src="{{asset('UI/Imgs/website/Home/About/sebastian-scholz-nuki-Fh3Dtg6QX4Q-unsplash3.png')}}" alt="">
                 <div>
-                    <h3>{{ __('en.BestCustomized')}}</h3>
+                    <h3>{{ __('messages.BestCustomized')}}</h3>
                     <p>
-                        {{ __('en.BestCustomizedText')}}
+                        {{ __('messages.BestCustomizedText')}}
                     </p>
                 </div>
             </div>
             <div class="card-contact-left">
                 <div>
-                    <h3>{{ __('en.InstallationAndDesigning')}}</h3>
+                    <h3>{{ __('messages.InstallationAndDesigning')}}</h3>
                     <p>
-                        {{ __('en.InstallationAndDesigningText')}}
+                        {{ __('messages.InstallationAndDesigningText')}}
                     </p>
                 </div>
                 <img src="{{asset('UI/Imgs/website/Home/About/Entertainment.jpg')}}" alt="Entertainments ">
@@ -145,9 +145,9 @@
             <div class="card-contact-left">
                 <img src="{{asset('UI/Imgs/website/Home/About/smart-security.jpg')}}" alt="smart-security">
                 <div>
-                    <h3>{{ __('en.SmartProducts')}}</h3>
+                    <h3>{{ __('messages.SmartProducts')}}</h3>
                     <p>
-                        {{ __('en.SmartProductsText')}}
+                        {{ __('messages.SmartProductsText')}}
                     </p>
                 </div>
             </div>

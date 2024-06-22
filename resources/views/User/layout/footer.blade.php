@@ -1,4 +1,4 @@
-<script src="Admin/assets/js/plugins/chartjs.min.js"></script> 
+<script src="Admin/assets/js/plugins/chartjs.min.js"></script>
 
 <!-- Search  -->
 <div class="search-popup">
@@ -8,7 +8,7 @@
     </div>
     <div class="search-popup__inner">
         <form action="#" class="search-popup__form">
-        <input type="text" name="search" placeholder="{{ __('en.SearchPlaceholder')}}" autocomplete="off" />
+        <input type="text" name="search" placeholder="{{ __('messages.SearchPlaceholder')}}" autocomplete="off" />
         <button type="submit">
             <i class="fa fa-search"></i>
         </button>
@@ -29,29 +29,29 @@
         <div class="left-footer">
             <!-- Logo -->
             <h2>Zhome</h2>
-            <h3> {{ __('en.AlwaysInControl')}}</h3>
+            <h3> {{ __('messages.AlwaysInControl')}}</h3>
             <div class="text-footer">
                 <p>{{ $contact->phone ." - " . $contact->Phone2}}</p>
                 <p>{{ $contact->Market ." and " . $contact->Market2}}</p>
                 <p>{{ "Find us in " . $contact->Address }}</p>
             </div>
 
-            <p class="Download">{{ __('en.DownloadApp')}}</p>
+            <p class="Download">{{ __('messages.DownloadApp')}}</p>
             <button>
                 <i class="fa-brands fa-android"></i>
-                    {{ __('en.Android')}}
+                    {{ __('messages.Android')}}
             </button>
-            <button> 
+            <button>
                 <i class="fa-brands fa-apple"></i>
-                    {{ __('en.IOS')}}
+                    {{ __('messages.IOS')}}
             </button>
         </div>
 
         <div class="right-footer mr-0">
-            <h3>{{ __('en.Subscription')}}</h3>
-            <p>{{ __('en.SubscriptionText')}}</p>
+            <h3>{{ __('messages.Subscription')}}</h3>
+            <p>{{ __('messages.SubscriptionText')}}</p>
             <div class="subscriptions">
-                <input type="text" class="form-control" id="inputEmail" name="Email" placeholder="{{ __('en.EmailPlaceholder')}}" required oninput="handleInput()">
+                <input type="text" class="form-control" id="inputEmail" name="Email" placeholder="{{ __('messages.EmailPlaceholder')}}" required oninput="handleInput()">
             </div>
             <script>
                 var typingTimer;
@@ -60,79 +60,79 @@
 
             <div class="list">
                 <ul>
-                    <li class="First">{{ __('en.Zhome')}}</li>
+                    <li class="First">{{ __('messages.Zhome')}}</li>
                     <li>
-                        <a href="{{route('Shop.index')}}">{{ __('en.Shop')}}</a>
+                        <a href="{{route('Shop.index')}}">{{ __('messages.Shop')}}</a>
                     </li>
                     <li>
-                        <a href="{{route('Categories.index')}}">{{ __('en.Categories')}}</a>
+                        <a href="{{route('Categories.index')}}">{{ __('messages.Categories')}}</a>
                     </li>
                     <li>
-                        <a href="{{route('Platforms.index')}}">{{ __('en.Platforms')}}</a>
+                        <a href="{{route('Platforms.user.index')}}">{{ __('messages.Platforms')}}</a>
                     </li>
                     <li>
-                        <a href="{{route('Brand.index')}}">{{ __('en.Brands')}}</a>
+                        <a href="{{route('Brand.index')}}">{{ __('messages.Brands')}}</a>
                     </li>
                 </ul>
                 <ul>
-                    <li class="First">{{ __('en.About')}}</li>
+                    <li class="First">{{ __('messages.About')}}</li>
                     <li>
                         <a href="{{route('About.index')}}">
-                            {{ __('en.Zhome')}}
+                            {{ __('messages.Zhome')}}
                         </a>
                     </li>
                     <li>
                         <a href="{{route('Services.index')}}">
-                            {{ __('en.Services')}}
+                            {{ __('messages.Services')}}
                         </a>
                     </li>
                     <li>
                         <a href="{{route('Contact.contact')}}">
-                            {{ __('en.ContactUs')}}
+                            {{ __('messages.ContactUs')}}
                         </a>
                     </li>
                     <li>
                         <a href="{{route('About.index')}}">
-                            {{ __('en.WhyZhome')}}
+                            {{ __('messages.WhyZhome')}}
                         </a>
                     </li>
                 </ul>
                 <ul>
                     <li class="First">
                         @if (Auth::guard('web')->check())
-                            {{ __('en.User')}}
+                            {{ __('messages.User')}}
                         @elseif (Auth::guard('admin')->check())
-                            {{ __('en.Admin')}}
+                            {{ __('messages.Admin')}}
                         @else
-                            {{ __('en.User')}}
+                            {{ __('messages.User')}}
                         @endif
                     </li>
                     <li>
                         @if (Auth::guard('web')->check())
-                            <a href="{{route('Users.profile')}}">
-                                {{ __('en.Profile')}}
+                            <a href="{{route('Users.profile' , Auth::id() )}}">
+                                {{ __('messages.Profile')}}
                             </a>
                         @elseif (Auth::guard('admin')->check())
-                            <a href="{{route('Admins.profile')}}">
-                                {{ __('en.Profile')}}
+                            <a href="{{route('Admins.profile' , Auth::guard('admin')->user()->id )}}">
+                                {{ __('messages.Profile')}}
                             </a>
                         @else
-                            {{ __('en.JoinUs')}}
+                            {{ __('messages.JoinUs')}}
                         @endif
                     </li>
                     <li>
                         <a href="{{route('Cart.index')}}">
-                            {{ __('en.Cart')}}
+                            {{ __('messages.Cart')}}
                         </a>
                     </li>
                     <li>
                         <a href="{{route('Tools.index')}}">
-                            {{ __('en.Tools')}}
+                            {{ __('messages.Tools')}}
                         </a>
                     </li>
                     <li>
                         <a href="{{route('Shop.index')}}">
-                            {{ __('en.Products')}}
+                            {{ __('messages.Products')}}
                         </a>
                     </li>
                 </ul>
@@ -141,26 +141,27 @@
     </div>
     <div class="copyright">
         <div class="Lang">
-        <button id="langSwitchBtn" onclick="toggleLanguage()">
-            <?php if(isset($_SESSION['language']) && $_SESSION['language'] == 'ar'){ ?>
-                <img id="langFlag" src="https://zhome.com.eg/Admin/Images/Uploads/egypt.png" alt="Englsih">
-                <span id="langName">Arabic</span>
-            <?php }else{ ?>
-                <img id="langFlag" src="https://zhome.com.eg/Admin/Images/united-kingdom.png" alt="Arabic">
-                <span id="langName">English</span>
-            <?php } ?>
-        </button>
-
+            @if(App::getLocale() == 'en')
+                <a id="langSwitchBtn" href="{{ route('language', 'ar') }}" class="lang-switch-btn">
+                    <img class="lang-flag" src="https://zhome.com.eg/Admin/Images/Uploads/egypt.png" alt="Arabic">
+                    <span class="lang-name">Arabic</span>
+                </a>
+            @else
+                <a id="langSwitchBtn" href="{{ route('language', 'en') }}" class="lang-switch-btn">
+                    <img class="lang-flag" src="https://zhome.com.eg/Admin/Images/united-kingdom.png" alt="English">
+                    <span class="lang-name">English</span>
+                </a>
+            @endif
         </div>
         <div class="copy">
             <p >
-                Copyright@ {{ \Carbon\Carbon::now()->toDateString() }} Zhome. {{ __('en.CopyRights')}}
+                Copyright@ {{ \Carbon\Carbon::now()->year }} Zhome. {{ __('messages.CopyRights')}}
             </p>
         </div>
         <div class="Icons">
-            <a href=""><i class="fa-brands fa-twitter"></i></a> 
-            <a href=""><i class="fa-brands fa-facebook"></i></a> 
-            <a href=""><i class="fa-brands fa-linkedin"></i></a> 
+            <a href=""><i class="fa-brands fa-twitter"></i></a>
+            <a href=""><i class="fa-brands fa-facebook"></i></a>
+            <a href=""><i class="fa-brands fa-linkedin"></i></a>
         </div>
     </div>
 </section>
@@ -189,7 +190,7 @@
 <script src="{{ asset('UI/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('UI/js/html2canvas.js') }}"></script>
 
-<script src="https://kit.fontawesome.com/39c3d46f9d.js" crossorigin="anonymous"></script> 
+<script src="https://kit.fontawesome.com/39c3d46f9d.js" crossorigin="anonymous"></script>
 <script src="{{ asset('UI/js/nouislider.js') }}"></script>
 <script src="{{ asset('UI/js/wow.min.js') }}"></script>
 <script src="{{ asset('UI/js/owl.carousel.min.js') }}"></script>
@@ -209,3 +210,14 @@
 <script src="{{ asset('UI/js/TweenMax.min.js') }}"></script>
 <script src="{{ asset('UI/js/paymob.js') }}"></script>
 <script src="{{ asset('UI/js/backend.js') }}"></script>
+
+    <script>
+        function toggleLanguage() {
+            var currentLocale = $('html').attr('lang');
+            var newLocale = currentLocale === 'en' ? 'ar' : 'en';
+
+            $.get('/language/' + newLocale, function() {
+                location.reload();
+            });
+        }
+    </script>

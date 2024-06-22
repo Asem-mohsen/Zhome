@@ -74,4 +74,9 @@ class Product extends Model
         return $this->belongsToMany(User::class, 'orders', 'ProductID', 'UserID' , 'ID' , 'ID')->withPivot('Quantity');
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'orders', 'UserID' , 'ID');
+    }
+
 }

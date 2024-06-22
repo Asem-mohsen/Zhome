@@ -144,7 +144,6 @@
                                             </div>
                                             <div class="bottom-text">
                                                 <p>
-
                                                     @foreach ($product->technologies as $technology)
                                                         @php
                                                             $technologyArray[] = $technology['Technology'];

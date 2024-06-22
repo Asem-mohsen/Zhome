@@ -7,5 +7,8 @@ use Illuminate\Http\Request;
 
 class UserContactController extends Controller
 {
-    //
+    public function contact()
+    {
+        view('User.Contact.index');
+    }
 }

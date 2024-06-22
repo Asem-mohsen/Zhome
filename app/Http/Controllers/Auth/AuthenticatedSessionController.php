@@ -21,18 +21,18 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        
+
         $request->authenticate();
         $request->session()->regenerate();
-        
+
         if (Auth::guard('web')->check()) {
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route('index'));
         }
-    
+
         if (Auth::guard('admin')->check()) {
             return redirect()->intended(route('index'));
         }
-        
+
         return redirect()->route('login')->withErrors(['email' => 'Authentication error']);
     }
 
@@ -42,7 +42,7 @@ class AuthenticatedSessionController extends Controller
 
         $guard = Auth::guard('web')->check() ? 'web' : (Auth::guard('admin')->check() ? 'admin' : null);
         Auth::guard($guard)->logout();
-      
+
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();

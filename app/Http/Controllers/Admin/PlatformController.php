@@ -17,6 +17,14 @@ class PlatformController extends Controller
         return view('Admin.Platforms.index' , compact('Platforms'));
     }
 
+    public function userIndex(){
+        $platformsIds = Platform::distinct()->pluck('ID');
+        $platforms    = Platform::with('products' , 'Faqs')
+                    ->whereIn('ID', $platformsIds)
+                    ->get();
+        return view('User.Platforms.index' , compact('platforms'));
+    }
+
     public function create(){
         return view('Admin.Platforms.create');
     }

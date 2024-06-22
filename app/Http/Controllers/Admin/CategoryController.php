@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Subcategory;
 use App\Http\Requests\Admin\AddCategoryReqeust;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
@@ -21,6 +22,15 @@ class CategoryController extends Controller
             $subCounts[$category->ID] = $subNumber;
         }
         return view('Admin.Category.index' , compact('Categories' , 'subCounts'));
+    }
+
+    public function userIndex()
+    {
+        $categoryIds = Category::distinct()->pluck('ID');
+        $categories  = Category::with('subcategories.products')
+                    ->whereIn('ID', $categoryIds)
+                    ->get();
+        return view('User.Categories.index' , compact('categories'));
     }
 
     public function create(){

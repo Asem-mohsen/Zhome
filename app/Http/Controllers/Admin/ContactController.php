@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Http\Requests\Admin\UpdateContactRequest;
+use App\Http\Requests\User\AddNewContactRequest;
 
 class ContactController extends Controller
 {
@@ -31,4 +32,11 @@ class ContactController extends Controller
         
         return redirect()->route('Contact.index')->with('success','Contact Updated Successfully');
     }
+
+    public function contact()
+    {
+        $contact = Contact::all()->first();
+        return view('User.Contact.index', compact('contact'));
+    }
+
 }
