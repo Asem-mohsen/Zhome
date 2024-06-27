@@ -1,51 +1,49 @@
 @extends('User.layout.master')
 @section('Title' , 'Platforms')
 
+@section('Css')
+    <style>
+        .slider-OnlineShop .owl-carousel .owl-stage-outer {
+        border-radius: 0;
+        }
+        .platform{
+            width: 271px;
+            padding: 8px;
+            gap: 10px;
+        }
+        @media (max-width: 767px) {
+            .PlatformSection .PlatformTop {
+                display: block !important; 
+            }
+            .owl-carousel .owl-item {
+                width: 225px !important;
+            }
+            iframe.PlatformVideo {
+                width: auto;
+            }
+            .PlatformSection .PlatformInfo {
+                grid-template-columns: auto;
+            }
+            .Category-Product {
+                display: grid;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+        section.SectionNumber:nth-child(even) {
+                background-color: aliceblue;
+        }
 
+        button[data-toggle="collapse"] .fa:before {  
+            content: "";
+        }
+
+        button[data-toggle="collapse"].collapsed .fa:before {
+            content: "";
+        }
+    </style>
+@endsection
 @section('Content')
-
-    @section('Css')
-        <style>
-            .slider-OnlineShop .owl-carousel .owl-stage-outer {
-            border-radius: 0;
-            }
-            .platform{
-                width: 271px;
-                padding: 8px;
-                gap: 10px;
-            }
-            @media (max-width: 767px) {
-                .PlatformSection .PlatformTop {
-                    display: block !important; 
-                }
-                .owl-carousel .owl-item {
-                    width: 225px !important;
-                }
-                iframe.PlatformVideo {
-                    width: auto;
-                }
-                .PlatformSection .PlatformInfo {
-                    grid-template-columns: auto;
-                }
-                .Category-Product {
-                    display: grid;
-                    text-align: center;
-                    justify-content: center;
-                }
-            }
-            section.SectionNumber:nth-child(even) {
-                    background-color: aliceblue;
-            }
-
-            button[data-toggle="collapse"] .fa:before {  
-                content: "";
-            }
-
-            button[data-toggle="collapse"].collapsed .fa:before {
-                content: "";
-            }
-        </style>
-    @endsection
 
     <section>
         <div class="container mt-3 mb-4">
@@ -134,7 +132,7 @@
                     <!-- Products Related -->
                     <div class="Category-Product mt-5 pt-4">
                         <h3>{{ __('messages.RelatedProducts')}}</h3>
-                        <a href="https://zhome.com.eg/Front/Shop.php?action=PlatformFilter&PlatformID={{$platform->ID}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                        <a href="{{route("Shop.Filter.platform" , $platform->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                     </div>
                     <div class="related-product__carousel owl-carousel owl-theme mt-4 mb-5">                                
                             @foreach($platform->products as $product)

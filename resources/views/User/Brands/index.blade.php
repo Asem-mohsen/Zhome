@@ -89,7 +89,7 @@
                             <!-- Products Related -->
                             <div class="Category-Product mt-5 pt-5">
                                 <h3>{{ __('messages.RelatedProducts')}}</h3>
-                                <a href="https://zhome.com.eg/Front/Shop.php?action=BrandFilter&BrandID={{$brand->ID}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                                <a href="{{route('Shop.Filter.brand' , $brand->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                             </div>
                             <div class="related-product__carousel owl-carousel owl-theme mt-3 mb-4">
                                 @if ($brand->products->isNotEmpty())

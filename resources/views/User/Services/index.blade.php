@@ -48,11 +48,11 @@
                                 @endif
                             </p>
                             @if($service->Duration)
-                                <span>{{ __('messages.Duration')}}<?php echo lang('') ?> <?php echo $Service['Duration']. " Minutes" ?></span>
+                                <span>{{ __('messages.Duration')}}<?php echo $Service['Duration']. " Minutes" ?></span>
                             @endif
                             <br>
                             @if($service->Price)
-                                <span>{{ __('messages.Price') __('messages.DepenedsOntheProduct')}} </span>
+                                <span>{{ __('messages.Price') . __('messages.DepenedsOntheProduct')}} </span>
                             @else
                                 <span>{{ __('messages.Price') . $service->Price . "EGP"}}</span>
                             @endif

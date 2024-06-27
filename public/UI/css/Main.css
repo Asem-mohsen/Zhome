@@ -473,7 +473,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         text-align: center;
     }
     .FilterTransform #applyFilterBtn:hover{
-         background-color: #1c839a;
+         background-color: #154352;
         transition-duration: 0.4s;
         color: white;
     }
@@ -4910,12 +4910,27 @@ p.OutStock{
     border: 1px solid #eeee;
 }
 
+.FiltersButton{
+  display: flex;
+  gap:10px;
+}
 .FilterTransform #applyFilterBtn:hover{
-    background-color: #64caf8;
-    transition-duration: 0.4s;
+    background-color: #154352;
+    transition:all 0.4s;
     color: white;
 }
-
+.FilterTransform #Reset{
+  color: white;
+  background-color: #154352;
+  padding: 10px;
+  border-radius: 5px;
+}
+.FilterTransform #Reset:hover{
+  background-color: white;
+  border:1px solid #154352;
+  transition: all 0.4s;
+  color: white;
+}
 .FilterTransform button#applyFilterBtn:focus {
     outline: 1px dotted;
     outline: 0px auto -webkit-focus-ring-color;

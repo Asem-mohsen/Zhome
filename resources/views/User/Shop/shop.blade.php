@@ -187,19 +187,59 @@
     <!-- Promocode -->
     <section>
         <div class="container">
-                @php
-                    // Calculate remaining time
-                    $endDate = $promocodes->EndsIn;
-                    $currentTime = time();
-                    $remainingTime = strtotime($endDate) - $currentTime;
-
-                    $remainingDays = floor($remainingTime / (60 * 60 * 24));
-                    $remainingHours = floor(($remainingTime % (60 * 60 * 24)) / (60 * 60));
-                    $remainingMinutes = floor(($remainingTime % (60 * 60)) / 60);
-                    $remainingSeconds = $remainingTime % 60;
-                @endphp
-
                 @if($promocodes)
+                    {{-- Timer --}}
+                    <script>
+
+                        // Function to update the countdown
+                        var days =  {{$remainingDays}}
+                        var hours = {{$remainingHours}}
+                        var minutes = {{$remainingMinutes}}
+                        var seconds =  {{$remainingSeconds}}
+                        function updateCountdown() {
+
+                            seconds--;
+                                if (seconds < 0){
+                                    minutes--;
+                                    seconds = 59
+                                }
+                                if (minutes < 0){
+                                    hours--;
+                                    minutes = 59
+                                }
+                                if (hours < 0){
+                                    days--;
+                                    hours = 23
+                                }
+
+                                function pad(n) {
+                                    if ( n < 10 && n >= 0 ) {
+                                        return "0" + n;
+                                    } else {
+                                        return n;
+                                    }
+                                }
+                            // Update the countdown display
+                            document.getElementById("Days").innerHTML =  pad(days) ;
+                            document.getElementById("Hours").innerHTML = pad(hours) ;
+                            document.getElementById("Minutes").innerHTML = pad(minutes) ;
+                            document.getElementById("Seconds").innerHTML = pad(seconds) ;
+                            // Update the countdown every second
+                            setTimeout("updateCountdown()", 1000);
+                        }
+
+                    </script>
+                    @php
+                        // Calculate remaining time
+                        $endDate = $promocodes->EndsIn;
+                        $currentTime = time();
+                        $remainingTime = strtotime($endDate) - $currentTime;
+
+                        $remainingDays = floor($remainingTime / (60 * 60 * 24));
+                        $remainingHours = floor(($remainingTime % (60 * 60 * 24)) / (60 * 60));
+                        $remainingMinutes = floor(($remainingTime % (60 * 60)) / 60);
+                        $remainingSeconds = $remainingTime % 60;
+                    @endphp
                     <div class="promocode" style="background-image: url({{asset('UI/Imgs/website/Shop/pexels-eric-anada-1495580.jpg')}}">
                         <div class="promoInfo">
                             <h2>{{ __('messages.FreshSale')}}</h2>
@@ -228,15 +268,15 @@
                     </div>
                     
                 @else
-                    
+                    {{--                     
                     <div class="promocode">
                         <div class="NoPromo">
                             <h2>{{ __('messages.Offers')}}</h2>
-                            <p> {{ __('messages.SaveUpTo')}}{{$promocodes->Save . "%"}} <?php echo $fetchPromo['Save'] ?> % </p>
+                            <p> {{ __('messages.SaveUpTo')}}{{$promocodes->Save . "%"}}</p>
                             <h3>{{ __('messages.WithPromo')}}</h3><br>
-                            <span><?php echo $fetchPromo['Promocode'] ?></span>
+                            <span>{{$promocodes->Promocode }}</span>
                         </div>
-                    </div>
+                    </div> --}}
                 @endif
         </div>
     </section>
@@ -428,7 +468,7 @@
             <!-- Product From The Selected Brand -->
             <section>
                 <div class="Category-Product mt-4 justify-content-between">
-                    <h3>{{$brand->Brand , " Products"}} </h3>
+                    <h3>{{$brand->Brand . " Products"}} </h3>
                     <a href="{{route('Shop.index')}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                 </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5">
@@ -447,9 +487,9 @@
     <!-- Tool -->
     <section>
         <div class="container">
-            <div class="Cards-contact" style="margin-top: 57px;">
-                <div class="card-contact-left" style="align-items: center;">
-                    <a href="https://zhome.com.eg/Front/Proposal.php">
+            <div class="Cards-contact mt-5 pt-4">
+                <div class="card-contact-left align-items-center">
+                    <a href="{{route('Tools.index')}}">
                         <img src="{{asset('UI/Imgs/website/Shop/r-architecture-T6d96Qrb5MY-unsplash2.png')}}" class="ProposalProduct" alt="Design Your Home">
                     </a>
                     <div class="ToolOnlineShop">
@@ -484,47 +524,7 @@
 
 @section('Js')
 
-    {{-- Timer --}}
-    <script>
 
-        // Function to update the countdown
-        var days =  {{$remainingDays}}
-        var hours = {{$remainingHours}}
-        var minutes = {{$remainingMinutes}}
-        var seconds =  {{$remainingSeconds}}
-        function updateCountdown() {
-
-            seconds--;
-                if (seconds < 0){
-                    minutes--;
-                    seconds = 59
-                }
-                if (minutes < 0){
-                    hours--;
-                    minutes = 59
-                }
-                if (hours < 0){
-                    days--;
-                    hours = 23
-                }
-
-                function pad(n) {
-                    if ( n < 10 && n >= 0 ) {
-                        return "0" + n;
-                    } else {
-                        return n;
-                    }
-                }
-            // Update the countdown display
-            document.getElementById("Days").innerHTML =  pad(days) ;
-            document.getElementById("Hours").innerHTML = pad(hours) ;
-            document.getElementById("Minutes").innerHTML = pad(minutes) ;
-            document.getElementById("Seconds").innerHTML = pad(seconds) ;
-            // Update the countdown every second
-            setTimeout("updateCountdown()", 1000);
-        }
-
-    </script>
 
     <script>
         $(document).ready(function() {

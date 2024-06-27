@@ -117,7 +117,9 @@
                                 {{ __('messages.Profile')}}
                             </a>
                         @else
-                            {{ __('messages.JoinUs')}}
+                            <a href="{{route('login')}}">
+                                {{ __('messages.JoinUs')}}
+                            </a>
                         @endif
                     </li>
                     <li>
@@ -131,7 +133,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('Shop.index')}}">
+                        <a href="{{route('Shop.FilterIndex')}}">
                             {{ __('messages.Products')}}
                         </a>
                     </li>
@@ -168,14 +170,10 @@
 
 
 
-<!-- Argon dashboard in cart page -->
-<script src="{{ asset('UI/') }}Admin/assets/js/core/popper.min.js"></script>
-<script src="Admin/assets/js/core/bootstrap.min.js"></script>
-<script src="Admin/assets/js/plugins/perfect-scrollbar.min.js"></script>
-<script src="Admin/assets/js/plugins/smooth-scrollbar.min.js"></script>
+
 <!-- End -->
 <script src="{{ asset('UI/js/jquery-3.6.1.js') }}"></script>
-
+<script src="{{ asset('UI/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('UI/js/jquery.min.js') }}"></script>
 <script src="{{ asset('UI/js/jquery-ui.min.js') }}"></script>
 <script src="{{ asset('UI/js/jquery.magnific-popup.min.js') }}"></script>
@@ -196,12 +194,13 @@
 <script src="{{ asset('UI/js/owl.carousel.min.js') }}"></script>
 <script src="{{ asset('UI/js/jquery.counterup.min.js') }}"></script>
 <script src="{{ asset('UI/js/waypoints.min.js') }}"></script>
-<script src="{{ asset('UI/js/bootstrap.min.js') }}"></script>
+
 <script src="{{ asset('UI/js/theme.js') }}"></script>
 <script src="{{ asset('UI/js/Navbar.js') }}"></script>
+<script src="{{ asset('UI/js/popper.min.js') }}"></script>
 <!--End-->
 <!-- Swipper -->
-<script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+{{-- <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <!-- End Swipper -->
@@ -210,14 +209,13 @@
 <script src="{{ asset('UI/js/TweenMax.min.js') }}"></script>
 <script src="{{ asset('UI/js/paymob.js') }}"></script>
 <script src="{{ asset('UI/js/backend.js') }}"></script>
+<script>
+    function toggleLanguage() {
+        var currentLocale = $('html').attr('lang');
+        var newLocale = currentLocale === 'en' ? 'ar' : 'en';
 
-    <script>
-        function toggleLanguage() {
-            var currentLocale = $('html').attr('lang');
-            var newLocale = currentLocale === 'en' ? 'ar' : 'en';
-
-            $.get('/language/' + newLocale, function() {
-                location.reload();
-            });
-        }
-    </script>
+        $.get('/language/' + newLocale, function() {
+            location.reload();
+        });
+    }
+</script>

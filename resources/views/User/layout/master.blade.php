@@ -42,7 +42,7 @@
     <link rel="stylesheet" href="{{ asset('UI/css/bootstrap-select.min.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/hover-min.css')}}">
-    <link rel="stylesheet" href="{{ asset('UI/css/query.bootstrap-touchspin.min.css')}}j">
+    <link rel="stylesheet" href="{{ asset('UI/css/query.bootstrap-touchspin.min.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/jquery.mCustomScrollbar.min.css')}}">
     <!-- Swipper Home Page Brands -->
     <!-- End Swipper -->

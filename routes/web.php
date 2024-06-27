@@ -254,6 +254,11 @@ Route::controller(HomeController::class)->group(function(){
 Route::prefix('Shop')->name('Shop.')->group(function(){
     Route::controller(ShopController::class)->group(function(){
         Route::get('/', 'index')->name('index');
+        Route::get('/shop', 'filterIndex')->name('FilterIndex');
+        Route::get('/shop/category/{id}', 'categoryFilter')->name('Filter.category');
+        Route::get('/shop/subcategory/{id}', 'subcategoryFilter')->name('Filter.subcategory');
+        Route::get('/shop/brand/{id}', 'brandFilter')->name('Filter.brand');
+        Route::get('/shop/platform/{id}', 'platformFilter')->name('Filter.platform');
     });
 });
 Route::prefix('Contact')->name('Contact.')->group(function(){

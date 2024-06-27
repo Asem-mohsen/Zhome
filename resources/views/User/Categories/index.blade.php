@@ -1,47 +1,46 @@
 @extends('User.layout.master')
 @section('Title' , 'Categories')
 
-
-@section('Content')
-
-    @section('Css')
-        <style>
-            .owl-carousel .owl-stage-outer {
-                height: 400px;
-                border-radius: 10px;
+@section('Css')
+    <style>
+        .owl-carousel .owl-stage-outer {
+            height: 400px;
+            border-radius: 10px;
+        }
+        .bottom-slider {
+            display: flex;
+            margin: 0 39px;
+            gap: 56px;
+            align-items: center;
+            top: -318px;
+            position: relative;
+        }
+        .slider-one__btn {
+            padding: 13px 27px;
+            width: 176px;
+            border-radius: 35px;
+        }
+        @media (max-width: 767px) {
+            .related-product__carousel .owl-item {
+                width: 225px !important;
+            }
+            .Category-Product {
+                margin-top: 20px;
+                display: grid;
+                text-align: center;
+                justify-content: center;
             }
             .bottom-slider {
-                display: flex;
-                margin: 0 39px;
-                gap: 56px;
-                align-items: center;
-                top: -318px;
-                position: relative;
+                top: -140px !important;
             }
-            .slider-one__btn {
-                padding: 13px 27px;
-                width: 176px;
-                border-radius: 35px;
+            .slider-one .active .slider-one__title {
+                width: -webkit-fill-available;
             }
-                    @media (max-width: 767px) {
-                        .related-product__carousel .owl-item {
-                            width: 225px !important;
-                        }
-                        .Category-Product {
-                            margin-top: 20px;
-                            display: grid;
-                            text-align: center;
-                            justify-content: center;
-                        }
-                        .bottom-slider {
-                            top: -140px !important;
-                        }
-                        .slider-one .active .slider-one__title {
-                            width: -webkit-fill-available;
-                        }
-                    }
-        </style>
-    @endsection
+        }
+    </style>
+@endsection
+
+@section('Content')
 
     <section>
         <div class="container mt-3 mb-4">
@@ -70,6 +69,7 @@
             @endforeach
         </div>
     </section>
+
     <!-- All Categories and thier sub -->
     <section>
         <div class="container">
@@ -83,7 +83,7 @@
                         <div class="slider-one__carousel owl-carousel owl-theme">
                             <div class="item slider-one__slider-1" style="background-image: url({{asset("Admin/dist/img/web/Categories/$category->MainImage")}};" >
                                 <div class="container bottom-slider">
-                                    <a href="https://zhome.com.eg/Front/Shop.php?action=CategoryFilter&CategoryID={{$category->ID}}" class="thm-btn slider-one__btn">
+                                    <a href="{{route("Shop.Filter.category" , $category->ID)}}" class="thm-btn slider-one__btn">
                                         @if(App::getLocale() == 'ar')
                                             {{$category->ArabicName}}
                                         @else
@@ -108,7 +108,7 @@
                                     @if($category->subcategories->isNotEmpty())
                                         @foreach($category->subcategories as $subCategory)
 
-                                            <a class="ToTheSubPage" href="https://zhome.com.eg/Front/Shop.php?action=SubFilter&SubID={{$subCategory->ID}}">
+                                            <a class="ToTheSubPage" href="{{route("Shop.Filter.subcategory" , $subCategory->ID)}}">
                                                 <div class="box-shop SubCategory-onlineshop" style="background-image: url({{asset("Admin/dist/img/web/Categories/SubCategories/$subCategory->Image")}};">
                                                 </div>
                                                 <p>
@@ -135,9 +135,9 @@
                                     {{$category->Category . " Products"}}
                                 @endif
                             </h3>
-                            <a href="https://zhome.com.eg/Front/Shop.php?action=CategoryFilter&CategoryID={{$category->ID}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                            <a href="{{route("Shop.Filter.category" , $category->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                         </div>
-                        <div class="related-product__carousel owl-carousel owl-theme" style="margin-top: 38px; margin-bottom:50px;">
+                        <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5">
 
                             @foreach($category->subcategories as $subcategory)
                                 @if ($subcategory->products->isNotEmpty())
