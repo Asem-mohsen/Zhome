@@ -361,6 +361,7 @@ return[
         'PromoUsed'=>'Promo code used :',
         'ContinueShopping'=>'Continue Shopping',
         'ShippingInformation'=>'Shipping Information',
+        'TotalWithDelivery' =>'Total With Delivery',
         
         //Shop
         'Filters'=>'Filters',

@@ -206,9 +206,12 @@
 <!-- End Swipper -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 <script src="{{ asset('UI/js/TweenMax.min.js') }}"></script>
 <script src="{{ asset('UI/js/paymob.js') }}"></script>
 <script src="{{ asset('UI/js/backend.js') }}"></script>
+<script src="{{ asset('UI/js/user.js') }}"></script>
 <script>
     function toggleLanguage() {
         var currentLocale = $('html').attr('lang');

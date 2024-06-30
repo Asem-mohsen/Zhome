@@ -79,4 +79,15 @@ class Product extends Model
         return $this->belongsToMany(User::class, 'orders', 'UserID' , 'ID');
     }
 
+
+    public function isOnSale()
+    {
+        return $this->sale_price !== null && $this->sale_price < $this->Price;
+    }
+
+    public function getCurrentPrice()
+    {
+        return $this->isOnSale() ? $this->sale_price : $this->Price;
+    }
+
 }

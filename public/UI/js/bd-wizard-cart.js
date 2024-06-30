@@ -7,20 +7,20 @@ $(document).ready(function () {
         stepsOrientation: "horizontal",
         titleTemplate: '<span class="number">#index#</span>',
         onInit: function (event, currentIndex) {
-          // Get the value of the #SessionExists input
-          var sessionExists = $("#SessionExists").val();
+            // Get the value of the #SessionExists input
+            var sessionExists = $("#SessionExists").val();
 
-          // Show or hide the buttons based on session value on page load
-          if (currentIndex == 0 && sessionExists == 1) {
-            $("#wizard").find(".actions [href='#next']").show();
-            $("#wizard").find(".actions [href='#previous']").show();
-          }
+            // Show or hide the buttons based on session value on page load
+            if (currentIndex == 0 && sessionExists == 1) {
+                $("#wizard").find(".actions [href='#next']").show();
+                $("#wizard").find(".actions [href='#previous']").show();
+            }
     
-          // Existing code for hiding "Next" button conditionally
-          if (currentIndex == 0 && sessionExists != 1) {
-            $("#wizard").find(".actions [href='#next']").hide();
-            $("#wizard").find(".actions [href='#previous']").hide();
-          }
+            // Existing code for hiding "Next" button conditionally
+            if (currentIndex == 0 && sessionExists != 1) {
+                $("#wizard").find(".actions [href='#next']").hide();
+                $("#wizard").find(".actions [href='#previous']").hide();
+            }
         },
         onStepChanged: function (event, currentIndex, newIndex) {
 
@@ -30,7 +30,7 @@ $(document).ready(function () {
                 $(".actions [href='#next']").show();
             }
 
-            return true; // Continue
+            return true;
         },
         onFinished: function (event, currentIndex) {
 

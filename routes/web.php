@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 // Authentication
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\GoogleLoginController;
 
 // User
 use App\Http\Controllers\User\UserController;
@@ -41,6 +42,7 @@ use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\ServicesController;
 use App\Http\Controllers\User\UserContactController;
 
+// Language
 use App\Http\Controllers\LanguageController;
 
 use Illuminate\Support\Facades\Route;
@@ -62,6 +64,9 @@ Route::middleware('prevent.auth')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'register']);
 });
+
+Route::post('/google-login', [GoogleLoginController::class, 'handleGoogleLogin']);
+
 
 // Admin Routes
 Route::middleware('auth.admin')->group(function () {
@@ -248,9 +253,12 @@ Route::middleware('auth.admin')->group(function () {
     });
 });
 
+// Public Routes
+
 Route::controller(HomeController::class)->group(function(){
     Route::get('/', 'index')->name('index');
 });
+
 Route::prefix('Shop')->name('Shop.')->group(function(){
     Route::controller(ShopController::class)->group(function(){
         Route::get('/', 'index')->name('index');
@@ -261,11 +269,13 @@ Route::prefix('Shop')->name('Shop.')->group(function(){
         Route::get('/shop/platform/{id}', 'platformFilter')->name('Filter.platform');
     });
 });
+
 Route::prefix('Contact')->name('Contact.')->group(function(){
     Route::controller(ContactController::class)->group(function(){
         Route::get('/ContactUs', 'contact')->name('contact');
     });
 });
+
 Route::prefix('About')->name('About.')->group(function(){
     Route::controller(AboutController::class)->group(function(){
         Route::get('/', 'index')->name('index');
@@ -288,8 +298,13 @@ Route::prefix('Product')->name('Product.')->group(function(){
 Route::prefix('Cart')->name('Cart.')->group(function(){
     Route::controller(CartContoller::class)->group(function(){
         Route::get('/', 'index')->name('index');
+        Route::post('/add', 'addToCart')->name('add');
+        Route::get('/count', 'getCartCount');
+        Route::post('/update', 'updateCart');  //checkout update
+        Route::delete('/remove/{productId}','removeFromCart')->name('delete');
     });
 });
+
 Route::prefix('Services')->name('Services.')->group(function(){
     Route::controller(ServicesController::class)->group(function(){
         Route::get('/', 'index')->name('index');
@@ -315,15 +330,19 @@ Route::prefix('Brands')->name('Brand.')->group(function(){
         Route::get('/{brand}/brand', 'show')->name('show');
     });
 });
+
 Route::prefix('Platforms')->name('Platforms.')->group(function(){
     Route::controller(PlatformController::class)->group(function(){
         Route::get('/', 'userIndex')->name('user.index');
         Route::get('/{platform}/platform', 'show')->name('show');
     });
 });
+
 Route::prefix('Checkout')->name('Checkout.')->group(function(){
     Route::controller(CheckoutContoller::class)->group(function(){
         Route::get('/', 'index')->name('index');
+        Route::post('/check-promo-code','checkPromoCode');
+        Route::post('/get-delivery-cost', 'getDeliveryCost');
     });
 });
 

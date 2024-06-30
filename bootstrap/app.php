@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
+            \App\Http\Middleware\StartSession::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             // \App\Http\Middleware\VerifyCsrfToken::class,
@@ -41,7 +42,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.admin' => \App\Http\Middleware\AdminMiddleware::class,
             'prevent.auth' => \App\Http\Middleware\PreventAuthUser::class,
         ]);
-        
+
     })
 
     ->withExceptions(function (Exceptions $exceptions) {

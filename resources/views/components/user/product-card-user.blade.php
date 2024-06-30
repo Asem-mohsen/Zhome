@@ -29,7 +29,14 @@
                 @if($variable->Quantity <= 0)
                     <p class="OutStock">{{ __('OutofStock') }}</p>
                 @else
-                    <button name='Add_to_cart' type="button" data-toggle="tooltip" data-placement="top" title="Add to Cart" class="product-one__cart-btn add-to-cart-btn"  ><i class="fa-solid fa-cart-shopping"></i></button>
+                    <button 
+                        type="button" 
+                        data-toggle="tooltip" 
+                        data-placement="top" 
+                        title="Add to Cart" 
+                        class="product-one__cart-btn add-to-cart-btn"
+                        onclick="addToCart({{ $variable->ID }}, {{ $countSale > 0 ? $priceSale->PriceAfter : $variable->Price }}, {{ $variable->InstallationCost ?? 0 }})"
+                        ><i class="fa-solid fa-cart-shopping"></i></button>
                 @endif
             </div>
         </div>

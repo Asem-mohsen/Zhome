@@ -353,6 +353,7 @@ return[
       'PromoUsed'=>'كود الخصم المستخدم',
       'ContinueShopping'=>'أستكمل عملية الشراء',
       'ShippingInformation'=> 'معلومات التوصيل',
+      'TotalWithDelivery' =>'الاجمالي بالتوصيل ',
       
       //Shop
       'Filters'=>'التصفية',

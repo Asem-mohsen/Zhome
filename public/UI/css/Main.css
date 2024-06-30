@@ -3206,7 +3206,7 @@ align-items: self-end;
     width: 250px;
 }
 .PromocodeInput button{
-    margin-top: 17px;
+    /* margin-top: 17px; */
 }
 .Userform h5{
   text-align: center;
@@ -3896,8 +3896,7 @@ button.NextButton {
 .PromocodeInput button#Checkout{
     place-self: center;
     width: fit-content;
-    background-color: #66c9fa;
-    border-color: #66c9fa;
+    margin-left: 20px;
 }
 .tip {
     font-size: 20px;
@@ -4789,18 +4788,11 @@ text-decoration: none;
   transform: translate(0);
 }
 
-.cta.ShopNowButton {
-  border: none;
-  background: none;
-  text-align: center;
-    display: block;
-    margin-top: 21px;
-}
 
 .cta.ShopNowButton span {
   padding-bottom: 7px;
-  letter-spacing: 4px;
-  font-size: 17px;
+  letter-spacing:  1px;
+  font-size: 16px;
   padding-right: 15px;
   text-transform: uppercase;
 }

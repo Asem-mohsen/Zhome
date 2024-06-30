@@ -14,6 +14,8 @@ class NavbarController extends Controller
         $categories = Category::with('subcategories')->get();
         $brands     = Brand::all();
         $platforms  =  Platform::all();
+
         return view('User.layout.Nav', compact('categories','platforms','brands'));
     }
+    
 }

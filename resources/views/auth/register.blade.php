@@ -12,36 +12,36 @@
                     <div class="col-md-5 box">
                         <div class="form">
                             <div class="content">
-                                <a href="https://zhome.com.eg" class="ZhomeName">Zhome</a>
-                                <h3 class="login-form__title">{{ __('en.LoginToYourAccount') }}</h3>
+                                <a href="{{route('index')}}" class="ZhomeName">Zhome</a>
+                                <h3 class="login-form__title">{{ __('messages.LoginToYourAccount') }}</h3>
                                 <p>
-                                    {{ __('en.HaveAccount') }}
-                                    <a href="{{route('login')}}" class="fw-bold">{{ __('en.LoginNow') }}</a>
+                                    {{ __('messages.HaveAccount') }}
+                                    <a href="{{route('login')}}" class="fw-bold">{{ __('messages.LoginNow') }}</a>
                                 </p>
                             </div>
                         <form method='POST' action="{{ route('register') }}">
                                 @csrf
                                 <div class="inputs login-form__form">
                                     <div class="login-form__field position-relative" style="height:82px">
-                                        <input type="text" name="Name" id="name" placeholder="{{ __('en.UserName') }}" required/>
+                                        <input type="text" name="Name" id="name" placeholder="{{ __('messages.UserName') }}" required/>
                                         <i class="fa fa-user"></i>
                                     </div>
                                     <div class="login-form__field position-relative" style="height:82px">
-                                        <input type="email" name="email" id="email" placeholder="{{ __('en.EmailAddress') }}" required />
+                                        <input type="email" name="email" id="email" placeholder="{{ __('messages.EmailAddress') }}" required />
                                         <i class="fa-solid fa-envelope"></i>
                                     </div>
                                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
 
                                     <div class="login-form__field position-relative password-input" style="height:82px">
-                                        <input type="password" name="password" id="password" placeholder="{{ __('en.EnterPassword') }}" required/>
+                                        <input type="password" name="password" id="password" placeholder="{{ __('messages.EnterPassword') }}" required/>
                                         <i class="fa fa-eye toggler" id="eye"></i>
                                     </div>
                                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                                     <button type="submit" class="thm-btn contact-one__btn">
-                                        {{ __('en.SignUpNow') }}
+                                        {{ __('messages.SignUpNow') }}
                                     </button>
 
-                                    <p style="text-align: center;margin-top: 19px;color: #acacac;margin-bottom:15px;">{{ __('en.LogSocial') }}</p>
+                                    <p class="text-center mt-2 mb-3" style="color: #acacac;">{{ __('messages.LogSocial') }}</p>
                                     <div id="g_id_onload"
                                             data-client_id="673202749345-8voabpo6qcntjihfmlq4acudh7pl8o88.apps.googleusercontent.com"
                                             data-context="signup"
@@ -63,7 +63,7 @@
                                         </div>
                                         <a href="../SignWithFacebook.php" class="facebook-login-btn">
                                             <i class="fa-brands fa-facebook-f"></i>
-                                            <span>{{ __('en.LogWithFacebook') }}</span>
+                                            <span>{{ __('messages.LogWithFacebook') }}</span>
                                         </a>
                                     </div>
                                 </div>
@@ -72,9 +72,9 @@
                     </div>
                     <div class="col-md-1 small-sidenav">
                         <ul class="small-sidenav-ul">
-                            <li><a href="{{route('index')}}" title="{{ __('en.Home') }}"><i class="fa-solid fa-house"></i></a></li>
-                            <li><a href="{{route('Shop.index')}}" title="{{ __('en.Shop') }}"><i class="fa-solid fa-store"></i></a></li>
-                            <li><a href="{{route('About.index')}}" title="{{ __('en.About') }}"><i class="fa-solid fa-circle-info"></i></a></li>
+                            <li><a href="{{route('index')}}" title="{{ __('messages.Home') }}"><i class="fa-solid fa-house"></i></a></li>
+                            <li><a href="{{route('Shop.index')}}" title="{{ __('messages.Shop') }}"><i class="fa-solid fa-store"></i></a></li>
+                            <li><a href="{{route('About.index')}}" title="{{ __('messages.About') }}"><i class="fa-solid fa-circle-info"></i></a></li>
                         </ul>
                     </div>
                 </div>

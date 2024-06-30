@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Delivery extends Model
 {
     use HasFactory;
-    protected $table = 'orderdelivery';
+    protected $table = 'shipping';
     protected $guarded = [];
     
 }

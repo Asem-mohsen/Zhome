@@ -14,11 +14,11 @@
                     <div class="col-md-5 box">
                         <div class="form">
                             <div class="content">
-                                <a href="https://zhome.com.eg" class="ZhomeName">Zhome</a>
-                                <h3 class="login-form__title">{{ __('en.LoginToYourAccount') }}</h3>
+                                <a href="{{route('index')}}" class="ZhomeName">Zhome</a>
+                                <h3 class="login-form__title">{{ __('messages.LoginToYourAccount') }}</h3>
                                 <p>
-                                    {{ __('en.NewMember') }}
-                                    <a href="{{route('register')}}" class="fw-bold">{{ __('en.CreateYourAccountNow') }}</a>
+                                    {{ __('messages.NewMember') }}
+                                    <a href="{{route('register')}}" class="fw-bold">{{ __('messages.CreateYourAccountNow') }}</a>
                                 </p>
                             </div>
 
@@ -26,13 +26,13 @@
                                 @csrf
                                 <div class="inputs login-form__form">
                                     <div class="login-form__field position-relative" style="height:82px">
-                                        <input type="email" id="email" name="email" placeholder="{{ __('en.EmailAddress') }}" required />
+                                        <input type="email" id="email" name="email" placeholder="{{ __('messages.EmailAddress') }}" required />
                                         <i class="fa-solid fa-envelope"></i>
                                     </div>
                                     <x-input-error :messages="$errors->get('email')" class="mt-1" />
 
                                     <div class="login-form__field position-relative password-input" style="height:82px">
-                                        <input type="password" class="password" id="password" name="password" placeholder="{{ __('en.EnterPassword') }}" required/>
+                                        <input type="password" class="password" id="password" name="password" placeholder="{{ __('messages.EnterPassword') }}" required/>
                                         <i class="fa fa-eye toggler" id="eye"></i>
                                     </div>
                                     <x-input-error :messages="$errors->get('password')" class="mt-1" />
@@ -47,17 +47,17 @@
                                     <div class="flex items-center justify-end mt-4">
                                         @if (Route::has('password.request'))
                                             <a class="ForgetPassword underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                                                {{ __('en.ForgetPass') }}
+                                                {{ __('messages.ForgetPass') }}
                                             </a>
                                         @endif
                             
                                         <button type="submit" class="thm-btn contact-one__btn">
-                                            {{ __('en.LoginNow') }}
+                                            {{ __('messages.LoginNow') }}
                                         </button>
                                     </div>
 
                                     
-                                    <p style="text-align: center;margin-top: 19px;color: #acacac;margin-bottom:0;margin-bottom: 15px;">{{ __('en.LogSocial') }}</p>
+                                    <p class="text-center mt-2 mb-3" style="color: #acacac;">{{ __('messages.LogSocial') }}</p>
 
                                     <div id="g_id_onload"
                                         data-client_id="673202749345-8voabpo6qcntjihfmlq4acudh7pl8o88.apps.googleusercontent.com"
@@ -82,7 +82,7 @@
                                         
                                         <a href="../SignWithFacebook.php" class="facebook-login-btn">
                                             <i class="fa-brands fa-facebook-f"></i>
-                                            <span>{{ __('en.LogWithFacebook') }}</span>
+                                            <span>{{ __('messages.LogWithFacebook') }}</span>
                                         </a>
                                     </div>
 
@@ -92,9 +92,9 @@
                     </div>
                     <div class="col-md-1 small-sidenav">
                         <ul class="small-sidenav-ul">
-                            <li><a href="{{route('index')}}" title="{{ __('en.Home') }}"><i class="fa-solid fa-house"></i></a></li>
-                            <li><a href="{{route('Shop.index')}}" title="{{ __('en.Shop') }}"><i class="fa-solid fa-store"></i></a></li>
-                            <li><a href="{{route('About.index')}}" title="{{ __('en.About') }}"><i class="fa-solid fa-circle-info"></i></a></li>
+                            <li><a href="{{route('index')}}" title="{{ __('messages.Home') }}"><i class="fa-solid fa-house"></i></a></li>
+                            <li><a href="{{route('Shop.index')}}" title="{{ __('messages.Shop') }}"><i class="fa-solid fa-store"></i></a></li>
+                            <li><a href="{{route('About.index')}}" title="{{ __('messages.About') }}"><i class="fa-solid fa-circle-info"></i></a></li>
                         </ul>
                     </div>
                 </div>

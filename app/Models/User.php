@@ -12,6 +12,8 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     protected $table = 'user';
     protected $fillable = [
+        'google_id',
+        'session_id',
         'Name',
         'email',
         'password',
