@@ -59,13 +59,15 @@
                                     
                                     <p class="text-center mt-2 mb-3" style="color: #acacac;">{{ __('messages.LogSocial') }}</p>
 
+                                    <a href="{{route('auth.google')}}">
+                                        login with google
+                                    </a>
                                     <div id="g_id_onload"
                                         data-client_id="673202749345-8voabpo6qcntjihfmlq4acudh7pl8o88.apps.googleusercontent.com"
                                         data-context="signin"
                                         data-ux_mode="popup"
-                                        data-login_uri="https://zhome.com.eg/Common/SignIn.php"
                                         data-auto_prompt="false"
-                                        data-callback="handleCredentialResponse">
+                                        >
                                     </div>
 
                                     <div class="d-flex gap-3 align-items-center justify-content-center flex-wrap" style="gap:20px;">
@@ -76,7 +78,7 @@
                                             data-text="signin_with"
                                             data-size="large"
                                             data-locale="en-GB"
-                                            data-login_uri="https://zhome.com.eg/Common/SignIn.php">
+                                            >
                                             
                                         </div>
                                         

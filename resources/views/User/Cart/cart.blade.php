@@ -5,6 +5,9 @@
 
 @section('Css')
     <style>
+        button:focus{
+            outline: 0;
+        }
         .slider-OnlineShop .owl-carousel .owl-stage-outer {
         border-radius: 0;
         }
@@ -130,7 +133,13 @@
                     <div class="topping">
                         <div class="CartandCount">
                             <h3>{{ __('messages.Cart')}}</h3>
-                            <span id="TotalItems"> </span>
+                            <span id="TotalItems">
+                                @if ($cartItems->count() <= 1 )
+                                    {{$cartItems->count() ." ".  __('messages.Product')}} 
+                                @else
+                                    {{$cartItems->count() ." ". __('messages.Products')}} 
+                                @endif
+                            </span>
                         </div>
 
                         @if($cartItems->count() > 0)
@@ -168,15 +177,14 @@
                                                         </div>
                                                         <div class="d-flex flex-column justify-content-center ml-1">
                                                             <h3 class="prod-title padd-top-20">{{ucfirst(strtolower($item->product->Name)) }}</h3>
-                                                            @if($item->product->sale_price)
+                                                            @if($item->product->sale)
                                                                 <div class="d-flex" style="gap:20px;">
-                                                                    <p class="text-xs text-secondary mb-0 fw-bold" style="font-size:17px">{{ number_format($item->PriceAfter, 2) . "EGP" }}</p>
+                                                                    <p class="text-xs text-secondary mb-0 fw-bold" style="font-size:17px">{{ number_format($item->product->sale->PriceAfter, 2) . "EGP" }}</p>
                                                                     <p class="text-xs text-secondary mb-0 BeforeSale" style="text-decoration: line-through; font-size:14px">{{ number_format($item->product->Price, 2) . "EGP" }}</p>
-                                                                    <input type="hidden" class="OldProductPrice" value="{{$item->product->Price}}">
+                                                                    <input type="hidden" name="SavedPrice" class="SavedPrice" value="{{$item->product->sale->PriceAfter}}"> 
                                                                 </div>
                                                             @else
                                                                 <p class="text-xs text-secondary mb-0 BeforeSale" >{{$item->product->Price . " EGP"}}</p>
-                                                                <input type="hidden" class="OldProductPrice" value="{{$item->product->Price}}">
                                                             @endif
                                                                 <input type="hidden" name="Price[]" class="ProductPrice" value="{{$item->product->Price}}">
                                                         </div>
@@ -227,7 +235,7 @@
         </div>
     </section>
 
-    <!-- Total and Promocode -->
+    <!-- Total -->
     <section>
         <div class="container">
             <div class="row m-0 justify-content-evenly">
@@ -242,12 +250,12 @@
                                             {{ __('messages.SubTotal')}}
                                             <span id='TotalPriceOne'></span>
                                         </li>
-                                        <input type="hidden" name="TotalPriceAjax" id="TotalPriceAjax">
+                                        {{-- <input type="hidden" name="TotalPriceAjax" id="TotalPriceAjax"> --}}
                                         <li class="Saved">
                                             {{ __('messages.YouSaved')}}
                                             <span id="discountDiv2"></span>
                                         </li>
-                                        <input type="hidden" name="SavedAjax" id="SavedAjax">
+                                        <input type="hidden" name="totalSaved" id="totalSaved">
                                         <li class="total">
                                             {{ __('messages.Total')}}
                                             <span id='FinalTotal'></span>
@@ -368,33 +376,6 @@
                     emptyCart();
                 });
             });
-
-            function updateRowTotal(row) {
-                const quantity = parseInt(row.querySelector('.Quantity').value);
-                const price = parseFloat(row.querySelector('.ProductPrice').value);
-                const installmentCheckbox = row.querySelector('.installmentPriceCheckbox');
-                const installmentPrice = installmentCheckbox ? parseFloat(installmentCheckbox.value) : 0;
-                
-                let total = quantity * price;
-                if (installmentCheckbox && installmentCheckbox.checked) {
-                    total += installmentPrice;
-                }
-                
-                row.querySelector('.SubTotal').textContent = total.toFixed(2) + ' EGP';
-                return total;
-            }
-
-            function updateTotalPrice() {
-                const rows = document.querySelectorAll('tr[data-product-id]');
-                let grandTotal = 0;
-                
-                rows.forEach(row => {
-                    grandTotal += updateRowTotal(row);
-                });
-                
-                document.getElementById('FinalTotal').textContent = grandTotal.toFixed(2) + ' EGP';
-                document.getElementById('TotalPriceOne').textContent = grandTotal.toFixed(2) + ' EGP';
-            }
 
             document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.Quantity, .installmentPriceCheckbox').forEach(elem => {

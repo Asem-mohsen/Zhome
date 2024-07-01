@@ -25,7 +25,7 @@
             <div class="categories-shop customer-logos slider">
                 @foreach($categories as $category)
                     <div class="category-shop slide">
-                        <a href="{{route('Shop.index')}}">
+                        <a href="{{route('Shop.Filter.category' , $category->ID)}}">
                             <img src="{{asset("Admin/dist/img/web/Categories/$category->MainImage")}}" alt="{{$category->Category}}">
                         </a>
                         <a href="">
@@ -105,7 +105,7 @@
                 <div class="tab-pane fade" id="MostPopular" role="tabpanel">
                     <div class="wrapper">
                         <div class="card" >
-                            <div class="card-body" style="padding-left: 0;">
+                            <div class="card-body pl-0">
                                 <div class="related-product__carousel owl-carousel owl-theme">
                                     @foreach($categoriesProduct as $product)
                                         <div class="item">
@@ -145,17 +145,17 @@
         <!-- Select Bundles-->
         <div class="container">
             <div class="More-boxes">
-                <div class="box box-1"  style="background-image:url({{asset('UI/Imgs/website/Shop/Escritorio.jpg')}})">
+                <div class="box box-1" style="background-image:url({{asset('UI/Imgs/website/Shop/Escritorio.jpg')}})">
                     <p>{{ __('messages.ExploreCollection')}}</p>
                     <a class="Button" href="{{route('Categories.index')}}">{{ __('messages.DiscoverMore')}}</a>
                 </div>
-                <div class="box hoverhere box-2"  style="background-image:url({{asset('UI/Imgs/website/Shop/AlexaImage2.jpg')}})">
+                <div class="box hoverhere box-2" style="background-image:url({{asset('UI/Imgs/website/Shop/AlexaImage2.jpg')}})">
                     <div class="overlay-button" style="width: 85%;">
                         <div class="Info-bundle">
                             <h3>{{ucfirst(strtolower($bundle->Name))}}</h3>
                             <p>{{ucfirst(strtolower($bundle->brand->Brand))}}</p>
                         </div>
-                        <a href="{{route('Product.show' , $bundle->ID)}}">Read More</a>
+                        <a href="{{route('Product.show', $bundle->ID)}}">Read More</a>
                     </div>
                 </div>
                 <div class="box hoverhere box-3"  style="background-image:url({{asset('UI/Imgs/website/Shop/Escritorio.jpg')}})">
@@ -164,7 +164,7 @@
                             <h3>{{ucfirst(strtolower($bundle->Name))}}</h3>
                             <p>{{ucfirst(strtolower($bundle->brand->Brand))}}</p>
                         </div>
-                        <a href="{{route('Product.show' , $bundle->ID)}}">Read More</a>
+                        <a href="{{route('Product.show', $bundle->ID)}}">Read More</a>
                     </div>
                 </div>
                 <div class="box box-4"  style="background-image:url({{asset('UI/Imgs/website/Shop/LightZhome.jpg')}});flex: 0.6;">
@@ -187,97 +187,86 @@
     <!-- Promocode -->
     <section>
         <div class="container">
-                @if($promocodes)
-                    {{-- Timer --}}
-                    <script>
+            @if($promocodes)
+                {{-- Timer --}}
+                <script>
 
-                        // Function to update the countdown
-                        var days =  {{$remainingDays}}
-                        var hours = {{$remainingHours}}
-                        var minutes = {{$remainingMinutes}}
-                        var seconds =  {{$remainingSeconds}}
-                        function updateCountdown() {
+                    // Function to update the countdown
+                    var days =  {{$remainingDays}}
+                    var hours = {{$remainingHours}}
+                    var minutes = {{$remainingMinutes}}
+                    var seconds =  {{$remainingSeconds}}
+                    function updateCountdown() {
 
-                            seconds--;
-                                if (seconds < 0){
-                                    minutes--;
-                                    seconds = 59
+                        seconds--;
+                            if (seconds < 0){
+                                minutes--;
+                                seconds = 59
+                            }
+                            if (minutes < 0){
+                                hours--;
+                                minutes = 59
+                            }
+                            if (hours < 0){
+                                days--;
+                                hours = 23
+                            }
+
+                            function pad(n) {
+                                if ( n < 10 && n >= 0 ) {
+                                    return "0" + n;
+                                } else {
+                                    return n;
                                 }
-                                if (minutes < 0){
-                                    hours--;
-                                    minutes = 59
-                                }
-                                if (hours < 0){
-                                    days--;
-                                    hours = 23
-                                }
+                            }
+                        // Update the countdown display
+                        document.getElementById("Days").innerHTML =  pad(days) ;
+                        document.getElementById("Hours").innerHTML = pad(hours) ;
+                        document.getElementById("Minutes").innerHTML = pad(minutes) ;
+                        document.getElementById("Seconds").innerHTML = pad(seconds) ;
+                        // Update the countdown every second
+                        setTimeout("updateCountdown()", 1000);
+                    }
 
-                                function pad(n) {
-                                    if ( n < 10 && n >= 0 ) {
-                                        return "0" + n;
-                                    } else {
-                                        return n;
-                                    }
-                                }
-                            // Update the countdown display
-                            document.getElementById("Days").innerHTML =  pad(days) ;
-                            document.getElementById("Hours").innerHTML = pad(hours) ;
-                            document.getElementById("Minutes").innerHTML = pad(minutes) ;
-                            document.getElementById("Seconds").innerHTML = pad(seconds) ;
-                            // Update the countdown every second
-                            setTimeout("updateCountdown()", 1000);
-                        }
+                </script>
+                @php
+                    // Calculate remaining time
+                    $endDate = $promocodes->EndsIn;
+                    $currentTime = time();
+                    $remainingTime = strtotime($endDate) - $currentTime;
 
-                    </script>
-                    @php
-                        // Calculate remaining time
-                        $endDate = $promocodes->EndsIn;
-                        $currentTime = time();
-                        $remainingTime = strtotime($endDate) - $currentTime;
-
-                        $remainingDays = floor($remainingTime / (60 * 60 * 24));
-                        $remainingHours = floor(($remainingTime % (60 * 60 * 24)) / (60 * 60));
-                        $remainingMinutes = floor(($remainingTime % (60 * 60)) / 60);
-                        $remainingSeconds = $remainingTime % 60;
-                    @endphp
-                    <div class="promocode" style="background-image: url({{asset('UI/Imgs/website/Shop/pexels-eric-anada-1495580.jpg')}}">
-                        <div class="promoInfo">
-                            <h2>{{ __('messages.FreshSale')}}</h2>
-                            <p>{{ __('messages.SaveUpTo')}} {{$promocodes->Save . "%"}} </p>
-                            <h3>{{ __('messages.WithPromo')}}</h3><br>
-                            <span>{{$promocodes->Promocode}}</span>
+                    $remainingDays = floor($remainingTime / (60 * 60 * 24));
+                    $remainingHours = floor(($remainingTime % (60 * 60 * 24)) / (60 * 60));
+                    $remainingMinutes = floor(($remainingTime % (60 * 60)) / 60);
+                    $remainingSeconds = $remainingTime % 60;
+                @endphp
+                <div class="promocode" style="background-image: url({{asset('UI/Imgs/website/Shop/pexels-eric-anada-1495580.jpg')}}">
+                    <div class="promoInfo">
+                        <h2>{{ __('messages.FreshSale')}}</h2>
+                        <p>{{ __('messages.SaveUpTo')}} {{$promocodes->Save . "%"}} </p>
+                        <h3>{{ __('messages.WithPromo')}}</h3><br>
+                        <span>{{$promocodes->Promocode}}</span>
+                    </div>
+                    <div class="countdown" id="countdown">
+                        <div class="num">
+                            <span id="Days"></span>
+                            <p>{{ __('messages.DaysSale')}}</p>
                         </div>
-                        <div class="countdown" id="countdown">
-                            <div class="num">
-                                <span id="Days"></span>
-                                <p>{{ __('messages.DaysSale')}}</p>
-                            </div>
-                            <div class="num">
-                                <span id="Hours"></span>
-                                <p>{{ __('messages.HoursSale')}}</p>
-                            </div>
-                            <div class="num" >
-                                <span id="Minutes"></span>
-                                <p>{{ __('messages.MinutesSale')}}</p>
-                            </div>
-                            <div class="num">
-                                <span id="Seconds"></span>
-                                <p>{{ __('messages.SecondsSale')}}</p>
-                            </div>
+                        <div class="num">
+                            <span id="Hours"></span>
+                            <p>{{ __('messages.HoursSale')}}</p>
+                        </div>
+                        <div class="num" >
+                            <span id="Minutes"></span>
+                            <p>{{ __('messages.MinutesSale')}}</p>
+                        </div>
+                        <div class="num">
+                            <span id="Seconds"></span>
+                            <p>{{ __('messages.SecondsSale')}}</p>
                         </div>
                     </div>
-                    
-                @else
-                    {{--                     
-                    <div class="promocode">
-                        <div class="NoPromo">
-                            <h2>{{ __('messages.Offers')}}</h2>
-                            <p> {{ __('messages.SaveUpTo')}}{{$promocodes->Save . "%"}}</p>
-                            <h3>{{ __('messages.WithPromo')}}</h3><br>
-                            <span>{{$promocodes->Promocode }}</span>
-                        </div>
-                    </div> --}}
-                @endif
+                </div>
+            @endif
         </div>
     </section>
 
@@ -290,7 +279,7 @@
                     <h3></h3>
                     <a href="{{route('Shop.index')}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                 </div>
-                <div class="related-product__carousel owl-carousel owl-theme" style="margin-top: 20px ; margin-bottom:50px;">
+                <div class="related-product__carousel owl-carousel owl-theme mt-3 mb-5">
                     @foreach($productsOnSale as $product)
                         <div class="item">
                             <x-user.product-card-user :variable="$product" :productID="$product->ID" />
@@ -326,7 +315,7 @@
                     @if($category2->subcategories->isNotEmpty())
                         <div class="Subs">
                             @foreach($category2->subcategories as $subcategory)
-                                <a class="ToTheSubPage" href="{{route('Shop.index')}}">
+                                <a class="ToTheSubPage" href="{{route('Shop.Filter.subcategory' , $subcategory->ID)}}">
                                     <div class="box-shop SubCategory-OnlineShop-Circled" style="background-image: url({{asset("Admin/dist/img/web/Categories/SubCategory/$subcategory->image")}})">
                                     </div>
                                     <p>
@@ -346,14 +335,12 @@
             <!-- Product From The Selected Category -->
             <section>
                 <div class="Category-Product">
-                    <a href="{{route('Shop.index')}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                    <a href="{{route('Shop.Filter.category' , $category2->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                 </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5 pb-3">
                     @foreach($categoriesProduct as $product)
                         <div class="item">
-                            <a href="{{ route('Product.show', $product->ID) }}">
-                                <x-user.product-card-user :variable="$product" :productID="$product->ID" />
-                            </a>
+                            <x-user.product-card-user :variable="$product" :productID="$product->ID" />
                         </div>
                     @endforeach
                 </div>
@@ -413,7 +400,7 @@
                         <div class="Subs">
                             @foreach($category->subcategories as $subcategory)
 
-                                <a class="ToTheSubPage" href="{{route('Shop.index')}}">
+                                <a class="ToTheSubPage" href="{{route('Shop.Filter.subcategory' , $subcategory->ID)}}">
                                     <div class="box-shop SubCategory-OnlineShop-Circled" style="background-image: url({{asset("Admin/dist/img/web/Categories/SubCategory/$subcategory->Image")}})">
                                     </div>
                                     <p>
@@ -433,7 +420,7 @@
             <!-- Product From The Selected Category -->
             <section>
                 <div class="Category-Product">
-                    <a href="{{route('Shop.index')}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                    <a href="{{route('Shop.Filter.category' , $category->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                 </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5 pb-3">
                     @foreach($categoriesProduct as $product)
@@ -452,7 +439,7 @@
     <section>
         <div class="Fixed-bundle item slider-one__slider-1" style="background-image: url({{asset('UI/Imgs/website/Shop/bence-boros-anapPhJFRhM-unsplash.jpg')}})">
             <div class="bottom-slider">
-                <a href="https://zhome.com.eg/Front/Bundles.php" class="thm-btn slider-one__btn">{{ __('messages.ExploreBundles')}}</a>
+                <a href="{{route('Shop.FilterIndex')}}" class="thm-btn slider-one__btn">{{ __('messages.ExploreBundles')}}</a>
                 <h2 class="slider-one__title">
                     {{ __('messages.PackagesAndBundles')}}
                     <br/>
@@ -469,7 +456,7 @@
             <section>
                 <div class="Category-Product mt-4 justify-content-between">
                     <h3>{{$brand->Brand . " Products"}} </h3>
-                    <a href="{{route('Shop.index')}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                    <a href="{{route('Shop.Filter.brand' , $brand->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                 </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5">
                     @foreach($productsBrand as $product)

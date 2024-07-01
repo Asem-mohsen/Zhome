@@ -32,9 +32,9 @@ return [
     ],
 
     'google' => [
-        'client_id' => '673202749345-8voabpo6qcntjihfmlq4acudh7pl8o88.apps.googleusercontent.com',
-        // 'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => 'http://example.com/callback-url',
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRCT'),
     ],
 
 ];

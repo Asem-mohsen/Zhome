@@ -28,11 +28,6 @@ class CartContoller extends Controller
                     ->get();
 
         $total = 0;
-        // foreach ($cartItems as $item) {
-        //     $price = $item->product->sale_price ?? $item->product->price;
-        //     $item->subtotal = $price * $item->quantity;
-        //     $total += $item->subtotal;
-        // }
 
         $products = Product::all();
 

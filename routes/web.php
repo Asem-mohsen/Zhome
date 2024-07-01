@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 // Authentication
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\GoogleLoginController;
+use App\Http\Controllers\Auth\GoogleLoginController;
 
 // User
 use App\Http\Controllers\User\UserController;
@@ -65,7 +65,8 @@ Route::middleware('prevent.auth')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'register']);
 });
 
-Route::post('/google-login', [GoogleLoginController::class, 'handleGoogleLogin']);
+Route::get('/google-login',  [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
+Route::post('/google-login', [GoogleLoginController::class, 'handleGoogleLogin'])->name('auth.google.callback');
 
 
 // Admin Routes

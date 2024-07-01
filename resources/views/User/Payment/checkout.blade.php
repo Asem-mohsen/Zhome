@@ -4,8 +4,8 @@
 
 
 @section('Css')
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="{{asset('UI/css/bd-wizard.css')}}">
+
     <style>
         a{
             text-decoration: none !important;
@@ -97,9 +97,10 @@
                     height: 47px !important;
 
                 }
-                .product-checkout-page{
-                    width: 250px;
-                }
+                
+        }
+        .product-checkout-page{
+            width: 250px;
         }
     </style>
 @endsection
@@ -128,339 +129,329 @@
     <!-- Checkout form -->
     <section>
         <div class="container">
-                <div class="Checkout d-block">
-                    <!--Total Summary -->
-                    <div class="Summery">
-                        <div class="Receipt">
-                            <h4>{{ __('messages.ReceiptSummary')}}</h4>
-                            <!-- Product One -->
-                            <div class="smallSummary">
-                                @foreach($orders as $order)
-                                    <ul>
-                                        <!--Hidden Data-->
-                                        <form class="product-form">
-                                            <input class="OrdersID"         type="hidden" name="OrdersID"         value="{{$order->ID}}">
-                                            <input class="product-name"     type="hidden" name="product-name"     value="{{$order->product->Name}}">
-                                            <input class="product-quantity" type="hidden" name="product-quantity" value="{{$order->Quantity}}">
-                                            <input class="product-price"    type="hidden" name="product-price"    value="{{$order->SavedPrice}}">
-                                        </form>
-                                        <div class="product-checkout-page">
-                                            <img src="{{asset('Admin/dist/img/web/Products/MainImage/' . $order->product->MainImage)}}" alt="{{$order->product->Name}}">
-                                            <div>
-                                                <li>{{$order->product->Name}}</li>
-                                                <li>x{{$order->Quantity}}    </li>
-                                                <li>{{ __('messages.Price') . $order->product->Price . " EGP"}}</li>
-                                                @if($order->WithInstallation != 0)
-                                                    <li>{{ __('messages.InstallationPrice') . $order->product->InstallationCost . " EGP" }}</li>
-                                                @endif
-                                                @if($order->product->sale)
-                                                    <li>{{ __('messages.Saved') . $order->product->sale->PriceAfter . " EGP" }}</li>
-                                                @endif
-                                            </div>
+            <div class="Checkout d-block">
+                <!--Total Summary -->
+                <div class="Summery">
+                    <div class="Receipt">
+                        <h4>{{ __('messages.ReceiptSummary')}}</h4>
+                        <!-- Product One -->
+                        <div class="smallSummary">
+                            @foreach($orders as $order)
+                                <ul>
+                                    <div class="product-checkout-page">
+                                        <img src="{{asset('Admin/dist/img/web/Products/MainImage/' . $order->product->MainImage)}}" alt="{{$order->product->Name}}">
+                                        <div>
+                                            <li>{{$order->product->Name}}</li>
+                                            <li>x{{$order->Quantity}}    </li>
+                                            <li>{{ __('messages.Price'). " "  . $order->Price . " EGP"}}</li>
+                                            @if($order->WithInstallation != 0)
+                                                <li>{{ __('messages.InstallationPrice') . $order->product->InstallationCost . " EGP" }}</li>
+                                            @endif
+                                            @if($order->product->sale)
+                                                <li>{{ __('messages.Saved') . ": " . ($order->Product->Price - $order->product->sale->PriceAfter). " EGP" }}</li>
+                                            @endif
                                         </div>
-                                    </ul>
-                                @endforeach
-                            </div>
+                                    </div>
+                                </ul>
+                            @endforeach
                         </div>
-                        
-
-                        <p id="deliveryFees"></p>
-                        <h6 id="promocode-div" style="display:none;">{{ __('messages.Promocode') }} <span id="promocode"></span></h6>
-                        <h6 id="FinalBeforePromoHide">{{ __('messages.Total') .  " EGP" }}</h6>
-                        <h6 id="TotalWithDelivery"></h6>
-                        <h6 id="FinalCheckoutHide" style="display:none;">{{ __('messages.Total') }} <span id="FinalCheckout"></span></h6>
-                        <input type="hidden" name="TotalCheckout" id="TotalCheckout" value="" readonly>
-                        <input type="hidden" name="TotalCheckoutAfterPromo" id="TotalCheckoutAfterPromo" value="" readonly>
-                        <input type="hidden" name="deliveryFeesValue" id="deliveryFeesValue" readonly>
                     </div>
+                    
+                    <p id="deliveryFees"></p>
+                    <h6 id="promocode-div" style="display:none;">{{ __('messages.Promocode') }} <span id="promocode"></span></h6>
+                    <h6 id="FinalBeforePromoHide"></h6>
+                    <h6 id="FinalCheckoutHide" style="display:none;">{{ __('messages.Total') }} <span id="FinalCheckout"></span></h6>
+                    <input type="hidden" id="deliveryFeesValue" value="">
+                    <input type="hidden" id="TotalCheckout" value="">
+                    <input type="hidden" id="TotalCheckoutAfterPromo" value="">
+                </div>
 
-                    <div id="wizard">
-                        <input type="hidden" id="SessionExists" value="@if(Auth::guard('web')->check()) {{1}} @else {{0}} @endif" >
-                        <!--User Info-->
-                        <h3>Step 1 Title</h3>
-                        <section>
-                            <div class="Userform">
+                <div id="wizard" class="mb-4">
+                    @if(Auth::guard('web')->check()) 
+                        <input type="hidden" id="SessionExists" value="1">
+                    @endif
+                    
+                    <!--User Info-->
+                    <h3>Step 1 Title</h3>
+                    <section>
+                        <div class="Userform">
 
-                                <h4>{{ __('messages.ContactInformation')}}</h4>
-                                @if(Auth::guard('web')->check())
+                            <h4>{{ __('messages.ContactInformation')}}</h4>
+                            @if(Auth::guard('web')->check())
 
-                                    <div class="row">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="UserName" class="form-control-label">{{ __('messages.CheckoutName')}}</label>
+                                            @if(!Auth::guard('web')->check() || (Auth::guard('web')->check() && $userData->is_verified == 0))
+                                                <input class="form-control" id="UserName" type="text" name="Name" value="{{ $userData->Name ?? '' }}" autocomplete="off">
+                                            @else
+                                                <input class="form-control" id="UserName" type="text" name="Name" value="{{ $userData->Name ?? '' }}" autocomplete="off" disabled>
+                                            @endif
+                                            {{-- @if($user->is_verified && $user->is_verified == 0 )
+                                                <input class="form-control" id="UserName" type="text" name="Name" value="@if($user->Name) {{ $user->Name }}" autocomplete="off" >
+                                            @else
+                                                <input class="form-control" id="UserName" type="text" name="Name" value="@if($user->Name) {{ $user->Name }}" autocomplete="off" disabled>
+                                            @endif --}}
+
+                                            <input class="form-control" id="FirstName" type="hidden" name="FirstName" value="{{$firstName}}">
+                                            <input class="form-control" id="LastName"  type="hidden" name="LastName" value="{{$lastName}}" >
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="UserEmail" class="form-control-label">{{ __('messages.CheckoutEmail')}}</label>
+                                            {{-- @if($user->is_verified && $user->is_verified == 0 )
+                                                <input class="form-control" id="UserEmail" type="email"  name="Email" value="@if($user->email) {{ $user->email }}" autocomplete="off">
+                                            @else
+                                                <input class="form-control" id="UserEmail" type="email"  value="@if($user->email) {{ $user->email }}" autocomplete="off" disabled>
+                                            @endif --}}
+                                            @if(!Auth::guard('web')->check() || (Auth::guard('web')->check() && $userData->is_verified == 0))
+                                                <input class="form-control" id="UserEmail" type="email" name="email" value="{{ $userData->email ?? '' }}" autocomplete="off">
+                                            @else
+                                                <input class="form-control" id="UserEmail" type="email" value="{{ $userData->email ?? '' }}" autocomplete="off" disabled>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="UserMainAddress" class="form-control-label">{{ __('messages.CheckoutAddress')}}</label>
+                                            <textarea class="form-control" id="UserMainAddress" name="Address" >{{ $userData->Address ?? '' }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="UserPhone" class="form-control-label">{{ __('messages.CheckoutPhone')}}</label>
+                                            <input class="form-control" id="UserPhone" type="number"  name="Phone" value="@if (isset($userData->Phone)) {{ '0' . $userData->Phone }} @endif">                                                        
+                                        </div>
+                                    </div>
+                                </div>
+
+                            @else
+
+                                <div class="DarkShadow">
+                                    <div id="signInOverlay" class="overlaySignIn">
+                                        <div class="cardOverlay" id="signInCard">
+                                            <h2>{{ __('messages.ZhomeCommunity')}}</h2>
+                                            <p style="font-size: 13px;">{{ __('messages.ZhomeCommunityText')}}</p>
+                                            <div class="Div-Overlay-Sign">
+                                                <div class="InnerDiv-Overlay">
+                                                    <a href="{{route('login')}}" class="ButtonSignInOverlay"><img src="{{asset('UI/Imgs/website/Cart/refer.png')}}" alt="Sign In"></a>
+                                                    <p class="small-txt">{{ __('messages.HaveAccount')}}</p>
+                                                </div>
+                                                <div class="InnerDiv-Overlay">
+                                                    <a href="{{route('register')}}" class="ButtonSignUpOverlay"><img src="{{asset('UI/Imgs/website/Cart/add-user.png')}}" alt="Sign Up"></a>
+                                                    <p class="small-txt">{{ __('messages.ZhomeCommunityNewUser')}} </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="UserName" class="form-control-label">{{ __('messages.CheckoutName')}}</label>
-                                                @if(!Auth::guard('web')->check() || (Auth::guard('web')->check() && $userData->is_verified == 0))
-                                                    <input class="form-control" id="UserName" type="text" name="Name" value="{{ $userData->Name ?? '' }}" autocomplete="off">
-                                                @else
-                                                    <input class="form-control" id="UserName" type="text" name="Name" value="{{ $userData->Name ?? '' }}" autocomplete="off" disabled>
-                                                @endif
-                                                {{-- @if($user->is_verified && $user->is_verified == 0 )
-                                                    <input class="form-control" id="UserName" type="text" name="Name" value="@if($user->Name) {{ $user->Name }}" autocomplete="off" >
-                                                @else
-                                                    <input class="form-control" id="UserName" type="text" name="Name" value="@if($user->Name) {{ $user->Name }}" autocomplete="off" disabled>
-                                                @endif --}}
-
-                                                <input class="form-control" id="FirstName" type="hidden" name="FirstName" value="{{$firstName}}">
-                                                <input class="form-control" id="LastName"  type="hidden" name="LastName" value="{{$lastName}}" >
-
+                                                <label for="FirstName" class="form-control-label">{{ __('messages.FirstName')}}</label>
+                                                <input class="form-control" id="FirstName" type="text" name="FirstName" autocomplete="off" value="{{$firstName}}"  disabled>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="UserEmail" class="form-control-label">{{ __('messages.CheckoutEmail')}}</label>
-                                                {{-- @if($user->is_verified && $user->is_verified == 0 )
-                                                    <input class="form-control" id="UserEmail" type="email"  name="Email" value="@if($user->email) {{ $user->email }}" autocomplete="off">
-                                                @else
-                                                    <input class="form-control" id="UserEmail" type="email"  value="@if($user->email) {{ $user->email }}" autocomplete="off" disabled>
-                                                @endif --}}
-                                                @if(!Auth::guard('web')->check() || (Auth::guard('web')->check() && $userData->is_verified == 0))
-                                                    <input class="form-control" id="UserEmail" type="email" name="email" value="{{ $userData->email ?? '' }}" autocomplete="off">
-                                                @else
-                                                    <input class="form-control" id="UserEmail" type="email" value="{{ $userData->email ?? '' }}" autocomplete="off" disabled>
-                                                @endif
+                                                <label for="LastName" class="form-control-label">{{ __('messages.LastName')}}</label>
+                                                <input class="form-control" id="LastName" type="text" name="LastName" autocomplete="off" value="{{$lastName}}"  disabled>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
+
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="UserMainAddress" class="form-control-label">{{ __('messages.CheckoutAddress')}}</label>
-                                                <textarea class="form-control" id="UserMainAddress" name="Address" >{{ $userData->Address ?? '' }}</textarea>
+                                                <label for="UserEmail" class="form-control-label">{{ __('messages.CheckoutEmail')}}</label>
+                                                <input class="form-control" id="UserEmail" type="email"  name="email" autocomplete="off" value="{{ $userData->email ?? '' }}" disabled >
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="UserPhone" class="form-control-label">{{ __('messages.CheckoutPhone')}}</label>
-                                                <input class="form-control" id="UserPhone" type="number"  name="Phone" value="@if (isset($userData->Phone)) {{ '0' . $userData->Phone }} @endif">                                                        
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                @else
-
-                                    <div class="DarkShadow">
-                                        <div id="signInOverlay" class="overlaySignIn">
-                                            <div class="cardOverlay" id="signInCard">
-                                                <h2>{{ __('messages.ZhomeCommunity')}}</h2>
-                                                <p style="font-size: 13px;">{{ __('messages.ZhomeCommunityText')}}</p>
-                                                <div class="Div-Overlay-Sign">
-                                                    <div class="InnerDiv-Overlay">
-                                                        <a href="{{route('login')}}" class="ButtonSignInOverlay"><img src="{{asset('UI/Imgs/website/Cart/refer.png')}}" alt="Sign In"></a>
-                                                        <p class="small-txt">{{ __('messages.HaveAccount')}}</p>
-                                                    </div>
-                                                    <div class="InnerDiv-Overlay">
-                                                        <a href="{{route('register')}}" class="ButtonSignUpOverlay"><img src="{{asset('UI/Imgs/website/Cart/add-user.png')}}" alt="Sign Up"></a>
-                                                        <p class="small-txt">{{ __('messages.ZhomeCommunityNewUser')}} </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="FirstName" class="form-control-label">{{ __('messages.FirstName')}}</label>
-                                                    <input class="form-control" id="FirstName" type="text" name="FirstName" autocomplete="off" value="{{$firstName}}"  disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="LastName" class="form-control-label">{{ __('messages.LastName')}}</label>
-                                                    <input class="form-control" id="LastName" type="text" name="LastName" autocomplete="off" value="{{$lastName}}"  disabled>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="UserEmail" class="form-control-label">{{ __('messages.CheckoutEmail')}}</label>
-                                                    <input class="form-control" id="UserEmail" type="email"  name="email" autocomplete="off" value="{{ $userData->email ?? '' }}" disabled >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="UserPhone" class="form-control-label">{{ __('messages.CheckoutPhone')}}</label>
-                                                    <input class="form-control" id="UserPhone" type="number"  name="Phone" autocomplete="off" value="@if (isset($userData->Phone)) {{ '0' . $userData->Phone }} @endif" disabled>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="UserCity" class="form-control-label">{{ __('messages.City')}}</label>
-                                                    <input class="form-control" id="UserCity" type="text"  name="City" value="{{ $userData->City ?? '' }}" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="UserCountry" class="form-control-label">{{ __('messages.Country')}}</label>
-                                                    <input class="form-control" id="UserCountry" type="text"  name="Country" value="{{ $userData->Country ?? '' }}" disabled>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <label for="UserAddress" class="form-control-label">{{ __('messages.CheckoutAddress')}}</label>
-                                                    <textarea class="form-control" id="UserAddress" name="Address" disabled>{{ $userData->Address ?? '' }}</textarea>
-                                                </div>
-                                            </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="UserBuilding" class="form-control-label">{{ __('messages.Building')}}</label>
-                                                    <input class="form-control" id="UserBuilding" type="text"  name="Building" value="{{ $userData->Building ?? '' }}" disabled >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="UserFloor" class="form-control-label">{{ __('messages.Floor')}}</label>
-                                                    <input class="form-control" id="UserFloor" type="number"  name="Floor" value="{{ $userData->Floor ?? '' }}" disabled>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="UserApartment" class="form-control-label">{{ __('messages.Apartment')}}</label>
-                                                    <input class="form-control" id="UserApartment" type="number"  name="Apartment" value="{{ $userData->Apartment ?? '' }}" disabled>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                @endif
-
-                            </div>
-                        </section>
-
-                        <!--Address-->
-                        <h3>Step 2 Title</h3>
-                        <section>
-                            <div class="Userform">
-                                <h4>{{ __('messages.ShippingInformation')}}</h4>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="UserShippingAddress" class="form-control-label">{{ __('messages.CheckoutAddress')}}</label>
-                                                <textarea class="form-control" id="UserShippingAddress" name="UserShippingAddress" data-original-value="{{ $userData->UserShippingAddress ?? '' }}"></textarea>
+                                                <input class="form-control" id="UserPhone" type="number"  name="Phone" autocomplete="off" value="@if (isset($userData->Phone)) {{ '0' . $userData->Phone }} @endif" disabled>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
+
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="UserCountry">Country</label>
-                                                <select name="Country" id="UserCountry" class="form-control">
-                                                    @if(isset($userData->Country))
-                                                        <option value="{{$userData->Country}}" selected>{{$userData->Country}}</option>
-                                                    @else
-                                                        <option disabled selected hidden>{{ __('messages.SelectCountry')}}</option>
-                                                    @endif
-                                                        <option value="United Arab Emarits">United Arab Emarits</option>
-                                                        <option value="Egypt">Egypt</option>
-                                                </select>
+                                                <label for="UserCity" class="form-control-label">{{ __('messages.City')}}</label>
+                                                <input class="form-control" id="UserCity" type="text"  name="City" value="{{ $userData->City ?? '' }}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="UserCity">City</label>
-                                                <select name="City" id="UserCity" class="form-control">
-                                                    @if(isset($userData->City))
-                                                        <option value="{{$userData->City}}" selected>{{$userData->City}}</option>
-                                                    @else
-                                                        <option disabled selected hidden>{{ __('messages.SelectCity')}}</option>
-                                                    @endif
-                                                </select>
+                                                <label for="UserCountry" class="form-control-label">{{ __('messages.Country')}}</label>
+                                                <input class="form-control" id="UserCountry" type="text"  name="Country" value="{{ $userData->Country ?? '' }}" disabled>
                                             </div>
                                         </div>
+
                                     </div>
+                                    <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="UserAddress" class="form-control-label">{{ __('messages.CheckoutAddress')}}</label>
+                                                <textarea class="form-control" id="UserAddress" name="Address" disabled>{{ $userData->Address ?? '' }}</textarea>
+                                            </div>
+                                        </div>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="UserBuilding" class="form-control-label">{{ __('messages.Building')}}</label>
-                                                    <input class="form-control" id="UserBuilding" type="text"  name="Building" data-original-value="{{ $userData->Building ?? '' }}" value="{{ $userData->Building ?? '' }}" >
+                                                <input class="form-control" id="UserBuilding" type="text"  name="Building" value="{{ $userData->Building ?? '' }}" disabled >
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="UserFloor" class="form-control-label">{{ __('messages.Floor')}}</label>
-                                                <input class="form-control" id="UserFloor" type="text"  name="Floor" data-original-value="{{ $userData->Floor ?? '' }}" value="{{ $userData->Floor ?? '' }}" >
+                                                <input class="form-control" id="UserFloor" type="number"  name="Floor" value="{{ $userData->Floor ?? '' }}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="UserApartment" class="form-control-label">{{ __('messages.Apartment')}}</label>
-                                                <input class="form-control" id="UserApartment" type="text"  name="Apartment" data-original-value="{{ $userData->Apartment ?? '' }}" value="{{ $userData->Apartment ?? '' }}" >
+                                                <input class="form-control" id="UserApartment" type="number"  name="Apartment" value="{{ $userData->Apartment ?? '' }}" disabled>
                                             </div>
                                         </div>
+
                                     </div>
-
-                            </div>
-                        </section>
-
-                        <!--Promocode-->
-                        <h3>Step 3 Title</h3>
-                        <section>
-                            <h4 class="text-center mb-5" style="font-size: 30px;">{{ __('messages.Promocode')}}</h4>
-                            <div class="PromocodeInput">
-                                <div class="form-group d-flex align-items-center">
-                                    <input class="form-control" type="text" id="promoCodeInput" name="Promocode" placeholder="{{ __('messages.Promocode')}}" autocomplete="off">
-                                    <button class="btn btn-primary p-2" type="submit" id="checkPromoCodeButton" onclick="applyPromoCode()">{{ __('messages.Check')}}</button>
                                 </div>
-                                <div id="successPopup" class="popup">
-                                    <img src="{{asset('UI/Imgs/website/Cart/check.png')}}" alt="Success">
-                                    <p>{{ __('messages.PromocodeApplied')}}</p>
-                                </div>
-                            </div>
-                        </section>
 
-                        <!--Payment-->
-                        <h3>Step 4 Title</h3>
-                        <section>
-                            <h4 class="text-center mb-5" style="font-size: 30px;">{{ __('messages.PaymentOptions')}}</h4>
-                            <form method="post">
-                                @if(Auth::guard('web')->check())
-                                    <div class="PayNow">
-                                        <div class="PayWithCardButton" onclick="checkout()" id="checkoutButton">
-                                            <div class="left-side">
-                                                <div class="card">
-                                                    <div class="card-line"></div>
-                                                    <div class="buttons"></div>
-                                                </div>
-                                                <div class="post">
-                                                    <div class="post-line"></div>
-                                                    <div class="screen">
-                                                        <div class="dollar">$</div>
-                                                    </div>
-                                                    <div class="numbers"></div>
-                                                    <div class="numbers-line2"></div>
-                                                </div>
+                            @endif
+
+                        </div>
+                    </section>
+
+                    <!--Address-->
+                    <h3>Step 2 Title</h3>
+                    <section>
+                        <div class="Userform">
+                            <h4>{{ __('messages.ShippingInformation')}}</h4>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="UserShippingAddress" class="form-control-label">{{ __('messages.CheckoutAddress')}}</label>
+                                            <textarea class="form-control" id="UserShippingAddress" name="UserShippingAddress" data-original-value="{{ $userData->UserShippingAddress ?? '' }}"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="UserCountry">Country</label>
+                                            <select name="Country" id="UserCountry" class="form-control">
+                                                @if(isset($userData->Country))
+                                                    <option value="{{$userData->Country}}" selected>{{$userData->Country}}</option>
+                                                @else
+                                                    <option disabled selected hidden>{{ __('messages.SelectCountry')}}</option>
+                                                @endif
+                                                    <option value="United Arab Emarits">United Arab Emarits</option>
+                                                    <option value="Egypt">Egypt</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="UserCity">City</label>
+                                            <select name="City" id="UserCity" class="form-control">
+                                                @if(isset($userData->City))
+                                                    <option value="{{$userData->City}}" selected>{{$userData->City}}</option>
+                                                @else
+                                                    <option disabled selected hidden>{{ __('messages.SelectCity')}}</option>
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="UserBuilding" class="form-control-label">{{ __('messages.Building')}}</label>
+                                                <input class="form-control" id="UserBuilding" type="text"  name="Building" data-original-value="{{ $userData->Building ?? '' }}" value="{{ $userData->Building ?? '' }}" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="UserFloor" class="form-control-label">{{ __('messages.Floor')}}</label>
+                                            <input class="form-control" id="UserFloor" type="text"  name="Floor" data-original-value="{{ $userData->Floor ?? '' }}" value="{{ $userData->Floor ?? '' }}" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="UserApartment" class="form-control-label">{{ __('messages.Apartment')}}</label>
+                                            <input class="form-control" id="UserApartment" type="text"  name="Apartment" data-original-value="{{ $userData->Apartment ?? '' }}" value="{{ $userData->Apartment ?? '' }}" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                    </section>
+
+                    <!--Promocode-->
+                    <h3>Step 3 Title</h3>
+                    <section>
+                        <h4 class="text-center mb-5" style="font-size: 30px;">{{ __('messages.Promocode')}}</h4>
+                        <div class="PromocodeInput">
+                            <div class="form-group d-flex align-items-center">
+                                <input class="form-control" type="text" id="promoCodeInput" name="Promocode" placeholder="{{ __('messages.Promocode')}}" autocomplete="off">
+                                <button class="btn btn-primary p-2" type="submit" id="checkPromoCodeButton" onclick="applyPromoCode()">{{ __('messages.Check')}}</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!--Payment-->
+                    <h3>Step 4 Title</h3>
+                    <section>
+                        <h4 class="text-center mb-5" style="font-size: 30px;">{{ __('messages.PaymentOptions')}}</h4>
+                        <form method="post">
+                            @if(Auth::guard('web')->check())
+                                <div class="PayNow">
+                                    <div class="PayWithCardButton" onclick="checkout()" id="checkoutButton">
+                                        <div class="left-side">
+                                            <div class="card">
+                                                <div class="card-line"></div>
+                                                <div class="buttons"></div>
                                             </div>
-                                            <div class="right-side">
-                                                <div class="new">{{ __('messages.PaywithCard')}}</div>
+                                            <div class="post">
+                                                <div class="post-line"></div>
+                                                <div class="screen">
+                                                    <div class="dollar">$</div>
+                                                </div>
+                                                <div class="numbers"></div>
+                                                <div class="numbers-line2"></div>
                                             </div>
                                         </div>
-                                        <button class="button-COD" style="--clr: #00ad54;" onclick="COD()"  id="CODButton">
-                                            <span class="button-decor"></span>
-                                            <div class="button-content">
-                                                <div class="button__icon">
-                                                    <img src="{{asset('UI/Imgs/website/Cart/cash-on-delivery.png')}}" alt="Cash on Delivery">
-                                                </div>
-                                                <span class="button__text">{{ __('messages.CashOnDelivery')}}</span>
-                                            </div>
-                                        </button>
+                                        <div class="right-side">
+                                            <div class="new">{{ __('messages.PaywithCard')}}</div>
+                                        </div>
                                     </div>
-                                @endif
-                            </form>
-                        </section>
-                    </div>
-
-                    <div class="ZhomeLogoCheckout">
-                        <p>Zhome</p>
-                    </div>
-
+                                    <button class="button-COD" style="--clr: #00ad54;" onclick="COD()"  id="CODButton">
+                                        <span class="button-decor"></span>
+                                        <div class="button-content">
+                                            <div class="button__icon">
+                                                <img src="{{asset('UI/Imgs/website/Cart/cash-on-delivery.png')}}" alt="Cash on Delivery">
+                                            </div>
+                                            <span class="button__text">{{ __('messages.CashOnDelivery')}}</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            @endif
+                        </form>
+                    </section>
                 </div>
+
+                <div class="ZhomeLogoCheckout">
+                    <p>Zhome</p>
+                </div>
+
+            </div>
         </div>
     </section>
 
@@ -485,6 +476,7 @@
     <script src="{{asset('UI/js/jquery.steps.min.js')}}"></script>
     <script src="{{asset('UI/js/bd-wizard-cart.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
     <script>
         //  Code to update inputs ontime
         // document.addEventListener('DOMContentLoaded', function () {
@@ -500,117 +492,27 @@
         //     });
 
         // });
-
-        // Hide success of promocode
-        function hideSuccessPopup() {
-            $('#successPopup').hide();
-        }
     </script>
 
     <script>
+
         let totalPrice = {{ $total }};
         let promoCodeDiscount = 0;
         let deliveryCost = 0;
-
-        function updateTotalPrice() {
-            displayTotalPrice();
-        }
-
-        function updateRowTotal(row) {
-            const quantity = parseInt(row.querySelector('.Quantity').value);
-            const price = parseFloat(row.querySelector('.ProductPrice').value);
-            const installmentCheckbox = row.querySelector('.installmentPriceCheckbox');
-            const installmentPrice = installmentCheckbox && installmentCheckbox.checked ? parseFloat(installmentCheckbox.value) : 0;
-
-            let total = quantity * price + installmentPrice;
-            row.querySelector('.SubTotal').textContent = total.toFixed(2) + ' EGP';
-            return total;
-        }
-
-        function applyPromoCode() {
-            const promoCodeInput = document.getElementById('promoCodeInput');
-            const promoCode = promoCodeInput.value;
-
-            if (promoCode) {
-                axios.post('/Checkout/check-promo-code', { promoCode: promoCode, totalPrice: totalPrice })
-                    .then(response => {
-                        promoCodeDiscount = response.data.discount;
-                        document.getElementById('promocode').textContent = promoCodeDiscount.toFixed(2) + ' EGP';
-                        document.getElementById('promocode-div').style.display = 'block';
-                        displayTotalPrice();
-                    })
-                    .catch(error => {
-                        console.error('Error checking promo code:', error);
-                        promoCodeDiscount = 0;
-                        document.getElementById('promocode').textContent = '0.00 EGP';
-                        document.getElementById('promocode-div').style.display = 'none';
-                        displayTotalPrice();
-                    });
-            } else {
-                promoCodeDiscount = 0;
-                document.getElementById('promocode').textContent = '0.00 EGP';
-                document.getElementById('promocode-div').style.display = 'none';
-                displayTotalPrice();
-            }
-        }
-
-        function applyDeliveryCost() {
-            const citySelect = document.getElementById('UserCity');
-            const selectedCity = citySelect.value;
-
-            if (selectedCity) {
-                axios.post('/Checkout/get-delivery-cost', { city: selectedCity })
-                    .then(response => {
-                        deliveryCost = response.data.deliveryCost;
-                        document.getElementById('deliveryFees').textContent ="Delivery Fees: " + deliveryCost.toFixed(2) + ' EGP';
-                        document.getElementById('deliveryFeesValue').value = deliveryCost.toFixed(2);
-                        displayTotalPrice();
-                    })
-                    .catch(error => {
-                        console.error('Error getting delivery cost:', error);
-                        deliveryCost = 0;
-                        document.getElementById('deliveryFees').style.display = 'none'
-                        document.getElementById('deliveryFees').textContent = '0.00 EGP';
-                        document.getElementById('deliveryFeesValue').value = '0.00';
-                        displayTotalPrice();
-                    });
-            } else {
-                deliveryCost = 0;
-                document.getElementById('deliveryFees').style.display = 'none'
-                document.getElementById('deliveryFees').textContent = '0.00 EGP';
-                document.getElementById('deliveryFeesValue').value = '0.00';
-                displayTotalPrice();
-            }
-        }
-
-        function displayTotalPrice() {
-            const finalTotal = totalPrice - promoCodeDiscount + deliveryCost;
-            var messages = {
-                total: "{{ __('messages.Total') }}",
-                totalWithDelivery: "{{ __('messages.TotalWithDelivery') }}"
-            };
-            document.getElementById('FinalBeforePromoHide').textContent = messages.total + ` ${totalPrice.toFixed(2)} EGP`;
-            document.getElementById('TotalWithDelivery').style.display =(deliveryCost > 0) ? 'block' : 'none' ;
-            document.getElementById('TotalWithDelivery').textContent = messages.totalWithDelivery + ` ${(totalPrice + deliveryCost).toFixed(2)} EGP`;
-            document.getElementById('FinalCheckout').textContent = `${finalTotal.toFixed(2)} EGP`;
-            document.getElementById('FinalCheckoutHide').style.display = (promoCodeDiscount > 0 || deliveryCost > 0) ? 'block' : 'none';
-            document.getElementById('TotalCheckout').value = totalPrice.toFixed(2);
-            document.getElementById('TotalCheckoutAfterPromo').value = finalTotal.toFixed(2);
-        }
+        var messages = {
+            total: "{{ __('messages.Total') }}",
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.Quantity, .installmentPriceCheckbox').forEach(elem => {
-                elem.addEventListener('change', updateTotalPrice);
-            });
-
             document.getElementById('promoCodeInput').addEventListener('change', applyPromoCode);
             document.getElementById('UserCity').addEventListener('change', applyDeliveryCost);
 
-            updateTotalPrice();
+            displayTotalPrice();
         });
-    </script>
-    <script>
 
+    </script>
+
+    <script>
         $(document).ready(function () {
             var manualCities = {
                 "United States of America": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"],

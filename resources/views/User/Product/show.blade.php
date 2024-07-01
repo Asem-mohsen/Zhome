@@ -194,7 +194,7 @@
                                 </p>
                                 <p class="product-details__categories">
                                     <span class="text-uppercase"> {{ __('messages.Category')}} </span>
-                                    <a href="{{route('Category.show' , $product->subcategory->category->ID )}}">
+                                    <a href="{{route('Shop.Filter.category' , $product->subcategory->category->ID )}}">
                                         @if(App::getLocale() == 'ar')
                                             {{$product->subcategory->category->ArabicName }}
                                         @else
@@ -210,10 +210,10 @@
                                 <div class="product-details__button-block d-grid gap-1">
                                     <input type='hidden' name='Quantity' value="{{$product->Quantity}}" />
                                     @if($product->Quantity > 0)
-                                        <input class="quantity-spinner" type="text" min="1" value="1" name="quantity">
-                                        <button name='Add_Cart_ProductPageTop' class="thm-btn product-details__cart-btn">{{ __('messages.AddtoCart')}} <span>+</span></button>
+                                        <input class="quantity-spinner" type="text" min="1" value="1" name="quantity" id="quantity-{{ $product->ID }}">
+                                        <button onclick="addToCart({{ $product->ID }}, {{ $product->sale  ? $product->sale->PriceAfter : $product->Price }}, {{ $product->InstallationCost ?? 0 }})" class="thm-btn product-details__cart-btn">{{ __('messages.AddtoCart')}} <span>+</span></button>
                                     @elseif($product->Quantity <= 0)
-                                        <p class='OutStock'> {{ __('messages.OutOfStock')}} </p>
+                                        <p class='OutStock'> {{ __('messages.OutofStock')}} </p>
                                     @endif
                                 </div>
                                 @if($product->Quantity > 0)
@@ -224,13 +224,13 @@
                                 @else
                                     <p class="product-details__availabelity">
                                         <span>{{ __('messages.Availability')}}</span>
-                                        <span style='color: red;'>  <i class='fa-solid fa-xmark'  style='color: red;'></i> {{ __('messages.CurrentlyOutofstock')}} </span>
+                                        <span style='color: red;'><i class='fa-solid fa-xmark' style='color: red;'></i> {{ __('messages.CurrentlyOutofstock')}} </span>
                                     </p>
                                 @endif
 
                                 <div class="Product-Platforms DisplayFlex">
                                     @foreach($product->platforms as $platform)
-                                        <a href="{{route('Platform.edit' , $platform->ID )}}">
+                                        <a href="{{route('Shop.Filter.platform' , $platform->ID)}}">
                                             <div class="platform">
                                                 <img src="{{ asset("Admin/dist/img/web/Platforms/{$platform->Logo}") }}" alt="{{$platform->Platform}}">
                                                 <p>{{$platform->Platform}}</p>
@@ -287,7 +287,7 @@
                                     <div class="bottom-text">
                                         <div class="Product-Platforms">
                                             @foreach($product->platforms as $platform)
-                                                <a href="{{route('Platform.edit' , $platform->ID )}}">
+                                                <a href="{{route('Shop.Filter.platform' , $platform->ID)}}">
                                                     <div class="platform">
                                                         <img src="{{ asset("Admin/dist/img/web/Platforms/{$platform->Logo}") }}" alt="{{$platform->Platform}}">
                                                         <p>{{$platform->Platform}}</p>
@@ -440,9 +440,9 @@
                                     @endif
 
                                     @if($product->Quantity > 0)
-                                        <button name='Add_Product_ProductPage' data-toggle="tooltip" data-placement="top" class="thm-btn product-details__cart-btn"> {{ __('messages.AddtoCart')}}</button>
+                                        <button onclick="addToCart({{ $product->ID }}, {{ $product->sale  ? $product->sale->PriceAfter : $product->Price }}, {{ $product->InstallationCost ?? 0 }})" data-toggle="tooltip" data-placement="top" class="thm-btn product-details__cart-btn"> {{ __('messages.AddtoCart')}}</button>
                                     @elseif($product->Quantity <= 0)
-                                        <p class='OutStock text-center' style='font-size: 20px;'> {{ __('messages.OutOfStock')}}</p>
+                                        <p class='OutStock text-center' style='font-size: 20px;'> {{ __('messages.OutofStock')}}</p>
                                     @endif
                                 </div>
                         </div>
@@ -615,9 +615,7 @@
 
                     @foreach($products as $product)
                         <div class="item">
-                            <a href="{{ route('Product.show', $product->ID) }}">
-                                <x-user.product-card-user :variable="$product" :productID="$product->ID" />
-                            </a>
+                            <x-user.product-card-user :variable="$product" :productID="$product->ID" />
                         </div>
                     @endforeach
 
@@ -637,97 +635,5 @@
                 $('.product-details__img-popup').attr('href', imageUrl);
             });
         });
-    </script>
-        <!-- Add to Cart -->
-    <script>
-        $(document).ready(function() {
-            // Button in the top of the page
-            $('[name="Add_Cart_ProductPageTop"]').click(function() {
-                var button = $(this);
-                var quantitySpinner = $('.quantity-spinner');
-                var incrementdec = $('.bootstrap-touchspin-injected');
-                var selectedQuantity = quantitySpinner.val();
-
-                var ProductID = $(this).closest('.product-details').find('[name="ProductID"]').val();
-                var UserID = $(this).closest('.product-details.NearestDiv').find('[name="UserID"]').val();
-                var RegularPrice = $(this).closest('.product-details.NearestDiv').find('[name="Price"]').val();
-                var SalePrice = $(this).closest('.product-details__content').find('[name="PriceAfterSale"]').val();
-                var ProductName = $(this).closest('.product-details.NearestDiv').find('[name="ProductName"]').val();
-                var ProductImage = $(this).closest('.product-details.NearestDiv').find('[name="ProductImage"]').val();
-
-
-                var Price = SalePrice || RegularPrice;
-
-                // Send an AJAX request to add the product to the cart and update the database
-                $.ajax({
-                    method: 'POST',
-                    url: 'UserAjaxQuantity.php',
-                    data: {
-                        ProductID: ProductID,
-                        UserID: UserID,
-                        Price: (SalePrice ? SalePrice : RegularPrice),
-                        AddToCart: 1,
-                        Quantity: selectedQuantity
-                    },
-                    success: function(response) {
-                        updateCartCount();
-                        button.text('Added Successfully');
-                        quantitySpinner.hide();
-                        incrementdec.hide();
-                        updateCartProducts();
-                        button.prop('disabled', true); // Disable the button
-
-                        const productInfo = {
-                            name: ProductName,
-                            price: Price,
-                            image: ProductImage,
-                            quantity: selectedQuantity
-                        };
-                        addToCartDrop(productInfo);
-                    }
-                });
-            });
-
-            // Button In the Second Part
-            $('[name="Add_Product_ProductPage"]').click(function() {
-                var button = $(this);
-                // Get the product ID of the product that you want to add to the cart.
-                var ProductID = $(this).closest('.product-details').find('[name="ProductID"]').val();
-                var UserID = $(this).closest('.product-details.NearestDiv').find('[name="UserID"]').val();
-                var RegularPrice = $(this).closest('.product-details.NearestDiv').find('[name="Price"]').val();
-                    var SalePrice = $(this).closest('.product-details__content').find('[name="PriceAfterSale"]').val();
-                    var ProductName = $(this).closest('.product-details.NearestDiv').find('[name="ProductName"]').val();
-                var ProductImage = $(this).closest('.product-details.NearestDiv').find('[name="ProductImage"]').val();
-                // Send an AJAX request to add the product to the cart.
-                    var Price = SalePrice || RegularPrice;
-                $.ajax({
-                    method: 'POST',
-                    url: 'UserAjax.php',
-                    data: {
-                        ProductID: ProductID,
-                        UserID: UserID,
-                            Price: (SalePrice ? SalePrice : RegularPrice),
-                        AddToCart: 1,
-                        Quantity: 1
-                    },
-                    success: function(response) {
-                        updateCartCount();
-                        button.text('Added Successfully');
-                        button.prop('disabled', true);  // Disable the button to prevent multiple clicks
-                        updateCartProducts();
-                        const productInfo = {
-                            name: ProductName,
-                            price: Price,
-                            image: ProductImage
-                        };
-
-                        addToCartDrop(productInfo);
-                    }
-                });
-
-            });
-            updateCartCount();
-        });
-        updateCartCount();
     </script>
 @stop
