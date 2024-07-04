@@ -4,25 +4,18 @@
 @section('Content')
 <!-- Welcome  -->
 <section class="slider-one">
-    <style>
-        #ToolButton {
-            display:none;
-        }
-    </style>
-
     <div id="index-background" style="background-image: url({{asset('UI/Imgs/website/Home/Sliders/AlexaBlueGround.jpg')}});">
         <div class="parent-home">
             <p id="Welcome">{{ __('messages.Welcome')}}</p>
             <h1>{{ __('messages.Zhome')}}</h1>
             <p id="welcome-text">{{ __('messages.SliderTextTwo')}}</p>
-            
+
             <div class="parent-buttons">
                 <a href="{{route('Tools.index')}}" class="DesignButton">{{ __('messages.Design')}}</a>
                 <hr>
                 <a href="{{route('Shop.index')}}"  class="ShopButton">{{ __('messages.ShopNowButton')}}</a>
             </div>
         </div>
-        
     </div>
 </section>
 
@@ -208,7 +201,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- On Sale -->
             <div class="tab-pane fade" id="OnSale" role="tabpanel">
                 <div class="wrapper">
@@ -295,7 +288,7 @@
                 </svg>
             </a>
         </div>
-        
+
     </div>
 </section>
 
@@ -573,15 +566,14 @@
     <div class="container">
         <div class="Build">
             <div class="Products-home" style="background-image:url({{asset('UI/Imgs/website/Home/About/bence-boros-anapPhJFRhM-unsplash-3.png')}}">
-                <h3 style="color: black;font-weight: bold;">
+                <h3 class="fw-bold text-dark">
                     {{ __('messages.ShopTextHome')}}
                 </h3>
-                <a href="{{route('Shop.index')}}" class="buttonBlack">{{ __('messages.FunctionsShippingFourText')}}</a>
+                <a href="{{route('Shop.index')}}" class="buttonBlack">{{ __('messages.ShopNowButton')}}</a>
             </div>
             <div class="Products-home" style="background-image:url({{asset('UI/Imgs/website/Home/About/pexels-andrew-neel-2312369-3.png')}}">
                 <h3>
                     {{ __('messages.ToolTextHome')}}
-
                 </h3>
                 <a href="{{route('Tools.index')}}"> {{ __('messages.DiscoverOurToolButton')}}</a>
             </div>
@@ -672,9 +664,6 @@
         disableOnInteraction: false,
     },
     });
-</script>
-<script>
-    updateCartCount();
 </script>
 
 @stop

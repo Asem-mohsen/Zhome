@@ -30,22 +30,22 @@ return[
       'SliderButtonOne'=>'تصفح أدواتنا',
       'SliderButtonTwo'=> 'تصفح منتجاتنا',
       'Welcome'=>'أهلا بك في',
-      
+
       'ToolTextBelowSlider'=>'قم ببناء منزل ذكي للارتقاء باللحظات ذات المغزى',
       'GetYourDesignButton'=>'احصل علي تصميمك',
-      
+
       'DesignOnline'=>'صمم منزلك',
       'PersonalAdvice'=>'الدعم و الاستشارة',
       'ProfessionalInstallation'=>'فريق للتثبيت والدعم',
       'DesignOnlineText'=>'استخدم أداة ZHome عبر الإنترنت واتبع أسئلتنا البسيطة لتصميم نظامك المفضل في دقائق!',
       'PersonalAdviceText'=>'فريق الخبراء لدينا موجود للإجابة على جميع الأسئلة وتخصيص منزل أحلامك بشكل فردي.',
       'ProfessionalInstallationText'=>'اختر وقت التثبيت الماختر وقت التثبيت المفضل لديك، وسيقوم فريقنا ذو الخبرة بتثبيته لك دون أي متاعب!!',
-      
+
       'StartYourOwnSystem'=>'إنشئ نظامك الخاص ',
       'Recommendition'=>'اقتراحات',
       'BestSelling'=>'الافضل مبيعاً ',
       'OnSale'=>'خصومات',
-      'ShopNowButton' => 'تسوق الان',    
+      'ShopNowButton' => 'تسوق الان',
 
       'Testmonials'=> 'أراء العملاء',
       'AlaaAbdelghafar'=> 'تعاون رائع',
@@ -54,7 +54,7 @@ return[
       'SherifYoussefOpenion'=> 'لقد فوجئت حقًا بالعثور على منصة إلكترونية شفافة واحترافية مثل ZHome. إنهم يتمتعون بخبرة كبيرة وهم موجودون دائمًا من أجلي.',
       'OsamaElsayed'=> 'بسرعة وكفاءة',
       'OsamaElsayedOpenion'=> 'أحب تصميم النظام والسيناريوهات الخاصة بي، وهذا هو ما تدور حوله ZHome، لقد أعطوني النظام الأساسي المثالي لتخصيص وتصميم وتثبيت النظام المناسب لي دون أي مشاكل.',
-      
+
       'ControlYourHome'=>'تحكم في منزلك',
       'ControlHomeEnergy'=>'ادارة الطاقة',
       'ControlHomeEnergyText'=>'راقب دائمًا إنتاج الطاقة في نظامك الشمسي بالإضافة إلى استهلاكك للطاقة',
@@ -82,7 +82,7 @@ return[
       'ControlHomeIrrigationText'=>'راقب دائمًا إنتاج الطاقة في نظامك الشمسي بالإضافة إلى استهلاكك للطاقة',
       'ControlHomeElectrical'=>'التنظيف الكهربائي',
       'ControlHomeElectricalText'=>'راقب دائمًا إنتاج الطاقة في نظامك الشمسي بالإضافة إلى استهلاكك للطاقة',
-      
+
       'FunctionsExpertOne'=>'استشارة الخبراء',
       'FunctionsExpertOneText'=>'سيقدم لك الخبراء لدينا المشورة بشأن الحل الأفضل لمنزلك الذكي',
       'FunctionsGuaranteeTwo'=>'الضمان',
@@ -95,9 +95,9 @@ return[
       'DiscoverOurToolButton'=>'استكشف أداتنا',
       'ShopTextHome'=>'اكتشف منتجاتنا وحزمنا المصممة خصيصًا لمنزل أحلامك.',
       'ToolTextHome'=>' استخدم أداتنا المخصصة لبناء منزلك أو مكتبك في خطوات قليلة فقط.',
-      
+
       'ZhomeCompability'=>'متوافقين مع',
-      
+
        // Proposal
       'Step'=>'الخطوة ',
       'Step1Question'=>'أين يجب تركيب منزلك الذكي؟',
@@ -153,7 +153,7 @@ return[
       'Phone'=>'الرقم',
       'Finish'=>'انتهاء',
       'ProposalSucess'=>'لقد تم ملئ الاستبيان بنجاح, سنقوم بالرد عليك في أسرع وقت ممكن',
-      
+
       //SignIn
       'LoginToYourAccount'=>'تسجيل الحساب الشخصي',
       'NewMember'=>'عضو جديد ؟',
@@ -166,8 +166,8 @@ return[
       'AccountNotExist'=>'الحساب غير موجود',
       'DeactivatedAccount'=>'الحساب غير مفعل ',
       'LogWithFacebook'=> 'أكمل مع فيسبوك',
-      
-      //SignUp   
+
+      //SignUp
       'CreateYourAccount'=>'انشئ حسابك الشخصي',
       'HaveAccount'=>'هل لديك حساب ؟',
       'UserName'=>'الاسم',
@@ -182,14 +182,14 @@ return[
       'PatternEmail'=>'مسموح فقط بالحروف والمسافات',
       'UserExist'=>'الحساب موجود بالفعل',
       'SignupFacebook'=> 'أكمل مع فيسبوك',
-      
+
       //Forget anf Verify
       'ResetPassword'=> 'تغيير كلمة السر',
       'SendEmail'=>'أرسل بريد الكتروني',
       'PasswordResetLink'=>'تم إرسال رابط إعادة تعيين كلمة المرور إلى حساب بريدك الإلكتروني، يرجى التحقق من بريدك الإلكتروني',
       'PasswordResetLinkFalse'=>'البريد الإلكتروني الذي أدخلته غير مسجل الرجاء إنشاء حساب جديد',
       'NewPassword'=>'كلمة سر جديدة',
-      
+
        //Online Shop
       'ShopByCategories'=>'تسوق عن طريق الفئات',
       'FreshSale'=>'أستمتع بالخصومات الحصرية',
@@ -212,14 +212,14 @@ return[
       'BuildYourHomeButton'=>'أبني منزلك الذكي',
       'RecommendedForYou'=>'الموصي به لك',
       'More'=>'المزيد',
-      
+
       'ContentShop'=>'استمتع بتجربة حياة سلسة مع مجموعتنا من تقنيات المنزل الذكي',
       'All'=>'الكل',
       'MostPopular'=>'الاكثر شهرة',
       'ExploreCollection'=>'استكشف مجموعتنا من الأدوات المنزلية الذكية',
       'FindYourPerfect'=>'ابحث عن إعداد منزلك الذكي المثالي هنا',
       'BestProduct'=>'أفضل منتجاتنا',
-      
+
       //Product Page
       'Category'=>'الفئة',
       'Brand'=>'المركة',
@@ -247,7 +247,8 @@ return[
       'ElectricalDate'=>'المواصفات الكهربائية',
       'Video'=>'الفيديو',
       'YouMayAlsoLike'=>'قد يعجبك ايضاً',
-      
+      'ExpertEng' => 'مهندس مختص',
+
        //About Us
       'AboutUs'=>'من نحن',
       'TheFirstEgyptian'=>'السوق المصري الاول',
@@ -283,15 +284,15 @@ return[
 
       //Brands
       'RelatedProducts' => 'المنتجات ذات الصلة',
-      
+
        //Platforms
       'FAQ'=>'اسئلة شائعة',
-      
+
       //Services
       'Duration'=>'المدة',
       'Price'=>'السعر',
       'DepenedsOntheProduct'=>'يعتمد علي المنتج',
-      
+
        //Contact Us
       'ZhomeLocation'=>'السرايات الغربية, المعادي , القاهرة',
       'ZhomeEmail'=>'البريد الالكتروني : Zhome@gmail.com ',
@@ -309,7 +310,7 @@ return[
       'ResponseMsg'=>'سوف نقوم بالرد عليك في أقرب وقت ممكن',
       'ProblemSending'=>'هناك مشكلة في الارسال من فضلك تأكد من البيانات وحاول مرة أخري',
       'AdminSentEmail'=>'أنت من فريق الادارة لماذا تريد هذا !!',
-      
+
        //Cart
       'ContinuetoCheckout' => 'الانتقال الي الدفع',
       'Total'=>'الأجمالي',
@@ -354,7 +355,7 @@ return[
       'ContinueShopping'=>'أستكمل عملية الشراء',
       'ShippingInformation'=> 'معلومات التوصيل',
       'TotalWithDelivery' =>'الاجمالي بالتوصيل ',
-      
+
       //Shop
       'Filters'=>'التصفية',
       'Sales'=>'خصومات',
@@ -371,7 +372,7 @@ return[
       'MoreAbout'=>'المزيد عن',
       'ResetChoices'=>'اعادة ضبط',
       'EGP'=>'جنيه مصري',
-      
+
       // Profile
       'Profile'=>' الصفحة الشخصية',
       'ActivationText'=>'من فضلك تفقد بريدك الالكتروني لتفعيل حسابك',
@@ -393,12 +394,12 @@ return[
       'EditProfile'=>'عدل الحساب الشخصي',
       'Password'=>'كلمة السر',
       'UpdateAccount'=>'تحديث الحساب',
-      
+
       //Footer
       'WhyZhome' =>'لماذا نحن',
       'User' =>'المستخدم',
       'Admin' =>'الادارة',
-      'JoinUs' =>'أنضم الينا', 
+      'JoinUs' =>'أنضم الينا',
       'Tools' =>'الادوات',
       'AlwaysInControl' =>'أنت المتحكم ',
       'IOS' =>'IOS',
@@ -407,5 +408,5 @@ return[
       'DownloadApp'=>'تنزيل التطبيق',
       'SubscriptionText'=>'كن أول من يسمع عن العروض والتحديثات الجديدة',
       'SearchPlaceholder'=>'أكتب هنا للبحث ...',
-      'EmailPlaceholder'=>'البريد الألكتروني',  
+      'EmailPlaceholder'=>'البريد الألكتروني',
 ];

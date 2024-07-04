@@ -34,4 +34,10 @@ class Admin extends Authenticatable
         return $this->belongsTo(Roles::class, 'RoleID','ID');
         
     }
+
+    public function ProductEvaluation(){
+        
+        return $this->belongsTo(ProductEvaluation::class, 'ExpertID','id');
+        
+    }
 }

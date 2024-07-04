@@ -26,7 +26,7 @@ class UserController extends Controller
         $orderStatistics = DB::table('orders')
             ->select(
                 'UserID',
-                DB::raw('MIN(Date) as MinOrderDate'),
+                DB::raw('MIN(created_at) as MinOrderDate'),
                 DB::raw('COUNT(ID) as TotalNumberOfOrders')
             )
             ->where('UserID', $userId)
@@ -39,7 +39,7 @@ class UserController extends Controller
     public function userProfile(User $user)
     {
         $userProducts = $user->products;
-        $products = Product::with(['brand', 'platforms', 'subcategory.category'])->all();
+        $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
         $orderStatistics = $this->getUserOrderStatistics($user->id);
         return view('User.Profile.index', compact('user' , 'products', 'userProducts' ,'orderStatistics'));
     }

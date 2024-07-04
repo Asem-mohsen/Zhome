@@ -1,4 +1,3 @@
-<script src="Admin/assets/js/plugins/chartjs.min.js"></script>
 
 <!-- Search  -->
 <div class="search-popup">
@@ -21,8 +20,6 @@
     <i class="fa fa-arrow-turn-up"></i>
 </a>
 
-
-</div>
 <!-- Footer -->
 <section class="MainFooter">
     <div class="Footer">
@@ -109,7 +106,7 @@
                     </li>
                     <li>
                         @if (Auth::guard('web')->check())
-                            <a href="{{route('Users.profile' , Auth::id() )}}">
+                            <a href="{{route('Profile.profile', Auth::guard('web')->user()->id)}}">
                                 {{ __('messages.Profile')}}
                             </a>
                         @elseif (Auth::guard('admin')->check())
@@ -145,12 +142,12 @@
         <div class="Lang">
             @if(App::getLocale() == 'en')
                 <a id="langSwitchBtn" href="{{ route('language', 'ar') }}" class="lang-switch-btn">
-                    <img class="lang-flag" src="https://zhome.com.eg/Admin/Images/Uploads/egypt.png" alt="Arabic">
+                    <img class="lang-flag" src="{{asset('UI/Imgs/website/Footer/egypt.png')}}" alt="Arabic">
                     <span class="lang-name">Arabic</span>
                 </a>
             @else
                 <a id="langSwitchBtn" href="{{ route('language', 'en') }}" class="lang-switch-btn">
-                    <img class="lang-flag" src="https://zhome.com.eg/Admin/Images/united-kingdom.png" alt="English">
+                    <img class="lang-flag" src="{{asset('UI/Imgs/website/Footer/united-kingdom.png')}}" alt="English">
                     <span class="lang-name">English</span>
                 </a>
             @endif
@@ -167,8 +164,6 @@
         </div>
     </div>
 </section>
-
-
 
 
 <!-- End -->
@@ -200,7 +195,6 @@
 <script src="{{ asset('UI/js/popper.min.js') }}"></script>
 <!--End-->
 <!-- Swipper -->
-{{-- <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script> --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <!-- End Swipper -->

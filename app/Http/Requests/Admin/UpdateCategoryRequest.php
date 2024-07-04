@@ -13,7 +13,7 @@ class UpdateCategoryRequest extends FormRequest
 
     public function __construct(Request $request)
     {
-        $this->id = (integer) $request->route()->caetgory->ID;
+        $this->id = (integer) $request->route()->category->ID;
     }
     
 

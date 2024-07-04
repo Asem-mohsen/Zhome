@@ -21,7 +21,7 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="product-details__image d-flex justify-content-center">
-                                    <img class="img-fluid" src="{{ asset("Admin/dist/img/web/Products/MainImage/{$product->MainImage}") }}" width="500px" style="max-height: 493px;" alt="{{$product->Name}}" />
+                                    <img class="img-fluid" src="{{ asset("Admin/dist/img/web/Products/MainImage/".$product->MainImage)}}" width="500px" style="max-height: 493px;" alt="{{$product->Name}}" />
                                     <a href="#" class="product-details__img-popup img-popup">
                                         <i class="fa fa-search"></i>
                                     </a>
@@ -30,7 +30,7 @@
                                 <div class="additional-images d-flex justify-content-center p-3">
                                     @foreach ($product->images as $image)
                                         <div class="additional-image m-2">
-                                            <img class="img-fluid h-100" src="{{ asset("Admin/dist/img/web/Products/OtherImages/{$image->Image}") }}" style="width:130px;object-fit: cover;" alt="{{$product->Name}}" />
+                                            <img class="img-fluid h-100" src="{{ asset("Admin/dist/img/web/Products/OtherImages/$image->Image") }}" style="width:130px;object-fit: cover;" alt="{{$product->Name}}" />
                                         </div>
                                     @endforeach
                                 </div>
@@ -90,13 +90,13 @@
                                     </h2>
                                     <div class="Images-ProductsDetails">
                                         <div class="Image-One-ProductDetails fadeInUp">
-                                            <img src="{{ asset("Admin/dist/img/web/Products/CoverImage/{$product->productDetails->CoverImage}") }}" alt="Cover Image">
+                                            <img src="{{ asset("Admin/dist/img/web/Products/CoverImage/".$product->productDetails->CoverImage) }}" alt="Cover Image">
                                         </div>
                                     </div>
                                     <div class="Text-under-images-ProductDetails pt-5 mt-5">
                                         <div class="text-one-ProductDetails">
                                             <div class="top-text">
-                                                <img src="{{ asset("Admin/dist/img/web/Brands/{$product->brand->Logo}") }}" alt="{{$product->brand->Brand}}">
+                                                <img src="{{ asset("Admin/dist/img/web/Brands/".$product->brand->Logo) }}" alt="{{$product->brand->Brand}}">
                                                 <h3>Brand</h3>
                                             </div>
                                             <div class="bottom-text">
@@ -116,7 +116,7 @@
                                                     @foreach($product->platforms as $Platform)
                                                         <a href="{{route('Platform.edit' , $Platform->ID )}}">
                                                             <div class="platform">
-                                                                <img src="{{ asset("Admin/dist/img/web/Platforms/{$Platform->Logo}") }}" alt="{{$Platform->Platform}}">
+                                                                <img src="{{ asset("Admin/dist/img/web/Platforms/$Platform->Logo") }}" alt="{{$Platform->Platform}}">
                                                                 <p>{{$Platform->Platform}}</p>
                                                             </div>
                                                         </a>
@@ -187,7 +187,7 @@
                                         <div class="product-details__review-left d-flex">
                                             <img src="{{asset('Admin/dist/img/avatar2.png')}}" width="70px" height="70px" alt="Image" />
                                             <div class="d-flex flex-column pl-2">
-                                                <h4 class="product-details__review-title">{{ "Admin Name"}}</h4>
+                                                <h4 class="product-details__review-title">{{ $admin->Name }}</h4>
                                                 <span class="product-details__review-date text-sm">- <?php echo "Expert engineer" ?></span>
                                             </div>
 
@@ -239,7 +239,7 @@
                             </div>
                             <div class="col-lg-6">
                                 <div class="product-details__image LastProductDetails">
-                                    <img class="img-fluid" src="{{asset('Admin/dist/img/Background.jpg')}}" alt="MainImage" />
+                                    <img class="img-fluid" src="{{asset('Admin/dist/img/web/Products/MainImage/'.$product->MainImage)}}" alt="MainImage" />
                                 </div>
                             </div>
                         </div>

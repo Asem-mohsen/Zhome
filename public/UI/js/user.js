@@ -1,22 +1,37 @@
-
-$(document).ready(function() {
-    $('nav ul li').click(function() {
-        $('nav ul li').removeClass('current');
-        $(this).addClass('current');
-    });
-});
-
-
 var currentUrl = window.location.href;
 $('nav ul li a').each(function() {
-if ($(this).attr('href') === currentUrl) {
-    $(this).parent().addClass('current');
-}
+    if ($(this).attr('href') === currentUrl) {
+        $(this).parent().addClass('current');
+    }
 });
 
+// Navbar
+// document.addEventListener('DOMContentLoaded', function() {
+//     const burger = document.querySelector('#burger');
+//     const menu = document.querySelector('#menu');
+//     const overlay = document.querySelector('.overlay');
 
+//     burger.addEventListener('click', function() {
+//         menu.classList.toggle('active');
+//         overlay.classList.toggle('active');
+//     });
 
-// Cart 
+//     overlay.addEventListener('click', function() {
+//         menu.classList.remove('active');
+//         overlay.classList.remove('active');
+//     });
+
+//     function handleResize() {
+//         if (window.innerWidth > 768) {
+//             menu.classList.remove('active');
+//             overlay.classList.remove('active');
+//         }
+//     }
+
+//     window.addEventListener('resize', handleResize);
+// });
+
+// Cart
 function addToCart(productId, price, installationCost)  {
     const quantityInput = document.getElementById('quantity-' + productId);
     let quantity = 1; //default
@@ -26,8 +41,6 @@ function addToCart(productId, price, installationCost)  {
         quantity = parseInt(quantityInput.value);
         totalPrice = quantity * price;
     }
-
-    
 
     axios.post('/Cart/add', {
         product_id: productId,
@@ -59,8 +72,9 @@ function removeFromCart(productId) {
 function updateCartCount() {
     axios.get('/Cart/count')
     .then(response => {
-        $('#TotalItems').text = response.data.count;
-        $('#cart-count').text = response.data.count;
+        $('.count').text(response.data.count);
+        $('#TotalItems').innerText = response.data.count;
+        
     })
     .catch(error => {
         console.error('Error updating cart count:', error);
@@ -80,13 +94,13 @@ function updateRowTotal(row) {
     if(savedPrice != 0 ){
          saved = (price - savedPrice) * quantity;
     }
-    
+
     let total = quantity * price;
 
     if (installmentCheckbox && installmentCheckbox.checked) {
         total += installmentPrice;
     }
-    
+
     row.querySelector('.SubTotal').textContent = total.toFixed(2) + ' EGP';
     return { total, saved };
 }
@@ -113,7 +127,7 @@ function checkout() {
     const cartData = [];
     let totalPrice = 0;
     let savedAmount = parseFloat(document.getElementById('totalSaved').value) || 0;
-    
+
     rows.forEach(row => {
         const productId = row.dataset.productId;
         const quantity = row.querySelector('.Quantity').value;
@@ -131,10 +145,10 @@ function checkout() {
             subtotal: rowTotal
         });
     });
-    
+
     const finalTotal = totalPrice - savedAmount;
 
-    axios.post('/Cart/update', { 
+    axios.post('/Cart/update', {
         cart: cartData,
         total_price: totalPrice,
         saved_amount: savedAmount,
@@ -209,7 +223,7 @@ function applyDeliveryCost() {
 
 function displayTotalPrice() {
     const finalTotal = totalPrice - promoCodeDiscount + deliveryCost;
-    
+
     document.getElementById('FinalBeforePromoHide').textContent = messages.total + ` ${totalPrice.toFixed(2)} EGP`;
     document.getElementById('FinalCheckout').textContent = `${finalTotal.toFixed(2)} EGP`;
     document.getElementById('FinalBeforePromoHide').style.display = (promoCodeDiscount > 0 || deliveryCost > 0) ? 'none' : 'block';

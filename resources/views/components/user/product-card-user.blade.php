@@ -11,7 +11,7 @@
                 {{ 'Brand: ' . $variable->brand->Brand }} <br>
                 <div class="d-flex gap-1">
                     @foreach ($variable->platforms as $platform)
-                        <a href="{{ route('Platform.edit' , $platform->ID ) }}" title="{{ $platform->Platform . " Platform" }}">
+                        <a href="{{ route('Shop.Filter.platform' , $platform->ID ) }}" title="{{ $platform->Platform . " Platform" }}">
                             <img src="{{ asset('Admin/dist/img/web/Platforms/' . $platform->Logo) }}" class="Platform-flex-img">
                         </a>
                     @endforeach
@@ -29,11 +29,11 @@
                 @if($variable->Quantity <= 0)
                     <p class="OutStock">{{ __('OutofStock') }}</p>
                 @else
-                    <button 
-                        type="button" 
-                        data-toggle="tooltip" 
-                        data-placement="top" 
-                        title="Add to Cart" 
+                    <button
+                        type="button"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="Add to Cart"
                         class="product-one__cart-btn add-to-cart-btn"
                         onclick="addToCart({{ $variable->ID }}, {{ $countSale > 0 ? $priceSale->PriceAfter : $variable->Price }}, {{ $variable->InstallationCost ?? 0 }})"
                         ><i class="fa-solid fa-cart-shopping"></i></button>

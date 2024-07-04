@@ -31,10 +31,10 @@
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!--Library of flags icons-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css"> --}}
 
     <!-- Price Slider Range -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    {{-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> --}}
     <!-- End Price Slider Range -->
 
     <link rel="stylesheet" href="{{ asset('UI/css/animate.css')}}">
@@ -42,7 +42,7 @@
     <link rel="stylesheet" href="{{ asset('UI/css/bootstrap-select.min.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/hover-min.css')}}">
-    <link rel="stylesheet" href="{{ asset('UI/css/query.bootstrap-touchspin.min.css')}}">
+    {{-- <link rel="stylesheet" href="{{ asset('UI/css/query.bootstrap-touchspin.min.css')}}"> --}}
     <link rel="stylesheet" href="{{ asset('UI/css/jquery.mCustomScrollbar.min.css')}}">
     <!-- Swipper Home Page Brands -->
     <!-- End Swipper -->
@@ -60,7 +60,6 @@
     <link rel="stylesheet" href="{{ asset('UI/css/Main.css')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/Navbar.css')}}">
     @if(App::getLocale() == 'ar')
-        <!--Arabic Style-->
         <link rel="stylesheet" href="{{ asset('UI/css/ArabicStyle.css')}}">
     @endif
 
@@ -95,31 +94,9 @@
             <div id="loader" style="display:none;"></div>
         </div>
 
-        @include('User.layout.Nav')
+        @include('components.navbar')
 
         @yield('Content')
-
-        <style>
-            .JoinUs {
-                color: white !important;
-                border: 1px solid white;
-                padding: 7px 15px;
-                border-radius: 4px;
-                transition: all .6s ease-out;
-                background: linear-gradient(to right, #154352 50%, transparent 50%);
-                background-size: 200% 100%;
-                background-position: right bottom;
-            }
-
-            .JoinUs:hover {
-                background-position: left bottom;
-            }
-            #Icons .separator{
-                border-left: 1px solid white;
-                height: 27px;
-                margin: 0px 8px;
-            }
-        </style>
 
         @include('User.layout.footer')
 

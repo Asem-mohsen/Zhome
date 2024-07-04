@@ -20,6 +20,12 @@ class ToolsController extends Controller
         return view('User.Tools.proposal' , compact('platforms'));
     }
 
+    public function interior()
+    {
+        $platforms = Platform::all();
+        return view('User.Tools.interior' , compact('platforms'));
+    }
+
     public function store(AddNewToolRequest $request)
     {
         // dd($request);

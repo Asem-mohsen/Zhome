@@ -151,7 +151,7 @@
                                                         <input class="card__input PlatformSelect" name="PlatformID[]"
                                                             type="checkbox" value="{{ $platform->ID }}" />
                                                         <div class="card__body platform">
-                                                            <img src="{{ asset('Admin/dist/img/Background.jpg') }}"
+                                                            <img src="{{ asset('Admin/dist/img/web/Platforms/' . $platform->Logo) }}"
                                                                 alt="{{ $platform->Platform }}">
                                                             <p>{{ $platform->Platform }}</p>
                                                         </div>
@@ -174,7 +174,7 @@
                                                             type="radio" value="{{ $brand->ID }}" />
                                                         <div class="card__body">
                                                             <div class="ImgDiv"
-                                                                style="background-image: url(https://zhome.com.eg/Admin/Images/Uploads/{{ $brand->Logo }});">
+                                                                style="background-image: url({{ asset('Admin/dist/img/web/Brands/' . $brand->Logo) }});">
                                                             </div>
                                                         </div>
                                                     </label>
@@ -404,7 +404,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="Capacity" class="form-control-label">Capacity</label>
-                                                <input class="form-control" type="number" id="Capacity"
+                                                <input class="form-control" type="text" id="Capacity"
                                                     name="Capacity">
                                             </div>
                                             @error('Capacity')
@@ -414,7 +414,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="Power" class="form-control-label">Power Consumption</label>
-                                                <input class="form-control" type="number" id="Power"
+                                                <input class="form-control" type="text" id="Power"
                                                     name="PowerConsumption">
                                             </div>
                                             @error('PowerConsumption')
@@ -424,7 +424,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="Weight" class="form-control-label">Weight</label>
-                                                <input class="form-control" type="number" id="Weight"
+                                                <input class="form-control" type="text" id="Weight"
                                                     name="Weight">
                                             </div>
                                             @error('Weight')
@@ -530,8 +530,27 @@
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="Question" class="form-control-label">Arabic Question</label>
+                                                <textarea class="form-control QuestionsTextarea" id="ArabicQuestion" name="ArabicQuestion[]" required></textarea>
+                                            </div>
+                                            @error('ArabicQuestion')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="Answer" class="form-control-label">Arabic Answer</label>
+                                                <textarea class="form-control AnswersTextarea" name="ArabicAnswer[]" required></textarea>
+                                            </div>
+                                            @error('ArabicAnswer')
+                                                <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div id="div-container" class="mt-5"></div>
                                         <a id="add-div-btn" class="btn bg-gradient-light mb-0" style="margin-left: 14px;width: 31%;">Add New FAQ</a>
-                                        <div id="div-container" class="mt-5"></div> <!-- Added class to div-container -->
+                                        
                                     </div>
                                 </section>
                             </div>
@@ -636,18 +655,30 @@
                                 <textarea class="form-control AnswersTextarea" name="Answer[]" required></textarea>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ArabicQuestion" class="form-control-label">Arabic Question</label>
+                                <textarea class="form-control QuestionsTextarea" name="ArabicQuestion[]" required></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="ArabicAnswer" class="form-control-label">Arabic Answer</label>
+                                <textarea class="form-control AnswersTextarea" name="ArabicAnswer[]" required></textarea>
+                            </div>
+                        </div>
                         <button class="btn btn-sm btn-danger remove-div-btn" style="margin-left: 14px;width: 10%;">
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>
                 `;
 
-                FAQContainer.appendChild(newDiv);
+                // FAQContainer.appendChild(newDiv);
 
                 const removeDivBtn = newDiv.querySelector(".remove-div-btn");
-                removeDivBtn.addEventListener("click", function() {
-                    FAQContainer.removeChild(newDiv);
-                });
+                    removeDivBtn.addEventListener("click", function() {
+                        FAQContainer.removeChild(newDiv);
+                    });
             });
         });
     </script>

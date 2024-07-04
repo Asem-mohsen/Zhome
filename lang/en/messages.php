@@ -24,32 +24,32 @@ return[
         'DiscoverAllBrands' => 'Discover All Brands',
         'DesignYourHome'=>'Design Your Home',
         'AllProducts'=>'All Products',
-        
-        
+
+
         //Main Page Index
         'SliderTextOne'=>'Your dream smart home tool created just for you.',
         'SliderTextTwo'=>'One simple ecosystem for smart living solutions.',
         'SliderButtonOne'=>'Explore Our Tool',
         'SliderButtonTwo'=>'Explore products',
         'Welcome'=>'Welcome to',
-        
+
         'ToolTextBelowSlider'=>' Build a smart home to uplift meaningful moments.',
         'GetYourDesignButton'=>'Get Your Design',
 
-        
+
         'DesignOnline'=>'Design Online',
         'PersonalAdvice'=>'Personal Advice',
         'ProfessionalInstallation'=>'Professional Installation',
         'DesignOnlineText'=>'Use ZHome online tool and follow our simple questions to design your preferred system in minutes!',
         'PersonalAdviceText'=>'Our team of experts is there for you to answer all questions and customize your dream home individually.',
         'ProfessionalInstallationText'=>'Choose your preferred installation time, and our experienced local team will install it for you hassle-free!',
-        
+
         'StartYourOwnSystem'=>'Start your own system',
         'Recommendition'=>'Our Recommendations',
         'BestSelling'=>'Best Selling',
         'OnSale'=>'On Sale',
         'ShopNowButton' =>'Shop Now',
-        
+
         'Testmonials'=> 'Testmonials',
         'AlaaAbdelghafar'=> 'Great collaboration',
         'AlaaAbdelghafarOpinion'=> 'ZHome was very helpful in upgrading my old security system and integrating it with my easy to use smart home system.',
@@ -58,7 +58,7 @@ return[
         'OsamaElsayed'=> 'Quickly and Efficiently',
         'OsamaElsayedOpenion'=> ' I like to design my own system and scenarios, this is what ZHome is all about, they gave me the perfect platform to customise, design and get my best suited system installed without trouble.',
         'Testmonials'=> 'Testmonials',
-        
+
         'ControlYourHome'=>'Control Your Home',
         'ControlHomeEnergy'=>'Energy Management',
         'ControlHomeEnergyText'=>'Always keep an eye on the energy production of your solar system as well as your energy consumption',
@@ -99,7 +99,7 @@ return[
         'DiscoverOurToolButton'=>'Discover Our Tool',
         'ShopTextHome'=>'Discover our products and bundles made especially for your dream home.',
         'ToolTextHome'=>' Use our customized tool to build your home or office in just few steps.',
-        
+
         'ZhomeCompability'=>'Zhome Compability',
 
         // Proposal
@@ -157,7 +157,7 @@ return[
         'Phone'=>'Phone',
         'Finish'=>'Finish',
         'ProposalSucess'=>'Your submission done successfully, we will respond as soon as possible',
-        
+
         //SignIn
         'LoginToYourAccount'=>'Login To Your Account',
         'NewMember'=>'New Member',
@@ -171,8 +171,8 @@ return[
         'DeactivatedAccount'=>'Your Account Is Deactiveted',
         'LogWithFacebook'=>'Login With Facebook',
 
-        
-        //SignUp   
+
+        //SignUp
         'CreateYourAccount'=>'Create Your Account',
         'HaveAccount'=>'Already have an Account?',
         'UserName'=>'User Name',
@@ -188,14 +188,14 @@ return[
         'UserExist'=>'User Already Exist!',
         'SignupFacebook'=> 'Continue With Facebook',
 
-        
+
         //Forget anf Verify
         'ResetPassword'=> 'Reset Password',
         'SendEmail'=>'Send Email',
         'PasswordResetLink'=>'Link of password reset is sent to your email account please check your Email',
         'PasswordResetLinkFalse'=>'The Email you entered is not registered Please Create a new Account.',
         'NewPassword'=>'New Password',
-        
+
         //Online Shop
         'ShopByCategories'=>'Shop By Categories',
         'FreshSale'=>' Enjoy the Fresh Sale ',
@@ -218,7 +218,7 @@ return[
         'BuildYourHomeButton'=>'Build your Home',
         'RecommendedForYou'=>'Recommended for You',
         'More'=>'More',
-        
+
         'ContentShop'=>'Experience Seamless Living with Our Range of Smart Home Technologies',
         'All'=>'All',
         'MostPopular'=>'Most Popular',
@@ -227,7 +227,7 @@ return[
         'BestProduct'=>'Our Best Product',
 
 
-        
+
         //Product Page
         'Category'=>'Category',
         'Brand'=>'Brand',
@@ -255,7 +255,8 @@ return[
         'ElectricalDate'=>'Electrical Date',
         'Video'=>'Video',
         'YouMayAlsoLike'=>'You may also like',
-        
+        'ExpertEng' => 'Expert Engineer',
+
         //About Us
         'AboutUs'=>'About Us',
         'TheFirstEgyptian'=>'The First Egyptian',
@@ -267,21 +268,21 @@ return[
         'Orders'=>'Orders',
         'Why'=>'Why',
         'BestCustomized'=>'Best Customized Packages & Proposals',
-        'BestCustomizedText'=>'ZHome offers free proposal customised for different customers needs, 
+        'BestCustomizedText'=>'ZHome offers free proposal customised for different customers needs,
                             just answer some basic questions and receive your FREE offer with installations included.
-                            We also offer exclusive complete and ready packages that fits different needs, 
-                            so customers get peace of mind! ZHome gives you more for less. Free delivery to your home and 
+                            We also offer exclusive complete and ready packages that fits different needs,
+                            so customers get peace of mind! ZHome gives you more for less. Free delivery to your home and
                             free returns for 14 days.',
-        'InstallationAndDesigningText'=>'ZHome offers free proposal customised for different customers needs, 
+        'InstallationAndDesigningText'=>'ZHome offers free proposal customised for different customers needs,
                             just answer some basic questions and receive your FREE offer with installations included.
-                            We also offer exclusive complete and ready packages that fits different needs, 
-                            so customers get peace of mind! ZHome gives you more for less. Free delivery to your home and 
+                            We also offer exclusive complete and ready packages that fits different needs,
+                            so customers get peace of mind! ZHome gives you more for less. Free delivery to your home and
                             free returns for 14 days.',
         'InstallationAndDesigning'=>'Installation and Designing Services ',
-        'SmartProductsText'=>'ZHome offers free proposal customised for different customers needs, 
+        'SmartProductsText'=>'ZHome offers free proposal customised for different customers needs,
                             just answer some basic questions and receive your FREE offer with installations included.
-                            We also offer exclusive complete and ready packages that fits different needs, 
-                            so customers get peace of mind! ZHome gives you more for less. Free delivery to your home and 
+                            We also offer exclusive complete and ready packages that fits different needs,
+                            so customers get peace of mind! ZHome gives you more for less. Free delivery to your home and
                             free returns for 14 days.',
         'SmartProducts'=>'All Smart Products in one place ',
         'Zhome'=>'Zhome',
@@ -290,10 +291,10 @@ return[
 
         //Brands
         'RelatedProducts' => 'Related Products',
-        
+
         //Platforms
         'FAQ'=>'FAQ',
-        
+
         //Services
         'Duration'=>'Duration:',
         'Price'=>'Price:',
@@ -316,7 +317,7 @@ return[
         'ResponseMsg'=>'We will Response as soon as possible',
         'ProblemSending'=>'There are problem sending your email, Please try again later',
         'AdminSentEmail'=>'You are admin why on earth do you need that !!',
-        
+
         //Cart
         'ContinuetoCheckout' => 'Continue to Checkout',
         'Total'=>'Total',
@@ -362,7 +363,7 @@ return[
         'ContinueShopping'=>'Continue Shopping',
         'ShippingInformation'=>'Shipping Information',
         'TotalWithDelivery' =>'Total With Delivery',
-        
+
         //Shop
         'Filters'=>'Filters',
         'Sales'=>'Sales',
@@ -401,12 +402,12 @@ return[
         'EditProfile'=>'Edit Profile',
         'Password'=>'Password',
         'UpdateAccount'=>'Update Account',
-        
+
         //Footer
         'WhyZhome' =>'Why Zhome',
         'User' =>'User',
         'Admin' =>'Admin',
-        'JoinUs' =>'Join Us', 
+        'JoinUs' =>'Join Us',
         'Tools' =>'Tools',
         'AlwaysInControl' =>'Always In Control',
         'IOS' =>'IOS',

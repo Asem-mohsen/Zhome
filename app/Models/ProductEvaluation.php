@@ -16,5 +16,9 @@ class ProductEvaluation extends Model
         return $this->belongsTo(Product::class, 'ProductID' ,'ID');
 
     }
+
+    public function admin(){
+        return $this->belongsTo(Admin::class, 'ExpertID' , 'ID');
+    }
     
 }

@@ -14,12 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
+            Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
             \App\Http\Middleware\StartSession::class,
-            \Illuminate\Session\Middleware\AuthenticateSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            // \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \App\Http\Middleware\SetLocale::class,
@@ -34,7 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
             'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
             'can' => \Illuminate\Auth\Middleware\Authorize::class,
-            'guest' => \Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
             'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
             'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,

@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         if (Auth::guard('admin')->check()) {
-            return redirect()->intended(route('index'));
+            return redirect()->intended(route('Dashboard.index'));
         }
 
         return redirect()->route('login')->withErrors(['email' => 'Authentication error']);
@@ -35,15 +35,15 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        dd($request);
+        $guard = Auth::guard('admin')->check() ? 'admin' : 'web';
 
-        $guard = Auth::guard('web')->check() ? 'web' : (Auth::guard('admin')->check() ? 'admin' : null);
         Auth::guard($guard)->logout();
-
+        
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
         return redirect('/');
     }
+
 }

@@ -159,11 +159,11 @@
                         </div>
                         <div class="Hidden-inputs">
                             <!-- HiddenInputs -->
-                                <input type="hidden" name="UserID"       value="@if(Auth::guard('web')->check()) {{ Auth::guard('web')->user()->id }} @else {{session_id()}} @endif ">
+                                {{-- <input type="hidden" name="UserID"       value="@if(Auth::guard('web')->check()) {{ Auth::guard('web')->user()->id }} @else {{session_id()}} @endif ">
                                 <input type="hidden" name="ProductID"    value="{{$product->ID}}">
                                 <input type="hidden" name="Price"        value="{{$product->Price}}">
                                 <input type="hidden" name="ProductName"  value="{{$product->Name}}">
-                                <input type="hidden" name="ProductImage" value="{{asset("Admin/dist/img/web/Products/MainImag/$product->MainImage")}}">
+                                <input type="hidden" name="ProductImage" value="{{asset("Admin/dist/img/web/Products/MainImag/$product->MainImage")}}"> --}}
                             <!-- End -->
                         </div>
                     </div>
@@ -211,7 +211,7 @@
                                     <input type='hidden' name='Quantity' value="{{$product->Quantity}}" />
                                     @if($product->Quantity > 0)
                                         <input class="quantity-spinner" type="text" min="1" value="1" name="quantity" id="quantity-{{ $product->ID }}">
-                                        <button onclick="addToCart({{ $product->ID }}, {{ $product->sale  ? $product->sale->PriceAfter : $product->Price }}, {{ $product->InstallationCost ?? 0 }})" class="thm-btn product-details__cart-btn">{{ __('messages.AddtoCart')}} <span>+</span></button>
+                                        <button onclick="addToCart({{ $product->ID }}, {{ $product->sale  ? $product->sale->PriceAfter : $product->Price }}, {{ $product->InstallationCost ?? 0 }})" class="thm-btn product-details__cart-btn ml-3">{{ __('messages.AddtoCart')}} <span>+</span></button>
                                     @elseif($product->Quantity <= 0)
                                         <p class='OutStock'> {{ __('messages.OutofStock')}} </p>
                                     @endif
@@ -366,10 +366,9 @@
                                             <div class="product-details__review-right">
                                                 <div class="product-details__review-top">
                                                     <div class="product-details__review-top-left">
-                                                        <h3 class="product-details__review-title">{{ "Admin Name"}}</h3>
+                                                        <h3 class="product-details__review-title">{{$product->evaluations->admin->Name}}</h3>
                                                         <span class="product-details__review-sep">-</span>
-                                                        <span class="product-details__review-date"><?php // echo $Date
-                                                                                                            echo "Expert engineer"    ?></span>
+                                                        <span class="product-details__review-date">{{__('messages.ExpertEng')}}</span>
                                                     </div>
                                                 </div>
                                                 <p class="product-details__review-text">

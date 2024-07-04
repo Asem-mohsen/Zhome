@@ -11,11 +11,13 @@ use App\Models\Product;
 use App\Models\Subcategory;
 use App\Models\Promocode;
 use App\Models\ProductTechnology;
-
 use App\Models\Platform;
+use App\Traits\NavigationTrait;
 
 class ShopController extends Controller
 {
+    use NavigationTrait;
+
     protected $filterableFields = [
         'CategoryIDs' => 'array',
         'BrandIDs' => 'array',
@@ -23,9 +25,10 @@ class ShopController extends Controller
         'TechnologyIDs' => 'array',
         'PriceBetween' => 'array',
     ];
-    
+
     public function index()
     {
+        $navData = $this->getNavigationData();
         $currentDate = Carbon::now();
 
         // Selscted brands
@@ -47,7 +50,7 @@ class ShopController extends Controller
                                     $query->where('MainCategoryID', $category2->ID);
                                 })
                                 ->get();
-        
+
         // All
         $brands    = Brand::all();
         $platforms = Platform::all();
@@ -59,7 +62,7 @@ class ShopController extends Controller
                                 ->get();
         $promocodes     = Promocode::where('EndsIn', '>', $currentDate)->where('Status' , '1')->orderBy('EndsIn')->limit(1)->first();
         $bundle         = Product::with(['brand', 'platforms', 'subcategory.category'])->where('IsBundle' , '1')->limit(1)->first();
-        return view('User.Shop.shop', compact('brands' , 'platforms','brand' , 'productsBrand' , 'category' , 'bundles' ,'categories' , 'productsOnSale' , 'promocodes','category2','categoriesProduct' , 'categoriesProduct2' , 'bundle'));
+        return view('User.Shop.shop', array_merge($navData, compact('brands' , 'platforms','brand' , 'productsBrand' , 'category' , 'bundles' ,'categories' , 'productsOnSale' , 'promocodes','category2','categoriesProduct' , 'categoriesProduct2' , 'bundle' )) );
     }
 
     protected function getFilterData()
@@ -73,7 +76,7 @@ class ShopController extends Controller
             'maxPrice'     => Product::max('Price'),
         ];
     }
-    
+
     protected function getCurrentFilters(Request $request)
     {
         $currentFilters = [];
@@ -81,8 +84,8 @@ class ShopController extends Controller
 
         foreach ($this->filterableFields as $field => $type) {
             if ($type === 'array') {
-                $currentFilters[$field] = $request->input($field) 
-                    ? explode(',', $request->input($field)) 
+                $currentFilters[$field] = $request->input($field)
+                    ? explode(',', $request->input($field))
                     : [];
             } elseif ($field === 'PriceBetween') {
                 $currentFilters[$field] = $request->input($field)
@@ -124,23 +127,23 @@ class ShopController extends Controller
 
         return $query;
     }
-    
+
     public function filterIndex(Request $request)
     {
         $filterData = $this->getFilterData();
         $currentFilters = $this->getCurrentFilters($request);
-        
+
         $query = Product::with(['brand', 'subcategory.category']);
         $query = $this->applyFilters($query, $currentFilters);
         $products = $query->paginate(12);
 
         return view('User.Shop.filterIndex', array_merge($filterData, compact('products', 'currentFilters')));
     }
-    
+
     public function categoryFilter($id)
     {
         $filterData = $this->getFilterData();
-        
+
         $category = Category::findOrFail($id);
         $subcategories = $category->subcategories;
         $products = Product::whereHas('subcategory', function ($query) use ($id) {
@@ -148,40 +151,40 @@ class ShopController extends Controller
         })->paginate(12);
 
         $currentFilters = ['CategoryIDs' => [$id]];
-        
+
         return view('User.Shop.category_filter', array_merge($filterData, compact('category', 'subcategories', 'products', 'currentFilters')));
     }
 
     public function subcategoryFilter($id)
     {
         $filterData = $this->getFilterData();
-        
+
         $subcategory = Subcategory::findOrFail($id);
         $category = $subcategory->category;
         $products = Product::where('SubCategoryID', $id)->paginate(12);
 
         $currentFilters = ['CategoryIDs' => [$category->ID]];
-        
+
         return view('User.Shop.subcategory_filter', array_merge($filterData, compact('subcategory', 'products', 'category', 'currentFilters')));
     }
 
     public function brandFilter($id)
     {
         $filterData = $this->getFilterData();
-        
+
         $brand = Brand::findOrFail($id);
         $products = Product::where('BrandID', $id)->paginate(12);
         $otherBrands = Brand::where('ID', '!=', $id)->get();
 
         $currentFilters = ['BrandIDs' => [$id]];
-        
+
         return view('User.Shop.brand_filter', array_merge($filterData, compact('brand', 'products', 'otherBrands', 'currentFilters')));
     }
-    
+
     public function platformFilter($id)
     {
         $filterData = $this->getFilterData();
-        
+
         $platform = Platform::findOrFail($id);
         $products = Product::whereHas('platforms', function ($query) use ($id) {
                         $query->where('PlatformID', $id);
@@ -189,7 +192,7 @@ class ShopController extends Controller
         $otherPlatforms = Platform::where('ID', '!=', $id)->get();
 
         $currentFilters = ['PlatformIDs' => [$id]];
-        
+
         return view('User.Shop.platform_filter', array_merge($filterData, compact('platform', 'products', 'otherPlatforms', 'currentFilters')));
     }
 }

@@ -31,7 +31,7 @@
             <div class="container">
                 <div class="Cards-contact mt-5 pt-3">
                     <div class="card-contact-left text-center">
-                        <img src="{{asset('Admin/dist/img/web/Services/')}}" class="ProposalProduct" style="width: 497px;height: 367px;border-radius: 3px;" alt="{{$service->Name}}">
+                        <img src="{{asset('Admin/dist/img/web/Services/'. $service->Image)}}" class="ProposalProduct" style="width: 497px;height: 367px;border-radius: 3px;" alt="{{$service->Name}}">
                         <div>
                             <h2 style="font-size: 35px;">
                                 @if(App::getLocale() == 'ar')
@@ -48,7 +48,7 @@
                                 @endif
                             </p>
                             @if($service->Duration)
-                                <span>{{ __('messages.Duration')}}<?php echo $Service['Duration']. " Minutes" ?></span>
+                                <span>{{ __('messages.Duration') . $service->Duration . " Minutes"}}</span>
                             @endif
                             <br>
                             @if($service->Price)
@@ -57,7 +57,7 @@
                                 <span>{{ __('messages.Price') . $service->Price . "EGP"}}</span>
                             @endif
                             <div>
-                                <a class="btn btn-info button-Tool text-white" <?php if($Service['Status'] == '1'){ echo " href=".$Service['Link']." " ;} ?> >{{ $service->ButtonText}}</a>
+                                <a class="btn btn-info button-Tool text-white"  >{{ $service->ButtonText}}</a>
                             </div>
                         </div>
                     </div>
@@ -170,9 +170,5 @@
 @endsection
 
 @section('Js')
-
-    <script>
-        updateCartCount();
-    </script>
 
 @stop

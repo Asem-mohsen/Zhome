@@ -118,11 +118,11 @@
                                     </div>
                                     <div class="col-sm-9 RowReverseInArabic d-felx align-items-center flex-wrap" style="gap: 29px">
                                         <p class="text-muted mb-0">{{$user->email}}</p>
-                                        <?php if($User['is_verified'] == 0 ){ ?>
+                                        @if($user->is_verified)
                                             <span class="badge badge-warning">{{ __('messages.unverified')}}</span>
-                                        <?php }else{ ?>
+                                        @else
                                             <span class="badge badge-success">{{ __('messages.verified')}}</span>
-                                        <?php } ?>
+                                        @endif
 
                                     </div>
                                 </div>
@@ -169,7 +169,7 @@
                                             <div class="row">
                                                 <div class="col-8">
                                                     <div class="numbers">
-                                                        <p class="text-sm mb-0 text-uppercase font-weight-bold" style="font-size: 25px;"><?php echo $FullName[0] ?>{{ __('messages.Orders')}} </p>
+                                                        <p class="text-sm mb-0 text-uppercase font-weight-bold" style="font-size: 25px;">{{$user->Name . __('messages.Orders')}} </p>
                                                         <h5 class="font-weight-bolder text-center" >
                                                             @if($orderStatistics)
                                                                 {{ $orderStatistics->TotalNumberOfOrders }}
@@ -216,43 +216,43 @@
 
                                 //     if($CountRows > 0){
                             ?>
-                                    <h1 class="sub-header">{{__('messages.TrackOrder')}}</h1>
-                                    <div class="card">
-                                        <div class="Success-invoice">
-                                            <div class="invoice text-center">
-                                            <p>Order ID [ {{$order->ID}} ]</p>
-                                            <p>Ordered in  {{date('d-M Y', strtotime($order->created_at))}} </p>
-                                            <div class="Invoice-items">
-                                                @foreach($SelectOrder as $Invoice)
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="{{asset("Admin/dist/img/webProducts/MainImage/$order->MainImage")}}" class="InvoiceProductImg" alt="Product Image">
-                                                            <ul>
-                                                                <li>{{ ucfirst(strtolower($order->Name)) }}</li>
-                                                                <li>x{{ 'x' . $order->Quantity }}</li>
-                                                                <li>{{__('messages.Pice') . $invoce->Total . "EGP"}}</li>
-                                                                @if($Invoice['WithInstallation'] != 0)
-                                                                    <li>{{__('messages.InstallationPrice') . $invoce->InstallationCost . "EGP"}} </li>
-                                                                @endif
-                                                            </ul>
-                                                        </div>
-                                                @endforeach
-                                            </div>
-
-                                                <p>{{__('messages.DeliveryFees') . $order->DeliveryCost}}</p>
-                                                <p> {{__('messages.EstimatedArrivalDate') . date('d-M h:i A', strtotime($order->DeliveryEstimatedArrivalTime)) }}</p>
-                                                <div class="Invoice-totals">
-                                                    <!--the user used a promocode-->
-                                                @if($order->PromoCodeID)
-                                                    <p>{{__('messages.PromoUsed') . $PromocodeUsed->Promocode}}</p>
-                                                    <p>{{__('messages.Total') . $PromocodeUsed->Total . "EGP"}}</p>
-                                                @else
-                                                    <p>{{__('messages.Total') . $TotalSum->Total . "EGP"}}</p>
-                                                @endif
-
+                            <h1 class="sub-header">{{__('messages.TrackOrder')}}</h1>
+                            <div class="card">
+                                <div class="Success-invoice">
+                                    <div class="invoice text-center">
+                                    <p>Order ID [ {{$order->ID}} ]</p>
+                                    <p>Ordered in  {{date('d-M Y', strtotime($order->created_at))}} </p>
+                                    <div class="Invoice-items">
+                                        @foreach($SelectOrder as $Invoice)
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{asset("Admin/dist/img/webProducts/MainImage/$order->MainImage")}}" class="InvoiceProductImg" alt="Product Image">
+                                                    <ul>
+                                                        <li>{{ ucfirst(strtolower($order->Name)) }}</li>
+                                                        <li>x{{ 'x' . $order->Quantity }}</li>
+                                                        <li>{{__('messages.Pice') . $invoce->Total . "EGP"}}</li>
+                                                        @if($Invoice['WithInstallation'] != 0)
+                                                            <li>{{__('messages.InstallationPrice') . $invoce->InstallationCost . "EGP"}} </li>
+                                                        @endif
+                                                    </ul>
                                                 </div>
-                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                        <p>{{__('messages.DeliveryFees') . $order->DeliveryCost}}</p>
+                                        <p> {{__('messages.EstimatedArrivalDate') . date('d-M h:i A', strtotime($order->DeliveryEstimatedArrivalTime)) }}</p>
+                                        <div class="Invoice-totals">
+                                            <!--the user used a promocode-->
+                                        @if($order->PromoCodeID)
+                                            <p>{{__('messages.PromoUsed') . $PromocodeUsed->Promocode}}</p>
+                                            <p>{{__('messages.Total') . $PromocodeUsed->Total . "EGP"}}</p>
+                                        @else
+                                            <p>{{__('messages.Total') . $TotalSum->Total . "EGP"}}</p>
+                                        @endif
+
                                         </div>
                                     </div>
+                                </div>
+                            </div>
                             <hr>
 
                             <!-- Purchased -->
@@ -304,8 +304,6 @@
 
 @section('Js')
     <script>
-        updateCartCount();
-
         // Alert
         function DeactivateAccount(){
             alert("By deactivating your account, you cannot access your account. if you want to get your account back just contact one of our customer service.")

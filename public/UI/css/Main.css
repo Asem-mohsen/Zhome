@@ -185,9 +185,6 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         margin: 0 20px;
         align-items: center;
     }
-    .ShopNavMainDiv span.count {
-        transform: translate(89%, -198%);
-    }
 
     .ShopNavMainDiv .SearchAndNav{
         display: flex;
@@ -531,33 +528,16 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
 
 }
 
+.cta.ShopNowButton{
+    text-align: center;
+    display: block;
+}
 #cartDropdown p.TotalPriceCartIcon{
     text-align: left;
     font-size: 15px;
     padding: 0 12px;
 }
-span.count{
-  width: 18px;
-  height: 18px;
-  background-color: var(--MainColor);
-  border-radius: 50%;
-  text-align: center;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  font-size: 12px;
-  font-weight: bold;
-  color: #fff;
 
-  -webkit-transform: translate(50%, -50%);
-    transform: translate(86%, -177%);
-}
 .search-popup__form button[type="submit"] {
   background-color: var(--MainColor);
 }
@@ -1701,9 +1681,6 @@ section.testmonials .content .contentBox.active span {
 section.testmonials .content .contentBox.active p {
   opacity: 1;
   transition-delay: 0.9s;
-}
-.nav-icon.CartIcon{
-    display: block;
 }
 .ControlHome {
   display: grid;
@@ -5011,9 +4988,6 @@ div.BundlesButton{
 @media screen and (min-width: 1500px) {
      .navbar-expand-lg {
         padding: 0 26rem !important;
-    }
-    span.count {
-        right: 419px !important;
     }
     .bottom-slider {
         margin: auto !important;

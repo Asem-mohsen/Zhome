@@ -58,21 +58,23 @@ Route::get('language/{locale}', function ($locale) {
 })->name('language');
 
 
-Route::middleware('prevent.auth')->group(function () {
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'register']);
+Route::middleware('guest')->group(function () {
+    Route::get('/login',    [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login',   [AuthenticatedSessionController::class, 'store']);
+    Route::get('/register', [RegisteredUserController::class,       'create'])->name('register');
+    Route::post('/register',[RegisteredUserController::class,       'register']);
 });
 
 Route::get('/google-login',  [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::post('/google-login', [GoogleLoginController::class, 'handleGoogleLogin'])->name('auth.google.callback');
 
+Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout')
+    ->middleware('auth:web,admin');
+    // ->middleware(['auth' , 'auth.admin']);
 
 // Admin Routes
 Route::middleware('auth.admin')->group(function () {
-
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::controller(DashboardController::class)->group(function(){
         Route::get('/Dashboard', 'index')->name('Dashboard.index');
@@ -287,6 +289,7 @@ Route::prefix('Tools')->name('Tools.')->group(function(){
     Route::controller(ToolsController::class)->group(function(){
         Route::get('/', 'index')->name('index');
         Route::post('/store', 'store')->name('store');
+        Route::get('/interior', 'interior')->name('interior');
     });
 });
 
@@ -348,9 +351,7 @@ Route::prefix('Checkout')->name('Checkout.')->group(function(){
 });
 
 // User Routes
-Route::middleware('auth')->group(function () {
-
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+Route::middleware('auth:web')->group(function () {
 
     Route::controller(UserController::class)->prefix('Profile')->name('Profile.')->group(function(){
         Route::get('/{user}/profile', 'userProfile')->name('profile');
@@ -361,4 +362,4 @@ Route::middleware('auth')->group(function () {
 
 });
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\ProductImages;
 use Illuminate\Http\Request;
 use App\Models\Category;
@@ -14,6 +15,7 @@ use App\Models\Features;
 use App\Models\ProductEvaluation;
 use App\Models\ProductFaq;
 use App\Models\ProductDetails;
+use App\Models\Admin;
 use App\Http\Requests\Admin\AddProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
 use App\Http\Services\Media;
@@ -32,7 +34,7 @@ class ProductController extends Controller
             $productplatforms = ProductPlatforms::where('ProductID' , $product->ID);
             $platforms[] = $productplatforms;
         }
-        
+
         return view('Admin.Products.index' , compact('products','platforms'));
     }
 
@@ -47,7 +49,6 @@ class ProductController extends Controller
         return view('Admin.Products.create' , compact('products','brands','platforms','categories','subs','features'));
     }
 
-    
     public function getSubcategories($categoryId)
     {
         $subcategories = SubCategory::where('MainCategoryID', $categoryId)->get();
@@ -57,24 +58,23 @@ class ProductController extends Controller
     public function store(AddProductRequest $request)
     {
 
-        $mainImageName = Media::upload($request->file('MainImage'), 'Admin\dist\img\web\Products\MainImage');
-        $coverImageName = Media::upload($request->file('CoverImage'), 'Admin\dist\img\web\Products\CoverImage');
+        $mainImageName  = Media::upload($request->file('MainImage'), 'Admin\dist\img\web\Products\MainImage');
+        $coverImageName = Media::upload($request->file('CoverImage'),'Admin\dist\img\web\Products\CoverImage');
 
         $productData           = $request->only('Name','ArabicName','Description','ArabicDescription','Price','Quantity','InstallationCost','SubCategoryID','BrandID','IsBundle');
         $productDetailsData    = $request->only('Title','Title2','ArabicTitle','ArabicTitle2','Video','Width','Height','Length','Color','Capacity','PowerConsumption','Weight');
         $productPlatformsData  = $request->only('PlatformID');
         $productTechnologyData = $request->only('Technology');
         $productFeatureData    = $request->only('FeatureID');
-        $productFAQData        = $request->only('Question','Answer');
+        $productFAQData        = $request->only('Question','Answer' , 'ArabicQuestion' , 'ArabicAnswer');
         $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
 
         // Create Product
         $productData['MainImage'] = $mainImageName;
+        $productData['AddedBy'] = Auth::guard('admin')->user()->id;
         $product = Product::create($productData);
 
-
-
-        // Create ProductImages 
+        // Create ProductImages
         $productImagesData['ProductID'] = $product->id;
         if ($request->hasFile('OtherImages')) {
             foreach ($request->file('OtherImages') as $otherImage) {
@@ -104,27 +104,34 @@ class ProductController extends Controller
         }
 
         // Create Feature
-        $productFeatureData['ProductID'] = $product->id;
-        foreach ($request->FeatureID as $Feature) {
-            $productFeatureData['FeatureID'] = $Feature;
-            ProductFeatures::create($productFeatureData);
+        if ($request->has('FeatureID')) {
+            $productFeatureData['ProductID'] = $product->id;
+            foreach ($request->FeatureID as $Feature) {
+                $productFeatureData['FeatureID'] = $Feature;
+                ProductFeatures::create($productFeatureData);
+            }
         }
 
         // Create Product Evaluation
         $productEvaluationData['ProductID'] = $product->id;
+        $productEvaluationData['ExpertID'] = Auth::guard('admin')->user()->id;
         ProductEvaluation::create($productEvaluationData);
-        
+
         // Create Product FAQ
         $productFAQData['ProductID'] = $product->id;
         $questions = $request->Question;
         $answers = $request->Answer;
+        $ARanswers = $request->ArabicAnswer;
+        $ARquestions= $request->ArabicQuestions;
 
         if (count($questions) === count($answers)) {
             foreach ($questions as $index => $question) {
                 $faqData = [
-                    'Question' => $question,
-                    'Answer' => $answers[$index],
-                        'ProductID' => $product->id,
+                    'Question'       => $question,
+                    'Answer'         => $answers[$index],
+                    'ArabicQuestion' => $ARquestions,
+                    'ArabicAnswer'   => $ARanswers,
+                    'ProductID'      => $product->id,
                     ];
                     ProductFaq::create($faqData);
             }
@@ -168,7 +175,7 @@ class ProductController extends Controller
         // Update ProductImages
         $productImagesData['ProductID'] = $product->ID;
         if ($request->hasFile('OtherImages')) {
-            
+
             $existingImages = ProductImages::where('ProductID' , $product->ID)->get();
             foreach ($existingImages as $existingImage) {
                 $oldImagePath = public_path("Admin/dist/img/web/Products/OtherImages/{$existingImage->Image}");
@@ -220,12 +227,13 @@ class ProductController extends Controller
 
     public function show(Product $product){
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations' , 'productDetails'])->first();
-        return view('Admin.Products.show' , compact('product'));
+        $admin = Admin::with('ProductEvaluation')->first();
+        return view('Admin.Products.show' , compact('product' , 'admin'));
     }
 
     public function userShow(Product $product)
     {
-        $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations' , 'productDetails'])->first();
+        $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
         return view('User.Product.show' , compact('product' , 'products'));
     }
@@ -266,7 +274,7 @@ class ProductController extends Controller
         $product->where('ID',$product->ID)->delete();
 
         return redirect()->back()->with('success', 'product Deleted Successfully');
-            
+
     }
 
 }
