@@ -270,6 +270,7 @@
                                                 <label for="Description" class="form-control-label">Description</label>
                                                 <textarea class="form-control" id="Description" name="Description" required></textarea>
                                             </div>
+                                            <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
                                             @error('Description')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -280,6 +281,7 @@
                                                     Description</label>
                                                 <textarea class="form-control" id="ArabicDescription" name="ArabicDescription" required></textarea>
                                             </div>
+                                            <p class="generate-link" onclick="generateArabicLoremIpsum(400, 'ArabicDescription')">Generate Lorem Ipsum Words</p>
                                             @error('ArabicDescription')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -289,6 +291,7 @@
                                                 <label for="Expert" class="form-control-label">Expert Review</label>
                                                 <textarea class="form-control" id="Expert" name="Evaluation" required></textarea>
                                             </div>
+                                            <p class="generate-link" onclick="generateLoremIpsum(200, 'Expert')">Generate Lorem Ipsum Words</p>
                                             @error('Evaluation')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -299,6 +302,7 @@
                                                     Review</label>
                                                 <textarea class="form-control" id="ArabicExpert" name="ArabicEvaluation" required></textarea>
                                             </div>
+                                            <p class="generate-link" onclick="generateArabicLoremIpsum(200, 'ArabicExpert')">Generate Lorem Ipsum Words</p>
                                             @error('ArabicEvaluation')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -309,6 +313,7 @@
                                                 <input class="form-control" type="text" id="Title" name="Title"
                                                     required>
                                             </div>
+                                            <p class="generate-link" onclick="generateLoremIpsum(10, 'Title')">Generate Lorem Ipsum Words</p>
                                             @error('Title')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -319,6 +324,7 @@
                                                 <input class="form-control" type="text" id="OtherTitle"
                                                     name="Title2" required>
                                             </div>
+                                            <p class="generate-link" onclick="generateLoremIpsum(10, 'OtherTitle')">Generate Lorem Ipsum Words</p>
                                             @error('Title2')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -329,6 +335,7 @@
                                                 <input class="form-control" type="text" id="ArabicTitle"
                                                     name="ArabicTitle" required>
                                             </div>
+                                            <p class="generate-link" onclick="generateArabicLoremIpsum(10, 'ArabicTitle')">Generate Lorem Ipsum Words</p>
                                             @error('ArabicTitle')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -340,6 +347,7 @@
                                                 <input class="form-control" type="text" id="OtherArabicTitle"
                                                     name="ArabicTitle2" required>
                                             </div>
+                                            <p class="generate-link" onclick="generateArabicLoremIpsum(10, 'OtherArabicTitle')">Generate Lorem Ipsum Words</p>
                                             @error('ArabicTitle2')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror

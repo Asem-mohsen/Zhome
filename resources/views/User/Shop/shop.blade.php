@@ -3,10 +3,6 @@
 @section('Title', 'Shop')
 
 
-@section('Css')
-@endsection
-
-
 @section('Content')
 
     <section>
@@ -510,9 +506,6 @@
 
 
 @section('Js')
-
-
-
     <script>
         $(document).ready(function() {
             $('.card-slider').slick({
@@ -542,11 +535,6 @@
             ]
         });
         });
-    </script>
-
-    <!-- Add to Cart -->
-    <script>
-        updateCartCount()
     </script>
 
     <!-- Logo Brands Slider -->

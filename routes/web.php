@@ -27,11 +27,7 @@ use App\Http\Controllers\Auth\GoogleLoginController;
 
 // User
 use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\User\UserProductController;
 use App\Http\Controllers\User\ProfileController;
-use App\Http\Controllers\User\BrandsContoller;
-use App\Http\Controllers\User\PlatformsController;
-use App\Http\Controllers\User\CategoriesController;
 use App\Http\Controllers\User\ToolsController;
 use App\Http\Controllers\User\AboutController;
 use App\Http\Controllers\User\CartContoller;
@@ -40,7 +36,6 @@ use App\Http\Controllers\User\ShopController;
 use App\Http\Controllers\User\CheckoutContoller;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\ServicesController;
-use App\Http\Controllers\User\UserContactController;
 
 // Language
 use App\Http\Controllers\LanguageController;
@@ -62,7 +57,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/login',    [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login',   [AuthenticatedSessionController::class, 'store']);
     Route::get('/register', [RegisteredUserController::class,       'create'])->name('register');
-    Route::post('/register',[RegisteredUserController::class,       'register']);
+    Route::post('/register',[RegisteredUserController::class,       'store']);
 });
 
 Route::get('/google-login',  [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
@@ -254,10 +249,10 @@ Route::middleware('auth.admin')->group(function () {
             });
         });
     });
+
 });
 
 // Public Routes
-
 Route::controller(HomeController::class)->group(function(){
     Route::get('/', 'index')->name('index');
 });
@@ -348,6 +343,10 @@ Route::prefix('Checkout')->name('Checkout.')->group(function(){
         Route::post('/check-promo-code','checkPromoCode');
         Route::post('/get-delivery-cost', 'getDeliveryCost');
     });
+});
+
+Route::controller(SubscribersController::class)->group(function(){
+    Route::post('/newSubscriber', 'newSubscriber')->name('new.subscriber');
 });
 
 // User Routes

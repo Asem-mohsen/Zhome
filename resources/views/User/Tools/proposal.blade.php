@@ -3,42 +3,33 @@
 @section('Title', 'Design Your Home')
 
 @section('Css')
-    <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{asset('UI/css/bd-wizard.css')}}">
 
     <style>
+        /* Navbar for specific pages */
+        .header{
+            border-bottom: 1px solid #eeee;
+        }
+        .menu .menu__inner .menu__item .menu__link , .nav-icon i{
+            color: black
+        }
+        #Icons .separator {
+            border-left: 1px solid black;
+        }
+        a.menu__link.JoinUsBtn {
+            border: 1px solid #154352;
+            color: black;
+        }
+        a.menu__link.JoinUsBtn:hover{
+            color: white;
+        }
+        /* End */
         a {
             text-decoration: none !important;
         }
-        #header {
-            border-bottom: 1px solid #ededed;
-        }
-        #Icons .separator {
-            border-left: 1px solid black !important;
-        }
-        .JoinUs {
-            background: linear-gradient(to right, #154352 50%, #154352 50%);
-        }
-        .JoinUs:hover {
-            /*background-position: left bottom;*/
-            /*color: black !important;*/
-            /*border: 1px solid #154352;*/
-        }
-        .nav-icon i {
-            color: black;
-        }
-        .nav-button:hover {
-            background-color: #1a798f;
-            color: white !important;
-        }
+
         .block-title.text-center{
-            margin-top: 95px;
-        }
-        .menu .menu__inner .menu__item .menu__link {
-            color:black;
-            text-decoration:none;
+            margin-top: 90px;
         }
         ul.menu__inner{
             margin:0;
@@ -111,6 +102,7 @@
 
         }
     </style>
+
 @endsection
 
 @section('Content')
@@ -121,7 +113,7 @@
                 <p class="block-title__tag-line text-center" >{{__('messages.GetYourDesignButton')}}</p>
             </div>
 
-                @include('User.Components.Msg')
+            @include('User.Components.Msg')
 
             <form method="POST" id="MainForm" action="{{ route('Tools.store') }}" enctype="multipart/form-data">
                 @csrf
@@ -641,9 +633,6 @@
 
 @section('Js')
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="{{asset('UI/js/jquery.steps.min.js')}}"></script>
     <script src="{{asset('UI/js/bd-wizard.js')}}"></script>
 
@@ -761,8 +750,4 @@
             });
     </script>
 
-    <!-- Add to Cart -->
-    <script>
-        updateCartCount()
-    </script>
 @stop

@@ -74,7 +74,7 @@ function updateCartCount() {
     .then(response => {
         $('.count').text(response.data.count);
         $('#TotalItems').innerText = response.data.count;
-        
+
     })
     .catch(error => {
         console.error('Error updating cart count:', error);
@@ -232,3 +232,36 @@ function displayTotalPrice() {
     document.getElementById('TotalCheckoutAfterPromo').value = finalTotal.toFixed(2);
 }
 // End Checkout Page
+
+
+// Footer subscription
+var typingTimer;
+var doneTypingInterval = 1000;
+function handleInput() {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(doneTyping, doneTypingInterval);
+}
+
+function doneTyping() {
+    var email = document.getElementById('inputEmail').value;
+
+    // Perform AJAX request
+    $.ajax({
+        url: subscriptionRoute,
+        type: 'POST',
+        data: {
+            email: email,
+            _token: token,
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#inputEmail').css('border-color', 'green');
+            } else {
+                $('#inputEmail').css('border-color', 'red');
+            }
+        },
+        error: function() {
+            $('#inputEmail').css('border-color', 'red');
+        }
+    });
+}

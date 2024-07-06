@@ -48,11 +48,11 @@
             <h3>{{ __('messages.Subscription')}}</h3>
             <p>{{ __('messages.SubscriptionText')}}</p>
             <div class="subscriptions">
-                <input type="text" class="form-control" id="inputEmail" name="Email" placeholder="{{ __('messages.EmailPlaceholder')}}" required oninput="handleInput()">
+                <input type="text" class="form-control" id="inputEmail" name="Email" placeholder="{{ __('messages.EmailPlaceholder')}}" required  oninput="handleInput()">
             </div>
             <script>
-                var typingTimer;
-                var doneTypingInterval = 1000;
+                const subscriptionRoute = "{{ route('new.subscriber') }}";
+                const token = "{{ csrf_token() }}";
             </script>
 
             <div class="list">

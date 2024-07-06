@@ -12,6 +12,7 @@
                 <span class="count" id="cart-count"></span>
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @method('GET')
                 @csrf
             </form>
             {{-- Logout --}}
@@ -27,6 +28,7 @@
             <div class="separator NewSeparator"></div>
             {{-- Logout --}}
             <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                @method('GET')
                 @csrf
             </form>
             <a class="nav-link" href="#" title="{{ __('messages.LogOut')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

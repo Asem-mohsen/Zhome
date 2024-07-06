@@ -2,6 +2,9 @@
 @section('Title' , $platform->Platform)
 
 @section('Css')
+    <!-- Price Slider Range -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!-- End Price Slider Range -->
     <style>
         .slider-OnlineShop .owl-carousel .owl-stage-outer {
             border-radius: 0;

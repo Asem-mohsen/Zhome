@@ -1,5 +1,5 @@
 @extends('auth.layouts.master')
-@section('Title' , 'Sign In')
+@section('Title' , 'Sign Up')
 
 @section('Content')
 
@@ -7,7 +7,7 @@
         <div class="h-100">
             <div class="row noHegiht h-100">
                 <div class="wrapper h-100">
-                    <div class="col-md-6 box details"> 
+                    <div class="col-md-6 box details">
                     </div>
                     <div class="col-md-5 box">
                         <div class="form">
@@ -23,7 +23,7 @@
                                 @csrf
                                 <div class="inputs login-form__form">
                                     <div class="login-form__field position-relative" style="height:82px">
-                                        <input type="text" name="Name" id="name" placeholder="{{ __('messages.UserName') }}" required/>
+                                        <input type="text" name="name" id="name" placeholder="{{ __('messages.UserName') }}" required/>
                                         <i class="fa fa-user"></i>
                                     </div>
                                     <div class="login-form__field position-relative" style="height:82px">
@@ -97,7 +97,7 @@
         document.getElementById('eye').addEventListener('click', function () {
             let passwordField = document.getElementById('password');
             let eyeIcon = document.getElementById('eye');
-            
+
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
             } else {
