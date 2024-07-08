@@ -63,6 +63,7 @@
                                     <label for="Description">Description</label>
                                     <textarea class="form-control" rows="3" name="Description" id="Description" placeholder="Enter ..." ></textarea>
                                 </div>
+                                <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
                                 @error('Description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
@@ -72,6 +73,7 @@
                                     <label for="Main-Description-AR">Description -AR-</label>
                                     <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ..."></textarea>
                                 </div>
+                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'Main-Description-AR')">Generate Lorem Ipsum Words</p>
                                 @error('ArabicDescription')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
@@ -81,6 +83,7 @@
                                     <label for="OtherDescription">Other Description</label>
                                     <textarea class="form-control" rows="3" name="OtherDescription" id="OtherDescription" placeholder="Enter ..." ></textarea>
                                 </div>
+                                <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
                                 @error('OtherDescription')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
@@ -90,6 +93,7 @@
                                     <label for="OtherArabicDescription">Other Description -AR-</label>
                                     <textarea class="form-control" rows="3" name="OtherArabicDescription" id="OtherArabicDescription" placeholder="Enter ..."></textarea>
                                 </div>
+                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'OtherArabicDescription')">Generate Lorem Ipsum Words</p>
                                 @error('OtherArabicDescription')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror

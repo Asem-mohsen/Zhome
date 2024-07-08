@@ -3,6 +3,25 @@
 
 @section('Css')
     <style>
+        /* Navbar for specific pages */
+        .header{
+            border-bottom: 1px solid #eeee;
+        }
+        .menu .menu__inner .menu__item .menu__link , .nav-icon i{
+            color: black
+        }
+        #Icons .separator {
+            border-left: 1px solid black;
+        }
+        a.menu__link.JoinUsBtn {
+            border: 1px solid #154352;
+            color: black;
+        }
+        a.menu__link.JoinUsBtn:hover{
+            color: white;
+        }
+        /* End */
+
         .owl-carousel .owl-stage-outer {
             height: 400px;
             border-radius: 10px;
@@ -43,7 +62,7 @@
 @section('Content')
 
     <section>
-        <div class="container mt-3 mb-4">
+        <div class="container mt-5 pt-5 mb-4">
             <div class="block-title text-center">
                 <p class="block-title__tag-line text-center">{{ __('messages.Zhome')}}</p>
                 <h1 class="text-center">{{ __('messages.Categories')}}</h1>
@@ -81,7 +100,7 @@
 
                     <section class="slider-one" style="top:0;" id="{{$category->Category}}">
                         <div class="slider-one__carousel owl-carousel owl-theme">
-                            <div class="item slider-one__slider-1" style="background-image: url({{asset("Admin/dist/img/web/Categories/$category->MainImage")}};" >
+                            <div class="item slider-one__slider-1" style="background-image: url({{asset("Admin/dist/img/web/Categories/$category->MainImage")}});" >
                                 <div class="container bottom-slider">
                                     <a href="{{route("Shop.Filter.category" , $category->ID)}}" class="thm-btn slider-one__btn">
                                         @if(App::getLocale() == 'ar')
@@ -109,7 +128,7 @@
                                         @foreach($category->subcategories as $subCategory)
 
                                             <a class="ToTheSubPage" href="{{route("Shop.Filter.subcategory" , $subCategory->ID)}}">
-                                                <div class="box-shop SubCategory-onlineshop" style="background-image: url({{asset("Admin/dist/img/web/Categories/SubCategories/$subCategory->Image")}};">
+                                                <div class="box-shop SubCategory-onlineshop" style="background-image: url({{asset("Admin/dist/img/web/Categories/SubCategory/" .$subCategory->image)}});">
                                                 </div>
                                                 <p>
                                                     @if(App::getLocale() == 'ar')
@@ -127,7 +146,7 @@
 
                     <!-- Product From The Selected Category -->
                     <section>
-                        <div class="Category-Product">
+                        <div class="category-Name">
                             <h3>
                                 @if(App::getLocale() == 'ar')
                                     {{$category->ArabicName . " منتجات"}}

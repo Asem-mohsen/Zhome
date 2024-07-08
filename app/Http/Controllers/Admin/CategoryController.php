@@ -26,10 +26,11 @@ class CategoryController extends Controller
 
     public function userIndex()
     {
-        $categoryIds = Category::distinct()->pluck('ID');
-        $categories  = Category::with('subcategories.products')
-                    ->whereIn('ID', $categoryIds)
-                    ->get();
+        $categories = Category::whereHas('subcategories.products')
+                ->with(['subcategories' => function ($query) {
+                    $query->whereHas('products');
+                }])
+                ->get();
         return view('User.Categories.index' , compact('categories'));
     }
 

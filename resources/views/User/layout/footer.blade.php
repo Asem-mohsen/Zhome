@@ -28,7 +28,7 @@
             <h2>Zhome</h2>
             <h3> {{ __('messages.AlwaysInControl')}}</h3>
             <div class="text-footer">
-                <p>{{ $contact->phone ." - " . $contact->Phone2}}</p>
+                <p>{{"0". $contact->Phone ." - 0". $contact->Phone2}}</p>
                 <p>{{ $contact->Market ." and " . $contact->Market2}}</p>
                 <p>{{ "Find us in " . $contact->Address }}</p>
             </div>

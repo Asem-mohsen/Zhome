@@ -5,6 +5,24 @@
 
 @section('Css')
     <style>
+        /* Navbar for specific pages */
+        .header{
+            border-bottom: 1px solid #eeee;
+        }
+        .menu .menu__inner .menu__item .menu__link , .nav-icon i{
+            color: black
+        }
+        #Icons .separator {
+            border-left: 1px solid black;
+        }
+        a.menu__link.JoinUsBtn {
+            border: 1px solid #154352;
+            color: black;
+        }
+        a.menu__link.JoinUsBtn:hover{
+            color: white;
+        }
+        /* End */
         section.SectionNumber:nth-child(even) {
                 background-color: aliceblue;
         }
@@ -44,8 +62,8 @@
     </style>
 @endsection
 
-    <section>
-        <div class="container mt-3 mb-4">
+    <section class="mt-5">
+        <div class="container mt-5 pt-5 mb-4">
             <div class="block-title text-center">
                 <p class="block-title__tag-line text-center">{{ __('messages.Zhome')}}</p>
                 <h1 class="text-center">{{ __('messages.Brands')}}</h1>
@@ -70,42 +88,39 @@
 
     <!-- Brands -->
     @php
-        // We are selecting only the brands that has products
         $i = 1;
     @endphp
     @foreach ($brands as $brand )
-            <section class="SectionNumber" id="{{$brand->Brand}}">
-                <div class="container">
-                    <div class="PlatformSection">
-                        <div class="PlatformTop">
-                            <h2>{{$brand->Brand}}</h2>
-                            <img src="{{asset("Admin/dist/img/web/Brands/Cover/$brand->CoverImg")}}" alt="{{$brand->Brand}}" style="object-fit: contain;height: 300px;">
+        <section class="SectionNumber" id="{{$brand->Brand}}">
+            <div class="container">
+                <div class="PlatformSection">
+                    <div class="PlatformTop">
+                        <h2>{{$brand->Brand}}</h2>
+                        <img src="{{asset("Admin/dist/img/web/Brands/Cover/$brand->CoverImg")}}" alt="{{$brand->Brand}}" style="object-fit: contain;height: 300px;">
+                    </div>
+                    <div class="container">
+                        <div class="PlatformDesc">
+                            <p>{{$brand->MainDescription}}</p>
                         </div>
-                        <div class="container">
-                            <div class="PlatformDesc">
-                                <p>{{$brand->MainDescription}}</p>
-                            </div>
 
-                            <!-- Products Related -->
-                            <div class="Category-Product mt-5 pt-5">
-                                <h3>{{ __('messages.RelatedProducts')}}</h3>
-                                <a href="{{route('Shop.Filter.brand' , $brand->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
-                            </div>
-                            <div class="related-product__carousel owl-carousel owl-theme mt-3 mb-4">
-                                @if ($brand->products->isNotEmpty())
-                                    @foreach ($brand->products as $product)
-                                        <div class="item">
-                                            <a href="{{route('Product.show' , $product->ID)}}">
-                                                <x-user.product-card-user :variable="$product" :productID="$product->ProductID" />
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                @endif
-                            </div>
+                        <!-- Products Related -->
+                        <div class="category-Name mt-5 pt-5">
+                            <h3>{{ __('messages.RelatedProducts')}}</h3>
+                            <a href="{{route('Shop.Filter.brand' , $brand->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                        </div>
+                        <div class="related-product__carousel owl-carousel owl-theme mt-3 mb-4">
+                            @if ($brand->products->isNotEmpty())
+                                @foreach ($brand->products as $product)
+                                    <div class="item">
+                                        <x-user.product-card-user :variable="$product" :productID="$product->ProductID" />
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
     @endforeach
 
 @endsection
@@ -138,8 +153,4 @@
         });
     </script>
 
-    <!-- Add to Cart -->
-    <script>
-        updateCartCount();
-    </script>
 @stop

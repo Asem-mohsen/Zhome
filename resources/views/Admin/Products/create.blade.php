@@ -281,7 +281,7 @@
                                                     Description</label>
                                                 <textarea class="form-control" id="ArabicDescription" name="ArabicDescription" required></textarea>
                                             </div>
-                                            <p class="generate-link" onclick="generateArabicLoremIpsum(400, 'ArabicDescription')">Generate Lorem Ipsum Words</p>
+                                            <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ArabicDescription')">Generate Lorem Ipsum Words</p>
                                             @error('ArabicDescription')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -302,7 +302,7 @@
                                                     Review</label>
                                                 <textarea class="form-control" id="ArabicExpert" name="ArabicEvaluation" required></textarea>
                                             </div>
-                                            <p class="generate-link" onclick="generateArabicLoremIpsum(200, 'ArabicExpert')">Generate Lorem Ipsum Words</p>
+                                            <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ArabicExpert')">Generate Lorem Ipsum Words</p>
                                             @error('ArabicEvaluation')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror

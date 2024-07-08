@@ -22,10 +22,9 @@ class BrandController extends Controller
 
     public function userIndex()
     {
-        $brandIds = Brand::distinct()->pluck('ID');
-        $brands   = Brand::with('products')
-                    ->whereIn('ID', $brandIds)
-                    ->get();
+        $brands = Brand::whereHas('products')
+                ->with('products')
+                ->get();
 
         return view('User.Brands.index' , compact('brands'));
     }

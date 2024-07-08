@@ -3,6 +3,25 @@
 
 @section('Css')
     <style>
+        /* Navbar for specific pages */
+        .header{
+            border-bottom: 1px solid #eeee;
+        }
+        .menu .menu__inner .menu__item .menu__link , .nav-icon i{
+            color: black
+        }
+        #Icons .separator {
+            border-left: 1px solid black;
+        }
+        a.menu__link.JoinUsBtn {
+            border: 1px solid #154352;
+            color: black;
+        }
+        a.menu__link.JoinUsBtn:hover{
+            color: white;
+        }
+        /* End */
+
         .slider-OnlineShop .owl-carousel .owl-stage-outer {
         border-radius: 0;
         }
@@ -46,7 +65,7 @@
 @section('Content')
 
     <section>
-        <div class="container mt-3 mb-4">
+        <div class="container mt-5 pt-5 mb-4">
             <div class="block-title text-center">
                 <p class="block-title__tag-line text-center">{{ __('messages.Zhome')}}</p>
                 <h1 class="text-center">{{ __('messages.Platforms')}}</h1>
@@ -130,7 +149,7 @@
                     </div>
 
                     <!-- Products Related -->
-                    <div class="Category-Product mt-5 pt-4">
+                    <div class="category-Name mt-5 pt-4">
                         <h3>{{ __('messages.RelatedProducts')}}</h3>
                         <a href="{{route("Shop.Filter.platform" , $platform->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
                     </div>

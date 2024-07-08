@@ -207,7 +207,7 @@ return[
         'SecondsSale'=>'Seconds',
         'Offers'=>'Offers',
         'DiscoverMore'=>'Discover More',
-        'FreshSale'=>'Fresh Sale',
+        'FreshSaleText'=>'Fresh Sale',
         'OutofStock'=>'Out of Stock',
         'DiscoverTheProductsOf'=>'Discover the products of',
         'BundlesMadeforYou'=>'Bundles made for you',

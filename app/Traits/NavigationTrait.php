@@ -13,7 +13,10 @@ trait NavigationTrait
         $isMobile   = $this->isMobile();
         $isShop     = $this->isShopPage();
         $allCategories = Category::with('subcategories')->get();
-        $navCategories = Category::with('subcategories')->limit(6)->get();
+        $navCategories = Category::whereHas('subcategories.products')
+                            ->with(['subcategories' => function ($query) {
+                                $query->whereHas('products');
+                            }])->get();
         $brands     = Brand::all();
         $platforms  = Platform::all();
 

@@ -19,11 +19,11 @@ div {
 html{
   scroll-behavior: smooth;
 }
-
-/* Navbar */
 a {
   cursor: pointer;
 }
+
+/* Navbar */
 nav.navbar {
   padding: 11rem;
   padding-top: 0;
@@ -260,6 +260,7 @@ nav.stricked-menu.stricky-fixed ul li.nav-item a.nav-button:hover {
         height: 25px;
         margin: 0px 8px;
     }
+
     /*Proposal*/
     .wizard .steps {
         overflow: hidden;
@@ -694,7 +695,33 @@ a.ZhomeName{
     cursor: pointer;
     margin-bottom: 20px;
 }
+.facebook-login-btn{
+  background-color: #3b5998;
+  color: white !important;
+  padding: 10px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.facebook-login-btn i{
+  color: white;
+  transition: transform 0.5s ease;
+}
+.facebook-login-btn span {
+  margin-left: 5px;
+  transition: opacity 0.5s ease;
+}
 
+.facebook-login-btn:hover i {
+  transform: translateX(70px);
+}
+
+.facebook-login-btn:hover span {
+  opacity: 0;
+}
 /* Index page */
 #StartYourSystem-Shop {
     margin-top: 66px;
@@ -907,33 +934,7 @@ a.ZhomeName{
         display:none !important;
     }
 }
-.facebook-login-btn{
-    background-color: #3b5998;
-    color: white !important;
-    padding: 10px;
-    border-radius: 8px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-.facebook-login-btn i{
-    color: white;
-    transition: transform 0.5s ease;
-}
-.facebook-login-btn span {
-    margin-left: 5px;
-    transition: opacity 0.5s ease;
-}
 
-.facebook-login-btn:hover i {
-    transform: translateX(70px);
-}
-
-.facebook-login-btn:hover span {
-    opacity: 0;
-}
 #shop-background{
     height: 440px;
     position: relative;
@@ -2636,7 +2637,7 @@ h4[aria-expanded="false"]::before {
   cursor: default;
 }
 .cta.ShopNowButton:hover svg#HomeIcon {
-    transform: translateX(231px);
+    transform: translateX(180px);
 }
 a#BuildHomeCta{
     display: flex;
@@ -2650,7 +2651,7 @@ a#BuildHomeCta{
   margin-top: 30px;
 }
 
-/* ONLINE SHOP */
+/* SHOP */
 .Shop {
   margin-top: 50px;
 }
@@ -2727,7 +2728,22 @@ h1#ShopByCategory {
 .category-shop a:hover {
   filter: brightness(0.5);
 }
+.category-Name{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
 
+  h3{
+    position: relative;
+  }
+  span{
+    font-size: 19px;
+    position: absolute;
+    right: 0;
+    margin-top: 7px;
+  }
+}
 .BrandDescriptionShop{
     color: #878787;
     width: 79%;
@@ -2951,6 +2967,9 @@ color: white;
   display: flex;
   align-items: center;
   justify-content: right;
+}
+.owl-nav{
+  display:none !important;
 }
 .Category-Product h3{
   margin-bottom: 0;

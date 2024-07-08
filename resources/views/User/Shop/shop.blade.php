@@ -271,9 +271,9 @@
     @if($productsOnSale->isNotEmpty())
         <section>
             <div class="container">
-                <div class="Category-Product mt-5">
-                    <h3></h3>
-                    <a href="{{route('Shop.index')}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                <div class="category-Name mt-5">
+                    <h3>{{ __('messages.FreshSaleText')}}</h3>
+                    <a href="{{route('Shop.index')}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right ml-2"></i></a>
                 </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-3 mb-5">
                     @foreach($productsOnSale as $product)
@@ -304,12 +304,13 @@
                                 {{$category2->Category}}
                             @endif
                             <br>
-                            {{ __('messages.Category')}}
+                            <span>{{ __('messages.Category')}}</span>
                         </h3>
+                        <a href="{{route('Shop.Filter.category' , $category2->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right ml-2"></i></a>
                     </div>
 
                     @if($category2->subcategories->isNotEmpty())
-                        <div class="Subs">
+                        <div class="Subs mt-3">
                             @foreach($category2->subcategories as $subcategory)
                                 <a class="ToTheSubPage" href="{{route('Shop.Filter.subcategory' , $subcategory->ID)}}">
                                     <div class="box-shop SubCategory-OnlineShop-Circled" style="background-image: url({{asset("Admin/dist/img/web/Categories/SubCategory/$subcategory->image")}})">
@@ -330,9 +331,6 @@
 
             <!-- Product From The Selected Category -->
             <section>
-                <div class="Category-Product">
-                    <a href="{{route('Shop.Filter.category' , $category2->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
-                </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5 pb-3">
                     @foreach($categoriesProduct as $product)
                         <div class="item">
@@ -389,11 +387,12 @@
                                 {{$category->Category}}
                             @endif
                             <br>
-                            {{ __('messages.Category')}}
+                            <span>{{ __('messages.Category')}}</span>
                         </h3>
+                        <a href="{{route('Shop.Filter.category' , $category->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right ml-2"></i></a>
                     </div>
                     @if($category->subcategories->isNotEmpty())
-                        <div class="Subs">
+                        <div class="Subs mt-3">
                             @foreach($category->subcategories as $subcategory)
 
                                 <a class="ToTheSubPage" href="{{route('Shop.Filter.subcategory' , $subcategory->ID)}}">
@@ -415,9 +414,6 @@
 
             <!-- Product From The Selected Category -->
             <section>
-                <div class="Category-Product">
-                    <a href="{{route('Shop.Filter.category' , $category->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
-                </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5 pb-3">
                     @foreach($categoriesProduct as $product)
                         <div class="item">
@@ -452,7 +448,7 @@
             <section>
                 <div class="Category-Product mt-4 justify-content-between">
                     <h3>{{$brand->Brand . " Products"}} </h3>
-                    <a href="{{route('Shop.Filter.brand' , $brand->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right"></i></a>
+                    <a href="{{route('Shop.Filter.brand' , $brand->ID)}}">{{ __('messages.DiscoverMore')}}<i class="fa fa-arrow-right ml-2"></i></a>
                 </div>
                 <div class="related-product__carousel owl-carousel owl-theme mt-5 mb-5">
                     @foreach($productsBrand as $product)

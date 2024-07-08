@@ -29,7 +29,7 @@ class UpdateSubCategoryRequest extends FormRequest
             'SubArabicName'     => ['required' , 'max:255' , Rule::unique('subcategory', 'SubArabicName')->ignore($this->id)],
             'image'             => ['nullable' , 'max:2048'],
             'SubDescription'    => ['required' , 'max:1000'],
-            'ArabicDescription' => ['required' , 'max:1000'],
+            'ArabicDescription' => ['required' ],
         ];
     }
 }

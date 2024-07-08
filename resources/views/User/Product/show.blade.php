@@ -9,6 +9,24 @@
 
 @section('Css')
     <style>
+            /* Navbar for specific pages */
+            .header{
+                border-bottom: 1px solid #eeee;
+            }
+            .menu .menu__inner .menu__item .menu__link , .nav-icon i{
+                color: black
+            }
+            #Icons .separator {
+                border-left: 1px solid black;
+            }
+            a.menu__link.JoinUsBtn {
+                border: 1px solid #154352;
+                color: black;
+            }
+            a.menu__link.JoinUsBtn:hover{
+                color: white;
+            }
+            /* End */
             .slider-OnlineShop .owl-carousel .owl-stage-outer {
                 border-radius: 0;
             }
@@ -125,7 +143,7 @@
 @section('Content')
 
         <!-- Header -->
-        <div class="container">
+        <div class="container mt-5 pt-3">
             <ul class="list-unstyled thm-breadcrumb thm-breadcrumb__two">
                 <li><a href="{{route('index')}}">{{ __('messages.Home')}}</a></li>
                 <li><a href="{{route('Shop.index')}}">{{ __('messages.Shop')}}</a></li>
