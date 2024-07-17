@@ -34,7 +34,6 @@ section.auth{
 }
 
 .details{
-    background-image: url('http://localhost:8000/UI/Imgs/Signin/RobotHand.jpg');
     background-size: cover;
 }
 
