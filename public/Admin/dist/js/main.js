@@ -16,13 +16,13 @@ $(function () {
 
 /*
 **
-    This function check all the disabled inputs, add the 
-    disabled attribute if the user deleted it manually 
+    This function check all the disabled inputs, add the
+    disabled attribute if the user deleted it manually
 **
 */
 function monitorDisabledInputs() {
     const disabledInputs = document.querySelectorAll('input[disabled], textarea[disabled]');
-    
+
     disabledInputs.forEach(input => {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(mutation => {
@@ -100,5 +100,20 @@ function generateArabicLoremIpsum(wordCount, elementId) {
     const targetElement = document.getElementById(elementId);
     if (targetElement) {
         targetElement.value = result;
+    }
+}
+
+
+// Function to set Remaining charachter length
+function updateCharacterCount(textareaId, maxLength) {
+    const textarea = $('#' + textareaId);
+    const remaining = $('.remaining[data-for="' + textareaId + '"]');
+    const length = textarea.val().length;
+
+    if (length > maxLength) {
+        textarea.val(textarea.val().substring(0, maxLength));
+        remaining.text('0 Characters Remaining').css('color', 'red');
+    } else {
+        remaining.text((maxLength - length) + ' Characters Remaining').css('color', '');
     }
 }

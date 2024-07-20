@@ -59,13 +59,13 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Platforms</td>
-                                                    <td>{{$order->Platforms}}</td>
+                                                    <td>{{$order->Platform}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Categories</td>
                                                     <td>
-                                                        @foreach ($order->toolsCategories as $category)
-                                                            {{$category->Category . " - "}}
+                                                        @foreach ($order->toolsCategories as $index => $category)
+                                                            {{$category->Category . ( ($index + 1) !== count($order->toolsCategories) ? "  -  " : "")}}
                                                         @endforeach
                                                     </td>
                                                 </tr>

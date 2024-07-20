@@ -1,3 +1,4 @@
+{{-- Display Success or Error Messages --}}
 @if(session('success'))
     <div class="alert alert-success text-center">
         {{ session('success') }}
@@ -7,4 +8,3 @@
         {{ session('error') }}
     </div>
 @endif
-

@@ -28,7 +28,7 @@ class ShopOrders extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'UserID', 'ID');
+        return $this->belongsTo(User::class, 'UserID', 'id');
     }
 
 }

@@ -285,6 +285,8 @@
     gap:20px;
     padding-top: 10px;
     justify-content: center;
+    width: fit-content;
+
     .card__body-header h2{
         font-size: 19px;
         text-align: center;
@@ -331,8 +333,28 @@
         display:block;
         margin:auto;
         width:100%;
+        cursor: pointer;
+        padding: 15px;
         max-width:300px'
      }
+}
+
+#myModal{
+    background-color: #0000003d;
+    padding: 20px;
+    overflow-y: scroll;
+    .close{
+        color: red;
+        font-size: 32px;
+        position: fixed;
+        right: 23px;
+        z-index: 99;
+    }
+    .modal-content {
+        width: 500px;
+        margin: auto;
+    }
+
 }
 
 /* Product index */
@@ -691,8 +713,11 @@ span.delete-icon {
     font-size: 30px;
 }
 .generate-link{
-    font-size: 12px;
+    font-size: 12px !important;
     color: #303030;
     text-decoration: underline;
     cursor: pointer;
+}
+p.remaining{
+    font-size: 12px !important;
 }
