@@ -9,7 +9,6 @@
             <div class="row noHegiht h-100">
                 <div class="wrapper h-100">
                     <div class="col-md-6 box details" style="background-image:url({{ asset("UI/Imgs/Signin/RobotHand.jpg")}});">
-                    
                     </div>
                     <div class="col-md-5 box">
                         <div class="form">
@@ -43,13 +42,13 @@
                                                 {{ __('messages.ForgetPass') }}
                                             </a>
                                         @endif
-                            
+
                                         <button type="submit" class="thm-btn contact-one__btn">
                                             {{ __('messages.LoginNow') }}
                                         </button>
                                     </div>
 
-                                    
+
                                     <p class="text-center mt-2 mb-3" style="color: #acacac;">{{ __('messages.LogSocial') }}</p>
 
                                     <a href="{{route('auth.google')}}">
@@ -72,9 +71,9 @@
                                             data-size="large"
                                             data-locale="en-GB"
                                             >
-                                            
+
                                         </div>
-                                        
+
                                         <a href="../SignWithFacebook.php" class="facebook-login-btn">
                                             <i class="fa-brands fa-facebook-f"></i>
                                             <span>{{ __('messages.LogWithFacebook') }}</span>
@@ -111,7 +110,7 @@
         document.getElementById('eye').addEventListener('click', function () {
             let passwordField = document.getElementById('password');
             let eyeIcon = document.getElementById('eye');
-            
+
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
             } else {
@@ -123,3 +122,4 @@
         });
     </script>
 @stop
+
