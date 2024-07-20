@@ -4,7 +4,6 @@
 @section('Css')
 
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="{{ asset('Admin/dist/css/wizard.css') }}">
 
 @endsection
@@ -789,5 +788,6 @@
             });
         });
     </script>
+
 @endsection
 

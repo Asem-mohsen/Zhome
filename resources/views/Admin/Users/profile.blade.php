@@ -15,20 +15,20 @@
                             <h5 class="mb-1">
                                 {{ $user->Name }}
                             </h5>
-                            <div style="display:flex; gap:20px;align-items: baseline;">
+                            <div class="d-flex align-items-baseline" style="gap:20px;">
                                 <p class="mb-0 font-weight-bold text-sm">
                                     @if($user->Status == 1)
                                         <span class="badge badge-success p-2">Active</span>
                                     @else
                                         <span class="badge badge-danger p-2">Disactivated</span>
-                                    @endif  
+                                    @endif
                                 </p>
                                 <p>
                                     @if($user->is_verified == 1)
                                         <span class="badge badge-success p-2">Verified</span>
                                     @else
                                         <span class="badge badge-warning p-2">Unverified</span>
-                                    @endif 
+                                    @endif
                                 </p>
                             </div>
 
@@ -105,11 +105,11 @@
                                                         <div class="numbers">
                                                             <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Orders</p>
                                                             <h5 class="font-weight-bolder">
-                                                                <?php // echo $RowOrder['TotalOrders']?>
+                                                                {{ $orderCount }}
                                                             </h5>
                                                             <p class="mb-0">
                                                             <span class="text-success text-sm font-weight-bolder">+55%</span>
-                                                            since yesterday
+                                                                since yesterday
                                                             </p>
                                                         </div>
                                                     </div>
@@ -130,17 +130,11 @@
                                                         <div class="numbers">
                                                             <p class="text-sm mb-0 text-uppercase font-weight-bold">User Paid</p>
                                                             <h5 class="font-weight-bolder">
-                                                                <?php 
-                                                                // if(isset($RowOrder['TotalBeforeSaving'])){ 
-                                                                //     echo $RowOrder['TotalBeforeSaving'] . " EGP" ;
-                                                                //     }else{
-                                                                //         echo "0" ;
-                                                                //     }
-                                                                ?>
+                                                                ${{ $totalPayments }}
                                                             </h5>
                                                             <p class="mb-0">
                                                             <span class="text-success text-sm font-weight-bolder">+55%</span>
-                                                            since yesterday
+                                                                since yesterday
                                                             </p>
                                                         </div>
                                                     </div>
@@ -164,7 +158,7 @@
                                                     <button type="submit" name="Deactivate" class="btn btn-md bg-danger w-100 mt-4 mb-0">Deactivate Account</button>
                                                 @else
                                                     <button type="submit" name="Activate" class="btn btn-md bg-success w-100 mt-4 mb-0">Activate</button>
-                                                @endif  
+                                                @endif
                                             </div>
                                         </div>
 
@@ -180,12 +174,12 @@
                     <!-- Side Card -->
                     <div class="col-md-4">
                         <div class="card card-profile">
-                            <img src="{{ asset('Admin/dist/img/Background.jpg') }}" alt="Image placeholder" class="card-img-top">
+                            <img src="{{ asset('Admin/dist/img/web/Background.jpg') }}" alt="Image placeholder" class="card-img-top">
                             <div class="row justify-content-center">
                                 <div class="col-4 col-lg-4 order-lg-2">
                                     <div class="mt-n4 mt-lg-n6 mb-4 mb-lg-0">
                                         <a>
-                                            <img src="{{ asset('Admin/dist/img/avatar.png') }}" class="rounded-circle img-fluid border border-2 border-white">
+                                            <img src="{{ asset('Admin/dist/img/avatar.png') }}" class="rounded-circle img-fluid border-2 border-white">
                                         </a>
                                     </div>
                                 </div>
@@ -196,7 +190,7 @@
                                         <span class="badge badge-success p-2">Active</span>
                                     @else
                                         <span class="badge badge-danger p-2">Disactivated</span>
-                                    @endif  
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-body pt-0">
@@ -204,36 +198,30 @@
                                 <div class="col">
                                     <div class="d-flex justify-content-center">
                                         <div class="d-grid text-center">
-                                            <span class="text-lg font-weight-bolder"><?php // echo $RowOrder['TotalOrders']?></span>
+                                            <span class="text-lg font-weight-bolder">{{ $orderCount }}</span>
                                             <span class="text-sm opacity-8">Total Orders</span>
                                         </div>
                                         <div class="d-grid text-center mx-4">
-                                            <span class="text-lg font-weight-bolder">  
-                                                                    <?php 
-                                                                    // if(isset($RowOrder['TotalBeforeSaving'])){ 
-                                                                    //     echo $RowOrder['TotalBeforeSaving'] . " EGP" ;
-                                                                    // }else{
-                                                                    //     echo "0" ;
-                                                                    // }
-                                                                ?>
-                                                                </span>
+                                            <span class="text-lg font-weight-bolder">
+                                                ${{ $totalPayments }}
+                                            </span>
                                             <span class="text-sm opacity-8">Total Payments</span>
                                         </div>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
                             <div class="text-center mt-4">
                                 <h5>
                                 {{ $user->Name }}<span class="font-weight-light"></span>
                                 </h5>
                                 <div class="h6 font-weight-300">
-                                <i class="ni location_pin mr-2"></i> {{ $user->Address }} 
+                                <i class="ni location_pin mr-2"></i> {{ $user->Address }}
                                 </div>
                                 <div class="h6 mt-4">
                                 <i class="ni business_briefcase-24 mr-2"></i>{{ $user->Phone }}
                                 </div>
                                 <div>
-                                <i class="ni education_hat mr-2"></i>{{ $user->email }} 
+                                <i class="ni education_hat mr-2"></i>{{ $user->email }}
                                 </div>
                             </div>
                             </div>

@@ -136,7 +136,7 @@
                 <!-- Side Card -->
                 <div class="col-md-4">
                     <div class="card card-profile">
-                        <img src="{{ asset('Admin/dist/img/Background.jpg') }}" alt="Image placeholder" class="card-img-top">
+                        <img src="{{ asset('Admin/dist/img/web/Background.jpg') }}" alt="Image placeholder" class="card-img-top">
                         <div class="row justify-content-center">
                             <div class="col-4 col-lg-4 order-lg-2">
                                 <div class="mt-n4 mt-lg-n6 mb-4 mb-lg-0">
@@ -152,7 +152,7 @@
                                     <span class="badge badge-success p-2">Active</span>
                                 @else
                                     <span class="badge badge-danger p-2">Disactivated</span>
-                                @endif    
+                                @endif
                             </div>
                         </div>
                         <div class="card-body pt-0">
@@ -169,7 +169,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                         <div class="text-center mt-4">
                             <h5>
                                 {{$admin->Name}}
