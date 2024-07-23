@@ -7,37 +7,47 @@ use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Http\Requests\Admin\UpdateContactRequest;
 use App\Http\Requests\User\AddNewContactRequest;
+use App\Traits\ApiResponse;
 
 class ContactController extends Controller
 {
-    public function index(){
+    use ApiResponse;
+
+    public function index()
+    {
         
         $contact = Contact::all()->first();
         
-        return view('Admin.Contact.index' , compact('contact'));
+        return $this->data($contact->toArray(), 'contact retrieved successfully');
+
     }
 
-    public function edit(Contact $contact){
+    public function edit(Contact $contact)
+    {
         
         $contact = Contact::all()->first();
         
-        return view('Admin.Contact.edit' , compact('contact'));
+        return $this->data($contact->toArray(), 'contact retrieved successfully');
+
     }
 
-    public function update(UpdateContactRequest $request ,Contact $contact){
-        
+    public function update(UpdateContactRequest $request ,Contact $contact)
+    {
+
         $data = $request->except('_method', '_token');
 
-        // Update Contact
         $contact::where('ID', $contact->ID)->update($data);
         
-        return redirect()->route('Contact.index')->with('success','Contact Updated Successfully');
+        return $this->success('Contact Updated successfully');
+
     }
 
     public function contact()
     {
         $contact = Contact::all()->first();
-        return view('User.Contact.index', compact('contact'));
+
+        return $this->data($contact->toArray(), 'contact retrieved successfully');
+
     }
 
 }

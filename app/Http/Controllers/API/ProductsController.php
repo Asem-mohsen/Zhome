@@ -23,22 +23,38 @@ use App\Http\Services\SyncChoices;
 use App\Models\ProductFeatures;
 use App\Models\ProductPlatforms;
 use App\Models\ProductTechnology;
+use App\Traits\ApiResponse;
 
 
 class ProductController extends Controller
 {
+    use ApiResponse;
+
     public function index(){
+
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
+        
         $platforms = [];
+        
         foreach($products as $product){
+            
             $productplatforms = ProductPlatforms::where('ProductID' , $product->ID);
+            
             $platforms[] = $productplatforms;
+
         }
 
-        return view('Admin.Products.index' , compact('products','platforms'));
+        $data = [
+            'products'  => $products,
+            'platforms' => $platforms,
+        ];
+
+        return $this->data($data, 'All Products data retrieved successfully');
+
     }
 
     public function create(){
+
         $products   = Product::all();
         $brands     = Brand::all();
         $platforms  = Platform::all();
@@ -46,13 +62,26 @@ class ProductController extends Controller
         $subs       = Subcategory::all();
         $features   = Features::all();
 
-        return view('Admin.Products.create' , compact('products','brands','platforms','categories','subs','features'));
+        $data = [
+            'products '  => $products,
+            'brands'     => $brands,
+            'platforms'  => $platforms,
+            'categories' => $categories,
+            'features'   => $features,
+            'subs'       => $subs,
+        ];
+
+        return $this->data($data, 'All Products data retrieved successfully');
+
     }
 
     public function getSubcategories($categoryId)
     {
+
         $subcategories = SubCategory::where('MainCategoryID', $categoryId)->get();
+
         return response()->json($subcategories);
+
     }
 
     public function store(AddProductRequest $request)
@@ -67,11 +96,13 @@ class ProductController extends Controller
         $productFeatureData    = $request->only('FeatureID');
         $faqData               = $request->only(['Question', 'Answer', 'ArabicQuestion', 'ArabicAnswer']);
         $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
+        
         $colorData = [
                 'Color' => $request->input('Color'),
                 'Color2' => $request->input('Color2'),
                 'Color3' => $request->input('Color3')
             ];
+
         $colorData = array_filter($colorData, function($value) {
             return !is_null($value);
         });
@@ -138,7 +169,8 @@ class ProductController extends Controller
             $faq->save();
         }
 
-        return redirect()->route('Products.index')->with('success', 'Product Added Successfully');
+        return $this->success('Product Added Successfully');
+
     }
 
     public function update(UpdateProductRequest $request , Product $product, ProductDetails $details , ProductImages $images){
@@ -221,14 +253,20 @@ class ProductController extends Controller
                 ProductFaq::where('ProductID' , $product->ID)->update($faqData);
         }
 
-        return redirect()->route('Products.show' , $product->ID)->with('success', 'Product Updated Successfully');
+        return $this->success('Product Updated Successfully');
+
     }
 
     public function show(Product $product){
 
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
         
-        return view('Admin.Products.show' , compact('product'));
+        $data = [
+            'product' => $product,
+        ];
+
+        return $this->data($data, 'Product data retrieved successfully');
+
     }
 
     public function userShow(Product $product)
@@ -236,46 +274,76 @@ class ProductController extends Controller
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
         
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
-        
-        return view('User.Product.show' , compact('product' , 'products'));
+
+        $data = [
+            'products' => $products,
+            'product' => $product,
+        ];
+
+        return $this->data($data, 'Product data retrieved successfully');
     }
 
-    public function edit(Product $product){
+    public function edit(Product $product)
+    {
+
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations' , 'productDetails'])->findOrFail($product->ID);
+        
         $brands     = Brand::all();
         $platforms  = Platform::all();
         $categories = Category::all();
         $subs       = Subcategory::all();
         $features   = Features::all();
-        return view('Admin.Products.edit' , compact('product','brands','platforms','categories','subs','features'));
+
+        $data = [
+            'product'   => $product,
+            'brands'    => $brands,
+            'platforms' => $platforms,
+            'categories'=> $categories,
+            'subs'      => $subs,
+            'features'  => $features,
+        ];
+
+        return $this->data($data, 'Product data for editing retrieved successfully');
+
     }
 
-    public function destroy(Product $product){
+    public function destroy(Product $product)
+    {
 
-        // Delete platforms
-        ProductPlatforms::where('ProductID',$product->ID)->delete();
+        try {
 
-        // Delete related FAQs
-        ProductFaq::where('ProductID',$product->ID)->delete();
+            // Delete platforms
+            ProductPlatforms::where('ProductID',$product->ID)->delete();
 
-        // Delete related images
-        ProductImages::where('ProductID',$product->ID)->delete();
+            // Delete related FAQs
+            ProductFaq::where('ProductID',$product->ID)->delete();
 
-        // Delete related technologies
-        ProductTechnology::where('ProductID',$product->ID)->delete();
+            // Delete related images
+            ProductImages::where('ProductID',$product->ID)->delete();
 
-        // Delete related features
-        ProductFeatures::where('ProductID',$product->ID)->delete();
+            // Delete related technologies
+            ProductTechnology::where('ProductID',$product->ID)->delete();
 
-        // Delete related Details
-        ProductDetails::where('ProductID',$product->ID)->delete();
+            // Delete related features
+            ProductFeatures::where('ProductID',$product->ID)->delete();
 
-        // Delete related Evaluations
-        ProductEvaluation::where('ProductID',$product->ID)->delete();
+            // Delete related Details
+            ProductDetails::where('ProductID',$product->ID)->delete();
 
-        $product->where('ID',$product->ID)->delete();
+            // Delete related Evaluations
+            ProductEvaluation::where('ProductID',$product->ID)->delete();
 
-        return redirect()->back()->with('success', 'product Deleted Successfully');
+            $product->where('ID',$product->ID)->delete();
+
+            return $this->success('Product Deleted Successfully');
+
+        } catch (\Exception $e) {
+
+            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Product');
+        
+        }
+
+
 
     }
 

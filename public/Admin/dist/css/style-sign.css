@@ -151,6 +151,7 @@ section.auth .box .content {
     font-size: 25px;
     color: #302e2f;
     height: 100%;
+    padding:0;
 }
 
 .thm-btn {

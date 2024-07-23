@@ -314,7 +314,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if($product->InstallationCost != NULL || $product->InstallationCost != 0)
+                                @if($product->InstallationCost != NULL && $product->InstallationCost != 0)
                                     <div class="text-one-ProductDetails">
                                         <div class="top-text">
                                             <i class="fa-solid fa-gears"></i>
@@ -454,7 +454,7 @@
                                         <p> {{ __('messages.FreeTransportation')}}</p>
                                     </li>
 
-                                    @if($product->InstallationCost != NULL || $product->InstallationCost != 0)
+                                    @if($product->InstallationCost != NULL && $product->InstallationCost != 0)
                                         <li>
                                             <span><i class="fa-solid fa-check"></i></span>
                                             <p>{{ __('messages.TextProfessionalInstallation')}} {{ $product->InstallationCost . 'EGP'}}</p>
