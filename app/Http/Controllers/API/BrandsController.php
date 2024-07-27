@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
@@ -33,7 +33,7 @@ class BrandController extends Controller
     public function store(AddBrandRequest $request){
 
         $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Brands');
-        
+
         $data = $request->except('image','_token','_method');
 
         $data['Logo'] = $newImageName;
@@ -78,7 +78,7 @@ class BrandController extends Controller
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Brand');
-        
+
         }
 
     }
