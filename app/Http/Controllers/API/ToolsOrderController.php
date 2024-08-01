@@ -9,7 +9,7 @@ use App\Models\ToolsOrders;
 use App\Models\ToolsCategories;
 use App\Traits\ApiResponse;
 
-class ToolsOrdersController extends Controller
+class ToolsOrderController extends Controller
 {
 
     use ApiResponse;

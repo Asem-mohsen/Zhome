@@ -14,7 +14,7 @@ use App\Models\CollectionFeatures;
 use App\Http\Services\SyncChoices;
 use App\Traits\ApiResponse;
 
-class CollectionController extends Controller
+class CollectionsController extends Controller
 {
     use ApiResponse;
 

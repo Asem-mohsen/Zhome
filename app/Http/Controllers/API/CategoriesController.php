@@ -12,7 +12,7 @@ use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Traits\ApiResponse;
 use App\Http\Services\Media;
 
-class CategoryController extends Controller
+class CategoriesController extends Controller
 {
     use ApiResponse;
 
@@ -44,7 +44,7 @@ class CategoryController extends Controller
                 ->get();
 
         return $this->data($categories->toArray(), 'Categories retrieved successfully');
-    
+
     }
 
     public function edit(Category $category){
@@ -77,7 +77,7 @@ class CategoryController extends Controller
             $data['MainImage'] = $newImageName;
 
             Media::delete(public_path("Admin\dist\img\web\Categories\\{$category->MainImage}"));
-        
+
         }
 
         Category::where('ID' , $category->ID)->update($data);
@@ -111,7 +111,7 @@ class CategoryController extends Controller
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Category');
-        
+
         }
 
     }

@@ -10,7 +10,7 @@ use App\Http\Requests\Admin\UpdateBrandRequest;
 use App\Http\Services\Media;
 use App\Traits\ApiResponse;
 
-class BrandController extends Controller
+class BrandsController extends Controller
 {
     use ApiResponse;
 

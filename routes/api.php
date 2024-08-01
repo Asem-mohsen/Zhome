@@ -1,27 +1,29 @@
 <?php
 // Admin
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\PlatformController;
-use App\Http\Controllers\Admin\RolesController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\SubcategoryController;
-use App\Http\Controllers\Admin\PaymentController;
-use App\Http\Controllers\Admin\SubscribersController;
-use App\Http\Controllers\Admin\ContactController;
-use App\Http\Controllers\Admin\InventoryController;
-use App\Http\Controllers\Admin\FeatureController;
-use App\Http\Controllers\Admin\CollectionController;
-use App\Http\Controllers\Admin\SalesController;
-use App\Http\Controllers\Admin\PromocodeController;
-use App\Http\Controllers\Admin\ShopOrdersController;
-use App\Http\Controllers\Admin\ToolsOrdersController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\API\BrandsController;
+use App\Http\Controllers\API\CategoriesController;
+use App\Http\Controllers\API\PlatformsController;
+use App\Http\Controllers\API\RolesController;
+use App\Http\Controllers\API\ProductsController;
+use App\Http\Controllers\API\SubcategoriesController;
+use App\Http\Controllers\API\PaymentsController;
+use App\Http\Controllers\API\SubscribersController;
+use App\Http\Controllers\API\ContactController;
+use App\Http\Controllers\API\InventoryController;
+use App\Http\Controllers\API\FeatureController;
+use App\Http\Controllers\API\CollectionsController;
+use App\Http\Controllers\API\SalesController;
+use App\Http\Controllers\API\PromocodesController;
+use App\Http\Controllers\API\ShopOrdersController;
+use App\Http\Controllers\API\ToolsOrderController;
+use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\UserController;
 // Authentication
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+
 use App\Http\Controllers\Auth\GoogleLoginController;
 
 use Illuminate\Http\Request;
@@ -32,7 +34,9 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/login',   [AuthenticatedSessionController::class, 'apiLogin']);
-Route::post('/register',[RegisteredUserController::class,       'store']);
+Route::post('/register',[RegisteredUserController::class,       'apiStore']);
+Route::post('/send-email',[VerifyEmailController::class,        'send']);
+Route::post('/verify-code',[VerifyEmailController::class,       'verify']);
 
 
 Route::middleware('auth:sanctum')->group(function () {

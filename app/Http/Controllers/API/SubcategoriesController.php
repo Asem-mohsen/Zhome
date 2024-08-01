@@ -11,7 +11,7 @@ use App\Http\Requests\Admin\UpdateSubCategoryRequest;
 use App\Http\Services\Media;
 use App\Traits\ApiResponse;
 
-class SubcategoryController extends Controller
+class SubcategoriesController extends Controller
 {
     use ApiResponse;
 
@@ -28,17 +28,17 @@ class SubcategoryController extends Controller
     }
 
     public function store(AddSubcategoryRequest $request , Category $category){
-        
+
         $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Categories\SubCategory');
-        
+
         $data = $request->except('_method','_token','image');
-        
+
         $data['MainCategoryID'] = $category->ID;
-        
+
         $data['image'] = $newImageName;
-        
+
         Subcategory::create($data);
-        
+
         return $this->success('Subcategory Added Successfully');
 
     }
@@ -50,11 +50,11 @@ class SubcategoryController extends Controller
         if($request->hasFile('image')){
 
             $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Categories\SubCategory');
-            
+
             $data['image'] = $newImageName;
 
             $oldImagePath = public_path("Admin/dist/img/web/Categories/SubCategory/{$subcategory->image}");
-            
+
             if (is_file($oldImagePath)) {
 
                 Media::delete($oldImagePath);
@@ -64,16 +64,16 @@ class SubcategoryController extends Controller
         }
 
         Subcategory::where('ID', $subcategory->ID)->update($data);
-        
+
         return $this->success('Subcategory Updated Successfully');
     }
 
     public function destroy(Subcategory $subcategory){
-        
+
         try {
 
             Media::delete(public_path("Admin\dist\img\web\Categories\SubCategory\\{$subcategory->image}"));
-            
+
             Subcategory::where('ID' , $subcategory->ID)->delete();
 
             return $this->success('Subcategory Deleted Successfully');
@@ -81,9 +81,9 @@ class SubcategoryController extends Controller
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Subcategory');
-        
+
         }
 
-        
+
     }
 }

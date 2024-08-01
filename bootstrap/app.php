@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->statefulApi();
         $middleware->web(append: [
             Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
             \Illuminate\Cookie\Middleware\EncryptCookies::class,

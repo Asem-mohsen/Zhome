@@ -12,9 +12,9 @@ use App\Models\ShopOrders;
 use Illuminate\Support\Carbon;
 use App\Traits\ApiResponse;
 
-class PromocodeController extends Controller
+class PromocodesController extends Controller
 {
-    
+
     use ApiResponse;
 
     public function index()
@@ -79,24 +79,24 @@ class PromocodeController extends Controller
             if($promocode->EndsIn > now()){
 
                 return $this->error('Cannot delete a promocode that has not expired yet. Expires on: ' . $promocode->EndsIn->format('Y-m-d H:i:s'));
-    
+
             }else{
 
                 ShopOrders::where('PromoCodeID', $promocode->ID)->update(['PromoCodeID' => null]);
-                
+
                 $promocode::where('ID' , $promocode->ID)->delete();
 
                 return $this->success('Promocode Deleted Successfully');
-                
+
             }
 
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Admin');
-        
+
         }
 
-        
+
     }
 }
 

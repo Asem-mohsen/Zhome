@@ -26,20 +26,20 @@ use App\Models\ProductTechnology;
 use App\Traits\ApiResponse;
 
 
-class ProductController extends Controller
+class ProductsController extends Controller
 {
     use ApiResponse;
 
     public function index(){
 
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
-        
+
         $platforms = [];
-        
+
         foreach($products as $product){
-            
+
             $productplatforms = ProductPlatforms::where('ProductID' , $product->ID);
-            
+
             $platforms[] = $productplatforms;
 
         }
@@ -96,7 +96,7 @@ class ProductController extends Controller
         $productFeatureData    = $request->only('FeatureID');
         $faqData               = $request->only(['Question', 'Answer', 'ArabicQuestion', 'ArabicAnswer']);
         $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
-        
+
         $colorData = [
                 'Color' => $request->input('Color'),
                 'Color2' => $request->input('Color2'),
@@ -260,7 +260,7 @@ class ProductController extends Controller
     public function show(Product $product){
 
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
-        
+
         $data = [
             'product' => $product,
         ];
@@ -272,7 +272,7 @@ class ProductController extends Controller
     public function userShow(Product $product)
     {
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
-        
+
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
 
         $data = [
@@ -287,7 +287,7 @@ class ProductController extends Controller
     {
 
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations' , 'productDetails'])->findOrFail($product->ID);
-        
+
         $brands     = Brand::all();
         $platforms  = Platform::all();
         $categories = Category::all();
@@ -340,7 +340,7 @@ class ProductController extends Controller
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Product');
-        
+
         }
 
 

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -51,23 +53,13 @@ class AuthenticatedSessionController extends Controller
 
 
     // New method for API login
-    public function apiLogin(Request $request): JsonResponse
+    public function apiLogin(LoginRequest $request): JsonResponse
     {
-        Log::info('Login attempt', ['email' => $request->email]);
+        $request->authenticate();
 
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        $user = \App\Models\Admin::where('email', $credentials['email'])->first();
-        if (!$user) {
-            Log::warning('User not found', ['email' => $credentials['email']]);
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
-        if (Auth::attempt($credentials)) {
-            Log::info('Login successful', ['user_id' => $user->id]);
+        // Check for User authentication
+        if (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
             $token = $user->createToken('auth-token')->plainTextToken;
             return response()->json([
                 'user' => $user,
@@ -76,8 +68,19 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        Log::warning('Login failed - incorrect password', ['user_id' => $user->id]);
-        return response()->json(['message' => 'Incorrect password'], 401);
+        // Check for Admin authentication
+        if (Auth::guard('admin')->check()) {
+            $admin = Auth::guard('admin')->user();
+            $token = $admin->createToken('auth-token')->plainTextToken;
+            return response()->json([
+                'user' => $admin,
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+            ]);
+        }
+
+        // If both checks fail, return an error response
+        return response()->json(['message' => 'Authentication failed'], 401);
     }
 
 }

@@ -9,7 +9,7 @@ use App\Models\ShopOrders;
 use Carbon\Carbon;
 use App\Traits\ApiResponse;
 
-class PaymentController extends Controller
+class PaymentsController extends Controller
 {
 
     use ApiResponse;
@@ -28,13 +28,13 @@ class PaymentController extends Controller
 
         // Amount In Cart
         $ordersInCart= ShopOrders::whereNull('TransactionID')->where('Status' , '2')->get();
-        
+
         $sumCart = 0;
-        
+
         foreach($ordersInCart as $cart){
 
             $sumCart += $cart->TotalAfterSaving;
-            
+
         }
 
         $totalCash = ShopOrders::whereHas('transaction', function($query) {

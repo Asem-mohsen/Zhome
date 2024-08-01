@@ -11,7 +11,7 @@ use App\Http\Requests\Admin\UpdatePlatfromRequest;
 use App\Http\Services\Media;
 use App\Traits\ApiResponse;
 
-class PlatformController extends Controller
+class PlatformsController extends Controller
 {
     use ApiResponse;
 
