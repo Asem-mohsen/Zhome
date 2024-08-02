@@ -27,13 +27,14 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetLocale::class,
         ]);
         $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
         $middleware->alias([
-            'auth' => \App\Http\Middleware\UserMiddleware::class,
-            'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-            'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
+            // 'auth' => \App\Http\Middleware\UserMiddleware::class,
+            // 'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+            // 'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
             'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
             'can' => \Illuminate\Auth\Middleware\Authorize::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
@@ -43,6 +44,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'auth.admin' => \App\Http\Middleware\AdminMiddleware::class,
             'prevent.auth' => \App\Http\Middleware\PreventAuthUser::class,
+            'admin' => \App\Http\Middleware\AuthAPIs\AdminMiddleware::class,
+            'lang' =>\App\Http\Middleware\CheckIfLanguageExist::class
         ]);
 
     })

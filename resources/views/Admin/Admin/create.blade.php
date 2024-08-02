@@ -75,18 +75,18 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Email address</label>
-                                        <input class="form-control" type="email" name="Email" required>
+                                        <input class="form-control" type="email" name="email" required>
                                     </div>
-                                    @error('Email')
+                                    @error('email')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Password</label>
-                                        <input class="form-control" type="password" name="Password" required>
+                                        <input class="form-control" type="password" name="password" required>
                                     </div>
-                                    @error('Password')
+                                    @error('password')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>

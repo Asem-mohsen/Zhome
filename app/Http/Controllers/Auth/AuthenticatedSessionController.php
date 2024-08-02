@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Traits\ApiResponse;
+use App\Models\User;
+use App\Models\Admin;
 
 class AuthenticatedSessionController extends Controller
 {
+    use ApiResponse;
     
     public function create(): View
     {
@@ -53,34 +57,30 @@ class AuthenticatedSessionController extends Controller
 
 
     // New method for API login
-    public function apiLogin(LoginRequest $request): JsonResponse
+    public function apiLogin(Request $request)
     {
-        $request->authenticate();
-
+        $request->validate([
+            'email'      => 'required|email|max:255',
+            'password'   => 'required',
+            'device_name'=> 'required',
+        ]);
+        $user  = User::where('email' , $request->email)->first();
+        $admin = Admin::where('email' , $request->email)->first();
+        
         // Check for User authentication
-        if (Auth::guard('web')->check()) {
-            $user = Auth::guard('web')->user();
-            $token = $user->createToken('auth-token')->plainTextToken;
-            return response()->json([
-                'user' => $user,
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ]);
+        if ($user && Hash::check($request->password, $user->password)) {
+            $user->token = "Bearer " . $user->createToken($request->device_name)->plainTextToken;
+            return $this->data(compact('user'), 'User logged in successfully');
         }
 
         // Check for Admin authentication
-        if (Auth::guard('admin')->check()) {
-            $admin = Auth::guard('admin')->user();
-            $token = $admin->createToken('auth-token')->plainTextToken;
-            return response()->json([
-                'user' => $admin,
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-            ]);
+        if ($admin && Hash::check($request->password, $admin->password)) {
+            $admin->token = "Bearer " . $admin->createToken($request->device_name)->plainTextToken;
+            return $this->data(compact('admin'), 'Admin logged in successfully');
         }
 
         // If both checks fail, return an error response
-        return response()->json(['message' => 'Authentication failed'], 401);
+        return $this->error(['message' => 'Authentication failed'], 401);
     }
 
 }

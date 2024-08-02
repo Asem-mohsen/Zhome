@@ -24,7 +24,7 @@
                                     @endif
                                 </p>
                                 <p>
-                                    @if($user->is_verified == 1)
+                                    @if($user->email_verified_at != "0000-00-00 00:00:00" && $user->email_verified_at != NULL)
                                         <span class="badge badge-success p-2">Verified</span>
                                     @else
                                         <span class="badge badge-warning p-2">Unverified</span>

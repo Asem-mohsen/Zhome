@@ -24,6 +24,7 @@ use App\Models\ProductFeatures;
 use App\Models\ProductPlatforms;
 use App\Models\ProductTechnology;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\App;
 
 
 class ProductsController extends Controller
@@ -46,7 +47,6 @@ class ProductsController extends Controller
 
         $data = [
             'products'  => $products,
-            'platforms' => $platforms,
         ];
 
         return $this->data($data, 'All Products data retrieved successfully');
@@ -55,7 +55,6 @@ class ProductsController extends Controller
 
     public function create(){
 
-        $products   = Product::all();
         $brands     = Brand::all();
         $platforms  = Platform::all();
         $categories = Category::all();
@@ -63,7 +62,6 @@ class ProductsController extends Controller
         $features   = Features::all();
 
         $data = [
-            'products '  => $products,
             'brands'     => $brands,
             'platforms'  => $platforms,
             'categories' => $categories,
@@ -159,21 +157,26 @@ class ProductsController extends Controller
         ProductEvaluation::create($productEvaluationData);
 
         // Create Product FAQ
-        foreach ($faqData['Question'] as $index => $question) {
-            $faq = new ProductFaq();
-            $faq['ProductID']    = $product->id;
-            $faq->Question       = $question;
-            $faq->Answer         = $faqData['Answer'][$index] ?? null;
-            $faq->ArabicQuestion = $faqData['ArabicQuestion'][$index] ?? null;
-            $faq->ArabicAnswer   = $faqData['ArabicAnswer'][$index] ?? null;
-            $faq->save();
+        if (!empty($faqData['Question'])) {
+            foreach ($faqData['Question'] as $index => $question) {
+                if (!empty($question)) {
+                    $faq = new ProductFaq();
+                    $faq['ProductID']    = $product->id;
+                    $faq->Question       = $question;
+                    $faq->Answer         = $faqData['Answer'][$index] ?? null;
+                    $faq->ArabicQuestion = $faqData['ArabicQuestion'][$index] ?? null;
+                    $faq->ArabicAnswer   = $faqData['ArabicAnswer'][$index] ?? null;
+                    $faq->save();
+                }
+            }
         }
-
+        
         return $this->success('Product Added Successfully');
 
     }
 
-    public function update(UpdateProductRequest $request , Product $product, ProductDetails $details , ProductImages $images){
+    public function update(UpdateProductRequest $request , Product $product, ProductDetails $details , ProductImages $images)
+    {
         $productDetails = $details::where('ProductID' , $product->ID)->first();
 
         $productData           = $request->only('Name','ArabicName','Description','ArabicDescription','Price','Quantity','InstallationCost','SubCategoryID','BrandID','IsBundle');
@@ -259,25 +262,21 @@ class ProductsController extends Controller
 
     public function show(Product $product){
 
-        $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
+        $product = $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
 
-        $data = [
-            'product' => $product,
-        ];
-
-        return $this->data($data, 'Product data retrieved successfully');
+        return $this->data(compact('product'), 'Product data retrieved successfully');
 
     }
 
     public function userShow(Product $product)
     {
-        $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
+        $product = $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
 
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
 
         $data = [
-            'products' => $products,
-            'product' => $product,
+            'Recommended-Products' => $products,
+            'Product' => $product,
         ];
 
         return $this->data($data, 'Product data retrieved successfully');

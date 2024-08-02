@@ -23,39 +23,66 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\GoogleLoginController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
+// Authentication
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(VerifyEmailController::class)->group(function(){
+        Route::post('/send-email' ,'send'  );
+        Route::post('/verify-code','verify');
+    });
+    Route::prefix('logout')->group(function(){
+        Route::controller(LogoutController::class)->group(function(){
+            Route::post('/current', 'current');
+            Route::post('/other', 'other');
+            Route::post('/all', 'all');
+        });
+    });
+});
 
 Route::post('/login',   [AuthenticatedSessionController::class, 'apiLogin']);
 Route::post('/register',[RegisteredUserController::class,       'apiStore']);
-Route::post('/send-email',[VerifyEmailController::class,        'send']);
-Route::post('/verify-code',[VerifyEmailController::class,       'verify']);
 
+Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
 
-Route::middleware('auth:sanctum')->group(function () {
-
-    Route::controller(UserController::class)->prefix('Users')->name('Users.')->group(function(){
-        Route::get('/', 'index')->name('index');
-        Route::get('/{user}/profile', 'profile')->name('profile');
-    });
-
-    Route::prefix('Admins')->name('Admins.')->group(function(){
+    Route::prefix('admins')->group(function(){
         Route::controller(AdminController::class)->group(function(){
-            Route::get('/', 'index')->name('index');
-            Route::get('/{admin}/edit', 'edit')->name('edit');
-            Route::get('/{admin}/profile', 'profile')->name('profile');
-            Route::get('/create', 'create')->name('create');
-            Route::post('/store', 'store')->name('store');
-            Route::put('/{admin}/update', 'update')->name('update');
-            Route::delete('/{admin}/delete', 'destroy')->name('delete');
+            Route::get('/', 'index');
+            Route::get('/{admin}/edit', 'edit');
+            Route::get('/{admin}/profile', 'profile');
+            Route::get('/create', 'create');
+            Route::post('/store', 'store');
+            Route::put('/{admin}/update', 'update');
+            Route::delete('/{admin}/delete', 'destroy');
         });
     });
+    
+    Route::prefix('products')->group(function(){
+        Route::controller(ProductsController::class)->group(function(){
+            Route::get('/products', 'index');
+            Route::get('/create', 'create');
+            Route::get('/{product}/edit', 'edit');
+            Route::get('/{product}/show', 'show');
+            Route::get('/{product}/userView', 'userShow');
+            Route::post('/store', 'store');
+            Route::put('/{product}/update', 'update');
+            Route::delete('/{product}/delete', 'destroy');
+        });
+    });
+    
+    Route::controller(UserController::class)->prefix('Users')->name('Users.')->group(function(){
+        Route::get('/', 'index');
+        Route::get('/{user}/profile', 'profile');
+    });
 
+
+
+
+    
 });

@@ -128,14 +128,18 @@ class ProductController extends Controller
         ProductEvaluation::create($productEvaluationData);
 
         // Create Product FAQ
-        foreach ($faqData['Question'] as $index => $question) {
-            $faq = new ProductFaq();
-            $faq['ProductID']    = $product->id;
-            $faq->Question       = $question;
-            $faq->Answer         = $faqData['Answer'][$index] ?? null;
-            $faq->ArabicQuestion = $faqData['ArabicQuestion'][$index] ?? null;
-            $faq->ArabicAnswer   = $faqData['ArabicAnswer'][$index] ?? null;
-            $faq->save();
+        if (!empty($faqData['Question'])) {
+            foreach ($faqData['Question'] as $index => $question) {
+                if (!empty($question)) {
+                    $faq = new ProductFaq();
+                    $faq['ProductID']    = $product->id;
+                    $faq->Question       = $question;
+                    $faq->Answer         = $faqData['Answer'][$index] ?? null;
+                    $faq->ArabicQuestion = $faqData['ArabicQuestion'][$index] ?? null;
+                    $faq->ArabicAnswer   = $faqData['ArabicAnswer'][$index] ?? null;
+                    $faq->save();
+                }
+            }
         }
 
         return redirect()->route('Products.index')->with('success', 'Product Added Successfully');
@@ -227,16 +231,16 @@ class ProductController extends Controller
     public function show(Product $product){
 
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
-        
+
         return view('Admin.Products.show' , compact('product'));
     }
 
     public function userShow(Product $product)
     {
         $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
-        
+
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
-        
+
         return view('User.Product.show' , compact('product' , 'products'));
     }
 
