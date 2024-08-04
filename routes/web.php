@@ -31,7 +31,6 @@ use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ToolsController;
 use App\Http\Controllers\User\AboutController;
 use App\Http\Controllers\User\CartContoller;
-use App\Http\Controllers\User\PaymentContoller;
 use App\Http\Controllers\User\ShopController;
 use App\Http\Controllers\User\CheckoutContoller;
 use App\Http\Controllers\User\HomeController;
@@ -161,7 +160,7 @@ Route::middleware('auth.admin')->group(function () {
 
     Route::prefix('Payment')->name('Payment.')->group(function(){
         Route::controller(PaymentController::class)->group(function(){
-            Route::get('/', 'index')->name('index');
+            Route::get('/', 'index')->name('Admin.index');
         });
     });
 
@@ -311,8 +310,8 @@ Route::prefix('Services')->name('Services.')->group(function(){
 });
 
 Route::prefix('Payment')->name('Payment.')->group(function(){
-    Route::controller(PaymentContoller::class)->group(function(){
-        Route::get('/', 'index')->name('index');
+    Route::controller(PaymentController::class)->group(function(){
+        Route::get('/Payment', 'userPayment')->name('index');
     });
 });
 

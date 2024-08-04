@@ -46,4 +46,8 @@ class PaymentController extends Controller
         return view('Admin.Payments.index' , compact('orders' , 'sumOrders' , 'sumCart' , 'totalCash' , 'totalCards' , 'newest', 'past'));
     }
 
+    public function userPayment()
+    {
+        return view('User.Payment.checkout');
+    }
 }

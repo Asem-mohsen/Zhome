@@ -6,7 +6,6 @@
 
 @section('Title', $title)
 
-
 @section('Css')
     <style>
             /* Navbar for specific pages */
@@ -355,7 +354,7 @@
                                 @foreach($product->features as $feature)
                                     <div class="text-one-ProductDetails">
                                         <div class="top-text">
-                                            <img src="{{asset('Admin/dist/img/photo3.jpg')}}" alt="{{$feature->Feature}}">
+                                            <img src="{{asset('Admin/dist/img/web/Features/' . $feature->Image)}}" alt="{{$feature->Feature}}">
                                             <h3>{{$feature->Feature}}</h3>
                                         </div>
                                         <div class="bottom-text">
@@ -425,7 +424,7 @@
                                         <p>
                                             {{ __('messages.CompitableWith')}}
                                                 @foreach($product->platforms as $Platform)
-                                                    <p>{{$Platform->Platform}}</p>
+                                                    {{$Platform->Platform}}
                                                 @endforeach
                                             Platfrom
                                         </p>
@@ -532,40 +531,51 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="Details">
-                                                            <h5>{{ __('messages.AirPurification')}}</h5>
-                                                            <div class="many-details">
-                                                                <div class="Details-info">
-                                                                    <p>Indcator(cleanliness)</p>
-                                                                    <span>{{ $product->productDetails->AirPurification }}</span>
-                                                                </div>
-                                                                <div class="Details-info">
-                                                                    <p>Pre Filter</p>
-                                                                    <span>
-                                                                        @if( $product->productDetails->PreFilter == 1)
-                                                                                {{'Yes'}}
-                                                                        @else
-                                                                                {{'No'}}
-                                                                        @endif
-                                                                    </span>
-                                                                </div>
-                                                                <div class="Details-info">
-                                                                    <p>Dust Collecting</p>
-                                                                    <span> {{ $product->productDetails->DustCollecting == 1 ? 'Yes' : 'No' }}</span>
-                                                                </div>
-                                                                <div class="Details-info">
-                                                                    <p>Deodorizing Filter</p>
-                                                                    <span>{{ $product->productDetails->DeodorizingFilter == 1 ? 'Yes' : 'No' }}</span>
+                                                        @if($product->productDetails->AirPurification)
+                                                            <div class="Details">
+                                                                <h5>{{ __('messages.AirPurification')}}</h5>
+                                                                <div class="many-details">
+                                                                    <div class="Details-info">
+                                                                        <p>Indcator(cleanliness)</p>
+                                                                        <span>{{ $product->productDetails->AirPurification }}</span>
+                                                                    </div>
+
+                                                                    @if($product->productDetails->PreFilter)
+                                                                        <div class="Details-info">
+                                                                            <p>Pre Filter</p>
+                                                                            <span>
+                                                                                @if( $product->productDetails->PreFilter == 1)
+                                                                                        {{'Yes'}}
+                                                                                @else
+                                                                                        {{'No'}}
+                                                                                @endif
+                                                                            </span>
+                                                                        </div>
+                                                                    @endif
+                                                                    @if($product->productDetails->DustCollecting)
+                                                                        <div class="Details-info">
+                                                                            <p>Dust Collecting</p>
+                                                                            <span> {{ $product->productDetails->DustCollecting == 1 ? 'Yes' : 'No' }}</span>
+                                                                        </div>
+                                                                    @endif
+                                                                    @if($product->productDetails->DeodorizingFilter)
+                                                                        <div class="Details-info">
+                                                                            <p>Deodorizing Filter</p>
+                                                                            <span>{{ $product->productDetails->DeodorizingFilter == 1 ? 'Yes' : 'No' }}</span>
+                                                                        </div>
+                                                                    @endif
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="Details">
-                                                            <h5>{{ __('messages.ElectricalDate')}}</h5>
-                                                            <div class="Details-info">
-                                                                <p>Power Consumption(W)</p>
-                                                                <span>{{ $product->productDetails->PowerConsumption .' W' }}</span>
+                                                        @endif
+                                                        @if($product->productDetails->PowerConsumption)
+                                                            <div class="Details">
+                                                                <h5>{{ __('messages.ElectricalDate')}}</h5>
+                                                                <div class="Details-info">
+                                                                    <p>Power Consumption(W)</p>
+                                                                    <span>{{ $product->productDetails->PowerConsumption .' W' }}</span>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -573,50 +583,54 @@
                                     </div>
                                 </div>
                                 <!-- Tech details -->
-                                <div class="accrodion">
-                                    <div class="accrodion-title">
-                                        <a data-toggle="collapse" href="#FAQ" role="button" aria-expanded="false" aria-controls="FAQ">{{ __('messages.TechnicalDetails')}}</a>
-                                    </div>
-                                    <div class="collapse " id="FAQ">
-                                        <div class="inner">
-                                            <div class="product-details__review-form mt-3">
-                                                <!-- FAQ -->
-                                                <div class="product-details__review mb-4">
-                                                    @foreach ($product->faqs as $faq)
-                                                        <div class="product-details__review-single" style="padding: 1px 30px;border:none;justify-content: left;">
-                                                            <div class="product-details__review-right">
-                                                                <div class="FAQ"  style="gap: 0px;">
-                                                                    <div class="Question">
-                                                                        {{ ucfirst(strtolower($faq->Question)) }}
-                                                                    </div>
-                                                                    <div class="Answer">
-                                                                        <p class="product-details__review-text mt-3"> {{ ucfirst(strtolower($faq->Answer)) }}</p>
+                                @if($product->faqs->isNotEmpty())
+                                    <div class="accrodion">
+                                        <div class="accrodion-title">
+                                            <a data-toggle="collapse" href="#FAQ" role="button" aria-expanded="false" aria-controls="FAQ">{{ __('messages.TechnicalDetails')}}</a>
+                                        </div>
+                                        <div class="collapse " id="FAQ">
+                                            <div class="inner">
+                                                <div class="product-details__review-form mt-3">
+                                                    <!-- FAQ -->
+                                                    <div class="product-details__review mb-4">
+                                                        @foreach ($product->faqs as $faq)
+                                                            <div class="product-details__review-single" style="padding: 1px 30px;border:none;justify-content: left;">
+                                                                <div class="product-details__review-right">
+                                                                    <div class="FAQ"  style="gap: 0px;">
+                                                                        <div class="Question">
+                                                                            {{ ucfirst(strtolower($faq->Question)) }}
+                                                                        </div>
+                                                                        <div class="Answer">
+                                                                            <p class="product-details__review-text mt-3"> {{ ucfirst(strtolower($faq->Answer)) }}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    @endforeach
+                                                        @endforeach
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                                 <!-- Video -->
-                                <div class="accrodion">
-                                    <div class="accrodion-title">
-                                        <a data-toggle="collapse" href="#Video" role="button"  aria-expanded="false" aria-controls="Video">{{ __('messages.Video')}}</a>
-                                    </div>
-                                    <div class="collapse " id="Video">
-                                        <div class="inner">
-                                            <div class="product-details__review-form" style="text-align-last: center;">
-                                                <!-- Video -->
-                                                <div class="product-details__review" style="margin-bottom: 40px;">
-                                                    <source src="{{$product->productDetails->Video}}" type="video/mp4">
+                                @if($product->productDetails->Video)
+                                    <div class="accrodion">
+                                        <div class="accrodion-title">
+                                            <a data-toggle="collapse" href="#Video" role="button"  aria-expanded="false" aria-controls="Video">{{ __('messages.Video')}}</a>
+                                        </div>
+                                        <div class="collapse " id="Video">
+                                            <div class="inner">
+                                                <div class="product-details__review-form text-center">
+                                                    <!-- Video -->
+                                                    <div class="product-details__review mb-5">
+                                                        <source src="{{$product->productDetails->Video}}" type="video/mp4">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

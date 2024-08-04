@@ -31,7 +31,7 @@
                 @method('GET')
                 @csrf
             </form>
-            <a class="nav-link" href="#" title="{{ __('messages.LogOut')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <a href="#" title="{{ __('messages.LogOut')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </a>
         @else

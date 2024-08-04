@@ -140,7 +140,7 @@
                 </li>
                 {{-- Payments --}}
                 <li class="nav-item">
-                    <a href="{{ route('Payment.index')}}" class="nav-link {{ request()->routeIs('Payment.index') ? 'active' : '' }}">
+                    <a href="{{ route('Payment.Admin.index')}}" class="nav-link {{ request()->routeIs('Payment.Admin.index') ? 'active' : '' }}">
                         <i class="nav-icon fa-solid fa-money-bill-1-wave"></i>
                         <p>
                             Payments

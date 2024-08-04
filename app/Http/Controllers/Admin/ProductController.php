@@ -57,7 +57,6 @@ class ProductController extends Controller
 
     public function store(AddProductRequest $request)
     {
-
         $mainImageName  = Media::upload($request->file('MainImage'), 'Admin\dist\img\web\Products\MainImage');
         $coverImageName = Media::upload($request->file('CoverImage'),'Admin\dist\img\web\Products\CoverImage');
 
@@ -66,8 +65,16 @@ class ProductController extends Controller
         $productPlatformsData  = $request->only('PlatformID');
         $productTechnologyData = $request->only('Technology');
         $productFeatureData    = $request->only('FeatureID');
-        $productFAQData        = $request->only('Question','Answer' , 'ArabicQuestion' , 'ArabicAnswer');
+        $faqData               = $request->only(['Question', 'Answer', 'ArabicQuestion', 'ArabicAnswer']);
         $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
+        $colorData = [
+                'Color' => $request->input('Color'),
+                'Color2' => $request->input('Color2'),
+                'Color3' => $request->input('Color3')
+            ];
+        $colorData = array_filter($colorData, function($value) {
+            return !is_null($value);
+        });
 
         // Create Product
         $productData['MainImage'] = $mainImageName;
@@ -87,6 +94,9 @@ class ProductController extends Controller
         // Create ProductDetails
         $productDetailsData['ProductID'] = $product->id;
         $productDetailsData['CoverImage'] = $coverImageName;
+        $productDetailsData['Color']  = $colorData['Color'] ?? null;
+        $productDetailsData['Color2'] = $colorData['Color2'] ?? null;
+        $productDetailsData['Color3'] = $colorData['Color3'] ?? null;
         ProductDetails::create($productDetailsData);
 
         // Create ProductPlatforms
@@ -118,25 +128,14 @@ class ProductController extends Controller
         ProductEvaluation::create($productEvaluationData);
 
         // Create Product FAQ
-        $productFAQData['ProductID'] = $product->id;
-        $questions = $request->Question;
-        $answers = $request->Answer;
-        $ARanswers = $request->ArabicAnswer;
-        $ARquestions= $request->ArabicQuestions;
-
-        if (count($questions) === count($answers)) {
-            foreach ($questions as $index => $question) {
-                $faqData = [
-                    'Question'       => $question,
-                    'Answer'         => $answers[$index],
-                    'ArabicQuestion' => $ARquestions,
-                    'ArabicAnswer'   => $ARanswers,
-                    'ProductID'      => $product->id,
-                    ];
-                    ProductFaq::create($faqData);
-            }
-        } else {
-            return redirect()->back()->with('success', 'The number of questions and answers do not match.');
+        foreach ($faqData['Question'] as $index => $question) {
+            $faq = new ProductFaq();
+            $faq['ProductID']    = $product->id;
+            $faq->Question       = $question;
+            $faq->Answer         = $faqData['Answer'][$index] ?? null;
+            $faq->ArabicQuestion = $faqData['ArabicQuestion'][$index] ?? null;
+            $faq->ArabicAnswer   = $faqData['ArabicAnswer'][$index] ?? null;
+            $faq->save();
         }
 
         return redirect()->route('Products.index')->with('success', 'Product Added Successfully');

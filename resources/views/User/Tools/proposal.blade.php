@@ -109,7 +109,7 @@
 
     <main class="MainProposal">
         <div class="container">
-            <div class="block-title text-center mt-3">
+            <div class="block-title text-center mt-5 pt-5">
                 <p class="block-title__tag-line text-center" >{{__('messages.GetYourDesignButton')}}</p>
             </div>
 
@@ -599,6 +599,7 @@
                                 }
                             });
                         </script>
+
                     </section>
 
                     <h3>Step 9 Title</h3>
@@ -652,8 +653,6 @@
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
-
 
     <script>
 

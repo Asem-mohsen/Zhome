@@ -81,15 +81,15 @@
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <span class="text-sm">Order ID: {{$order->ID}}</span>
-                                            <h6 class="mb-0 text-sm">{{$order->user->Name}}</h6>
-                                            <span>{{$order->user->Email}}</span>
+                                            <h6 class="mb-0 text-sm">{{$order->user->Name ?? 'Unknown'  }}</h6>
+                                            <span>{{$order->user->email ?? 'Unknown' }}</span>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
-                                            <img src="{{ asset('Admin/dist/img/avatar.png') }}" class="avatar avatar-sm me-3" alt="{{$order->product->Name}}">
+                                            <img src="{{ asset('Admin/dist/img/web/Products/MainImage/' . $order->product->MainImage) }}" class="avatar avatar-sm me-3" alt="{{$order->product->Name}}">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="mb-0">{{$order->product->Name}}</h6>

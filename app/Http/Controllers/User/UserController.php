@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Delivery;
 use Illuminate\Support\Facades\DB;
+use App\Models\ShopOrders;
 
 class UserController extends Controller
 {
@@ -18,7 +19,10 @@ class UserController extends Controller
 
     public function profile(User $user){
 
-        return view('Admin.Users.profile', compact('user'));
+        $orderCount = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->count();
+        $totalPayments  = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->sum('TotalAfterSaving');
+
+        return view('Admin.Users.profile', compact('user' , 'orderCount' , 'totalPayments'));
     }
 
     public function getUserOrderStatistics($userId)
@@ -43,7 +47,7 @@ class UserController extends Controller
         $orderStatistics = $this->getUserOrderStatistics($user->id);
         return view('User.Profile.index', compact('user' , 'products', 'userProducts' ,'orderStatistics'));
     }
-    
+
     public function edit(User $user)
     {
         return view('User.Profile.edit', compact('user'));
@@ -56,6 +60,6 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        
+
     }
 }

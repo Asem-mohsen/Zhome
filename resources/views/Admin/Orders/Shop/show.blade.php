@@ -120,7 +120,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td>Email</td>
-                                                    <td>{{$order->user->Email}}</td>
+                                                    <td>{{$order->user->email}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Phone</td>
@@ -371,7 +371,7 @@
                                                         <td>
                                                             <div class="d-flex px-2 py-1">
                                                                 <div>
-                                                                    <img src="./Images/Uploads/{{$prevOrder->product->MainImage}}" class="avatar avatar-sm me-3" alt="{{$prevOrder->product->Name}}">
+                                                                    <img src="{{ asset('Admin/dist/img/web/Products/MainImage/' . $prevOrder->product->MainImage) }}" class="avatar avatar-sm me-3" alt="{{$prevOrder->product->Name}}">
                                                                 </div>
                                                                 <div class="d-flex flex-column justify-content-center">
                                                                     <h6 class="mb-0 text-sm">{{$prevOrder->product->Name}}</h6>

@@ -4,7 +4,6 @@
 @section('Css')
 
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="{{ asset('Admin/dist/css/wizard.css') }}">
 
 @endsection
@@ -265,44 +264,55 @@
                                 <section>
                                     <p class="text-uppercase text-sm">Product Details</p>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="Description" class="form-control-label">Description</label>
-                                                <textarea class="form-control" id="Description" name="Description" required></textarea>
+                                                <textarea class="form-control" id="Description" name="Description"  data-maxlength="1000" required ></textarea>
                                             </div>
-                                            <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="generate-link" onclick="generateLoremIpsum(100, 'Description')">Generate Lorem Ipsum Words</p>
+                                                <p class="remaining" data-for="Description">1000 Characters Remaining</p>
+                                            </div>
                                             @error('Description')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="ArabicDescription" class="form-control-label">Arabic
                                                     Description</label>
-                                                <textarea class="form-control" id="ArabicDescription" name="ArabicDescription" required></textarea>
+                                                <textarea class="form-control" id="ArabicDescription" data-maxlength="1000" name="ArabicDescription" required></textarea>
                                             </div>
-                                            <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ArabicDescription')">Generate Lorem Ipsum Words</p>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ArabicDescription')">Generate Lorem Ipsum Words</p>
+                                                <p class="remaining" data-for="ArabicDescription">1000 Characters Remaining</p>
+                                            </div>
                                             @error('ArabicDescription')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="Expert" class="form-control-label">Expert Review</label>
-                                                <textarea class="form-control" id="Expert" name="Evaluation" required></textarea>
+                                                <textarea class="form-control" id="Expert" data-maxlength="700" name="Evaluation" required></textarea>
                                             </div>
-                                            <p class="generate-link" onclick="generateLoremIpsum(200, 'Expert')">Generate Lorem Ipsum Words</p>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="generate-link" onclick="generateLoremIpsum(100, 'Expert')">Generate Lorem Ipsum Words</p>
+                                                <p class="remaining" data-for="Expert">700 Characters Remaining</p>
+                                            </div>
                                             @error('Evaluation')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="Expert" class="form-control-label">Arabic Expert
-                                                    Review</label>
-                                                <textarea class="form-control" id="ArabicExpert" name="ArabicEvaluation" required></textarea>
+                                                <label for="Expert" class="form-control-label">Arabic Expert Review</label>
+                                                <textarea class="form-control" id="ArabicExpert" data-maxlength="700" name="ArabicEvaluation" required></textarea>
                                             </div>
-                                            <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ArabicExpert')">Generate Lorem Ipsum Words</p>
+                                            <div class="d-flex justify-content-between">
+                                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ArabicExpert')">Generate Lorem Ipsum Words</p>
+                                                <p class="remaining" data-for="ArabicExpert">700 Characters Remaining</p>
+                                            </div>
                                             @error('ArabicEvaluation')
                                                 <div class="alert alert-danger">{{ $message }}</div>
                                             @enderror
@@ -393,7 +403,7 @@
                                     <br>
                                     <p class="text-uppercase text-sm">Colors</p>
                                     <div class="row flex-column">
-                                        <div id="colorInputs" class="d-flex">
+                                        <div id="colorInputs" class="d-flex align-items-baseline" style="gap:20px">
                                             <div class="form-group">
                                                 <label for="Color" class="form-control-label">Color</label>
                                                 <input type="color" class="color-input" name="Color">
@@ -403,7 +413,7 @@
                                             @enderror
                                         </div>
                                         <div id="addRemoveColor" class="mb-5">
-                                            <span id="addColorSpan"><i class="fa-solid fa-plus"></i></span>
+                                            <span id="addColorSpan" onclick="addColorInput()"><i class="fa-solid fa-plus"></i></span>
                                         </div>
                                     </div>
                                     <br>
@@ -494,7 +504,7 @@
                                 <section>
                                     <p class="text-uppercase text-sm">Features</p>
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" style="overflow-x:scroll;">
                                             <label for="Feature" class="form-control-label">Select Featrues </label>
                                             <div class="cards FeatureSelections features-cards">
                                                 @foreach ($features as $feature)
@@ -557,8 +567,8 @@
                                             @enderror
                                         </div>
                                         <div id="div-container" class="mt-5"></div>
-                                        <a id="add-div-btn" class="btn bg-gradient-light mb-0" style="margin-left: 14px;width: 31%;">Add New FAQ</a>
-                                        
+                                        <a id="add-div-btn" class="btn bg-gradient-light mb-0 ml-2" onclick="addFAQ()" style="width: 31%;">Add New FAQ</a>
+
                                     </div>
                                 </section>
                             </div>
@@ -577,10 +587,10 @@
                 <!-- Side Card -->
                 <div class="col-md-4" id="Side">
                     <div class="card mb-4">
-                        <h3 class="text-uppercase text-sm heading">Main information</h3>
-                        <p class="text-Img-link">Please Make sure that the product information you are filling now are
+                        <h3 class="text-uppercase text-sm pt-3 text-center heading">Main information</h3>
+                        <p class="text-Img-link p-2">Please Make sure that the product information you are filling now are
                             compitable with the design in the provided photo, tap on the image for a full view.</p>
-                        <img id="myImg" src="https://zhome.com.eg/Admin/Images/AllPage.png" alt="Snow">
+                        <img id="myImg" src="{{asset('Admin/dist/img/web/Products/AllPage.png')}}" alt="All the Page">
                         <p id="imgLink" class="btn bg-gradient-info">View Full Image</p>
                         <div id="myModal" class="modal">
                             <span class="close">&times;</span>
@@ -616,7 +626,7 @@
                         url: '/Products/subcategories/' + categoryId,
                         type: 'GET',
                         success: function (data) {
-                            
+
                             $('#subCategorySelect').empty();
                             $('#subCategorySelect').append('<option hidden selected>Select SubCategory</option>');
                             $.each(data, function (key, subcategory) {
@@ -640,55 +650,78 @@
 
     {{-- Add New FAQ --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const AddNewFAQ = document.getElementById("add-div-btn");
-            const FAQContainer = document.getElementById("div-container");
-
-            AddNewFAQ.addEventListener("click", function() {
-                const newDiv = document.createElement("div");
-                newDiv.classList.add("new-div");
-
-                newDiv.innerHTML = `
-                    <hr class="horizontal dark">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="Question" class="form-control-label">Question</label>
-                                <textarea class="form-control QuestionsTextarea" name="Question[]" required></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="Answer" class="form-control-label">Answer</label>
-                                <textarea class="form-control AnswersTextarea" name="Answer[]" required></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="ArabicQuestion" class="form-control-label">Arabic Question</label>
-                                <textarea class="form-control QuestionsTextarea" name="ArabicQuestion[]" required></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="ArabicAnswer" class="form-control-label">Arabic Answer</label>
-                                <textarea class="form-control AnswersTextarea" name="ArabicAnswer[]" required></textarea>
-                            </div>
-                        </div>
-                        <button class="btn btn-sm btn-danger remove-div-btn" style="margin-left: 14px;width: 10%;">
-                            <i class="fa fa-trash"></i>
-                        </button>
+        function addFAQ() {
+            const divContainer = document.getElementById('div-container');
+            const newDiv = document.createElement('div');
+            newDiv.classList.add('row', 'mb-3');
+            newDiv.innerHTML = `
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Question" class="form-control-label">Question</label>
+                        <textarea class="form-control QuestionsTextarea" name="Question[]"></textarea>
                     </div>
-                `;
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Answer" class="form-control-label">Answer</label>
+                        <textarea class="form-control AnswersTextarea" name="Answer[]"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Question" class="form-control-label">Arabic Question</label>
+                        <textarea class="form-control QuestionsTextarea" name="ArabicQuestion[]"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Answer" class="form-control-label">Arabic Answer</label>
+                        <textarea class="form-control AnswersTextarea" name="ArabicAnswer[]"></textarea>
+                    </div>
+                </div>
+                <button class="btn btn-danger remove-div-btn pl-1 pr-1" type="button">x</button>
+            `;
+            divContainer.appendChild(newDiv);
 
-                // FAQContainer.appendChild(newDiv);
-
-                const removeDivBtn = newDiv.querySelector(".remove-div-btn");
-                    removeDivBtn.addEventListener("click", function() {
-                        FAQContainer.removeChild(newDiv);
-                    });
+            // Add event listener to the remove button
+            newDiv.querySelector('.remove-div-btn').addEventListener('click', function() {
+                newDiv.remove();
             });
-        });
+        }
+    </script>
+
+    {{-- Color Input --}}
+    <script>
+        let colorInputCount = 1;
+
+        function addColorInput() {
+            const addColorSpan = document.getElementById('addColorSpan');
+            const colorInputs = document.getElementById('colorInputs');
+
+            if (colorInputCount < 3) {
+                const newColorDiv = document.createElement('div');
+                newColorDiv.classList.add('form-group');
+                newColorDiv.innerHTML = `
+                    <input type="color" class="color-input" name="Color${colorInputCount + 1}">
+                    <button class="btn btn-danger remove-color-btn pl-1 pr-1" type="button">x</button>
+                `;
+                colorInputs.appendChild(newColorDiv);
+                colorInputCount++;
+
+                if (colorInputCount === 3) {
+                    addColorSpan.style.display = 'none';
+                }
+
+                // Add event listener to the remove button
+                newColorDiv.querySelector('.remove-color-btn').addEventListener('click', function() {
+                    newColorDiv.remove();
+                    colorInputCount--;
+                    if (colorInputCount < 3) {
+                        addColorSpan.style.display = 'inline';
+                    }
+                });
+            }
+        }
     </script>
 
     {{-- hasInstallments --}}
@@ -729,14 +762,32 @@
         }
     </script>
 
+    {{-- count text wrote --}}
+    <script>
+        $(document).ready(function(){
+            $('textarea').each(function(){
+                const maxLength = $(this).data('maxlength');
+                const textareaId = $(this).attr('id');
+
+                $(this).on('input', function() {
+                    updateCharacterCount(textareaId, maxLength);
+                });
+
+                // Initial update on page load
+                updateCharacterCount(textareaId, maxLength);
+            });
+        });
+    </script>
+
     {{-- Finish Button --}}
     <script>
         $(document).ready(function() {
             $('a[role="menuitem"][href="#finish"]').on('click', function(event) {
-                event.preventDefault(); 
+                event.preventDefault();
                 $('#productForm').submit();
             });
         });
     </script>
+
 @endsection
 

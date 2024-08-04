@@ -7,7 +7,7 @@
         <div class="h-100">
             <div class="row noHegiht h-100">
                 <div class="wrapper h-100">
-                    <div class="col-md-6 box details" style="background-image: url({{asset('UI/Imgs/Signin/RobotHand.jpg')}})">
+                    <div class="col-md-6 box details" style="background-image:url({{ asset("UI/Imgs/Signin/RobotHand.jpg")}});">
                     </div>
                     <div class="col-md-5 box">
                         <div class="form">
