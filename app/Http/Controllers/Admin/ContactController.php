@@ -25,6 +25,7 @@ class ContactController extends Controller
     }
 
     public function update(UpdateContactRequest $request ,Contact $contact){
+        
         $data = $request->except('_method', '_token');
 
         // Update Contact

@@ -7,6 +7,7 @@
 @section('Title', $title)
 
 @section('Css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.css">
     <style>
             /* Navbar for specific pages */
             .header{
@@ -167,21 +168,20 @@
                                 <i class="fa fa-search"></i>
                             </a>
                         </div>
-                        <div class="additional-images">
-                            @foreach ($product->images as $image)
-                                <div class="additional-image m-2">
-                                    <img class="img-fluid h-100" src="{{ asset("Admin/dist/img/web/Products/OtherImages/{$image->Image}") }}" style="width:130px;object-fit: cover;" alt="{{$product->Name}}" />
+                        <div class="additional-images-container">
+                            <div class="swiper additional-images-slider">
+                                <div class="swiper-wrapper">
+                                    @foreach ($product->images as $image)
+                                        <div class="swiper-slide">
+                                            <div class="additional-image m-2">
+                                                <img class="img-fluid h-100" src="{{ asset("Admin/dist/img/web/Products/OtherImages/{$image->Image}") }}" style="width:130px;object-fit: cover;" alt="{{$product->Name}}" />
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
-                            @endforeach
-                        </div>
-                        <div class="Hidden-inputs">
-                            <!-- HiddenInputs -->
-                                {{-- <input type="hidden" name="UserID"       value="@if(Auth::guard('web')->check()) {{ Auth::guard('web')->user()->id }} @else {{session_id()}} @endif ">
-                                <input type="hidden" name="ProductID"    value="{{$product->ID}}">
-                                <input type="hidden" name="Price"        value="{{$product->Price}}">
-                                <input type="hidden" name="ProductName"  value="{{$product->Name}}">
-                                <input type="hidden" name="ProductImage" value="{{asset("Admin/dist/img/web/Products/MainImag/$product->MainImage")}}"> --}}
-                            <!-- End -->
+                                <div class="swiper-button-next"></div>
+                                <div class="swiper-button-prev"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -314,7 +314,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if($product->InstallationCost != NULL || $product->InstallationCost != 0)
+                                @if($product->InstallationCost != NULL && $product->InstallationCost != 0)
                                     <div class="text-one-ProductDetails">
                                         <div class="top-text">
                                             <i class="fa-solid fa-gears"></i>
@@ -351,23 +351,36 @@
                                         </p>
                                     </div>
                                 </div>
-                                @foreach($product->features as $feature)
-                                    <div class="text-one-ProductDetails">
-                                        <div class="top-text">
-                                            <img src="{{asset('Admin/dist/img/web/Features/' . $feature->Image)}}" alt="{{$feature->Feature}}">
-                                            <h3>{{$feature->Feature}}</h3>
-                                        </div>
-                                        <div class="bottom-text">
-                                            <p>
-                                                {{$feature->Description}}
-                                            </p>
-                                        </div>
-                                    </div>
-                                @endforeach
+
                             </div>
                         </div>
                     </div>
 
+                    {{-- Features --}}
+                    <div class="Features-Product-Page mt-5 pt-5">
+                        <h2>Features</h2>
+                        <div class="container">
+                            <div class="card-slider-wrapper">
+                                <div class="card-slider">
+                                    <div class="feature-container mt-5 pt-3">
+                                    @foreach($product->features as $feature)
+                                    <div class="Feature-details">
+                                        <img src="{{asset('Admin/dist/img/web/Features/' . $feature->Image)}}" alt="{{$feature->Feature}}">
+                                        <div class="bottom-text">
+                                        <h3>{{$feature->Feature}}</h3>
+                                        <p>{{$feature->Description}}</p>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="navigation-buttons">
+                                <button class="prev-button"><i class="fa-solid fa-arrow-left"></i></button>
+                                <button class="next-button"><i class="fa-solid fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Expert Review -->
                     <div class="mt-4" style="border-bottom:1px solid #eeee; ">
                         <div class="product-details__review-form">
@@ -441,7 +454,7 @@
                                         <p> {{ __('messages.FreeTransportation')}}</p>
                                     </li>
 
-                                    @if($product->InstallationCost != NULL || $product->InstallationCost != 0)
+                                    @if($product->InstallationCost != NULL && $product->InstallationCost != 0)
                                         <li>
                                             <span><i class="fa-solid fa-check"></i></span>
                                             <p>{{ __('messages.TextProfessionalInstallation')}} {{ $product->InstallationCost . 'EGP'}}</p>
@@ -667,4 +680,82 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const cardSlider = document.querySelector(".card-slider");
+        const prevButton = document.querySelector(".prev-button");
+        const nextButton = document.querySelector(".next-button");
+        const featureContainer = document.querySelector(".feature-container");
+        let currentPosition = 0;
+        const cardWidth = 360 + 40; // card width + margin
+
+        function updateSliderPosition() {
+            cardSlider.style.transform = `translateX(${currentPosition}px)`;
+        }
+
+        function checkButtonsState() {
+            const totalWidth = featureContainer.scrollWidth;
+            const visibleWidth = featureContainer.offsetWidth;
+
+            prevButton.disabled = currentPosition >= 0;
+            nextButton.disabled = currentPosition <= visibleWidth - totalWidth;
+        }
+
+        nextButton.addEventListener("click", () => {
+            const visibleWidth = featureContainer.offsetWidth;
+            const totalWidth = featureContainer.scrollWidth;
+            currentPosition = Math.max(visibleWidth - totalWidth, currentPosition - cardWidth);
+            updateSliderPosition();
+            checkButtonsState();
+        });
+
+        prevButton.addEventListener("click", () => {
+            currentPosition = Math.min(0, currentPosition + cardWidth);
+            updateSliderPosition();
+            checkButtonsState();
+        });
+
+        // Initial check for buttons state
+        checkButtonsState();
+
+        // Recheck on window resize
+        window.addEventListener('resize', () => {
+            currentPosition = 0;
+            updateSliderPosition();
+            checkButtonsState();
+        });
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.5/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new Swiper('.additional-images-slider', {
+                slidesPerView: 4,
+                spaceBetween: 10,
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                breakpoints: {
+                    // when window width is >= 320px
+                    320: {
+                        slidesPerView: 2,
+                        spaceBetween: 10
+                    },
+                    // when window width is >= 480px
+                    480: {
+                        slidesPerView: 3,
+                        spaceBetween: 10
+                    },
+                    // when window width is >= 640px
+                    640: {
+                        slidesPerView: 4,
+                        spaceBetween: 10
+                    }
+                }
+            });
+        });
+</script>
 @stop

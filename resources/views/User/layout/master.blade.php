@@ -51,7 +51,7 @@
     <link rel="stylesheet" href="{{ asset('UI/css/core-style.css')}}">
     <!-- End Shop -->
     <link rel="stylesheet" href="{{ asset('UI/css/style.css')}}">
-    <link rel="stylesheet" href="{{ asset('UI/css/Main.css')}}">
+    <link rel="stylesheet" href="{{ asset('UI/css/Main.css?v.3')}}">
     <link rel="stylesheet" href="{{ asset('UI/css/Navbar.css')}}">
     @if(App::getLocale() == 'ar')
         <link rel="stylesheet" href="{{ asset('UI/css/ArabicStyle.css')}}">

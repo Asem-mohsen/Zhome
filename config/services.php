@@ -37,4 +37,8 @@ return [
         'redirect' => env('GOOGLE_REDIRCT'),
     ],
 
+    'supported-language'=>[
+        'ar','en'
+    ],
+
 ];

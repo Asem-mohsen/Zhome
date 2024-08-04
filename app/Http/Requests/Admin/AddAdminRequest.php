@@ -15,8 +15,8 @@ class AddAdminRequest extends FormRequest
     {
         return [
             'Name' => ['required', 'max:255'],
-            'Email' => ['required', 'max:255', 'unique:admin', 'email:rfc,dns'],
-            'Password' => ['required', 'min:9', 'max:255'],
+            'email' => ['required', 'max:255', 'unique:admin', 'email:rfc,dns'],
+            'password' => ['required', 'min:9', 'max:255'],
             'RoleID' => ['required', 'exists:adminrole,ID'],
             'Address' => ['required', 'max:255'],
             'Country' => ['required', 'max:255'],

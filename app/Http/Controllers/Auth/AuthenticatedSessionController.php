@@ -8,9 +8,18 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+use App\Traits\ApiResponse;
+use App\Models\User;
+use App\Models\Admin;
 
 class AuthenticatedSessionController extends Controller
 {
+    use ApiResponse;
+    
     public function create(): View
     {
         return view('auth.login');
@@ -44,6 +53,34 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+
+    // New method for API login
+    public function apiLogin(Request $request)
+    {
+        $request->validate([
+            'email'      => 'required|email|max:255',
+            'password'   => 'required',
+            'device_name'=> 'required',
+        ]);
+        $user  = User::where('email' , $request->email)->first();
+        $admin = Admin::where('email' , $request->email)->first();
+        
+        // Check for User authentication
+        if ($user && Hash::check($request->password, $user->password)) {
+            $user->token = "Bearer " . $user->createToken($request->device_name)->plainTextToken;
+            return $this->data(compact('user'), 'User logged in successfully');
+        }
+
+        // Check for Admin authentication
+        if ($admin && Hash::check($request->password, $admin->password)) {
+            $admin->token = "Bearer " . $admin->createToken($request->device_name)->plainTextToken;
+            return $this->data(compact('admin'), 'Admin logged in successfully');
+        }
+
+        // If both checks fail, return an error response
+        return $this->error(['message' => 'Authentication failed'], 401);
     }
 
 }

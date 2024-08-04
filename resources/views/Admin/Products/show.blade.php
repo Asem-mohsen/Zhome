@@ -187,7 +187,7 @@
                                         <div class="product-details__review-left d-flex">
                                             <img src="{{asset('Admin/dist/img/avatar2.png')}}" width="70px" height="70px" alt="Image" />
                                             <div class="d-flex flex-column pl-2">
-                                                <h4 class="product-details__review-title">{{ $admin->Name }}</h4>
+                                                <h4 class="product-details__review-title">{{ $product->evaluations->admin->Name }}</h4>
                                                 <span class="product-details__review-date text-sm">- <?php echo "Expert engineer" ?></span>
                                             </div>
 

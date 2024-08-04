@@ -15,7 +15,7 @@ class AdminUpdateRequest extends FormRequest
     {
         return [
             'Name' => ['required', 'max:255'],
-            'Email' => ['required', 'max:255', 'unique:admin', 'email:rfc,dns',Rule::unique('admin')->ignore($this->ID)],
+            'email' => ['required', 'max:255', 'unique:admin', 'email:rfc,dns',Rule::unique('admin')->ignore($this->id)],
             'RoleID' => ['required', 'exists:adminrole,ID'],
             'Address' => ['required', 'max:255'],
             'Phone' => ['required', 'max:11'],
