@@ -129,14 +129,20 @@ class ProductController extends Controller
 
         // Create Product FAQ
         if (!empty($faqData['Question'])) {
-            foreach ($faqData['Question'] as $index => $question) {
+            // Check if 'Question' is an array or a single value
+            $questions = is_array($faqData['Question']) ? $faqData['Question'] : [$faqData['Question']];
+
+            foreach ($questions as $index => $question) {
                 if (!empty($question)) {
                     $faq = new ProductFaq();
                     $faq['ProductID']    = $product->id;
                     $faq->Question       = $question;
-                    $faq->Answer         = $faqData['Answer'][$index] ?? null;
-                    $faq->ArabicQuestion = $faqData['ArabicQuestion'][$index] ?? null;
-                    $faq->ArabicAnswer   = $faqData['ArabicAnswer'][$index] ?? null;
+
+                    // Handle associated data, making sure to handle both array and non-array cases
+                    $faq->Answer         = is_array($faqData['Answer'] ?? null) ? $faqData['Answer'][$index] ?? null : $faqData['Answer'] ?? null;
+                    $faq->ArabicQuestion = is_array($faqData['ArabicQuestion'] ?? null) ? $faqData['ArabicQuestion'][$index] ?? null : $faqData['ArabicQuestion'] ?? null;
+                    $faq->ArabicAnswer   = is_array($faqData['ArabicAnswer'] ?? null) ? $faqData['ArabicAnswer'][$index] ?? null : $faqData['ArabicAnswer'] ?? null;
+
                     $faq->save();
                 }
             }

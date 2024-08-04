@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
             Route::delete('/{admin}/delete', 'destroy');
         });
     });
-    
+
     Route::prefix('products')->group(function(){
         Route::controller(ProductsController::class)->group(function(){
             Route::get('/products', 'index');
@@ -75,7 +75,7 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
             Route::delete('/{product}/delete', 'destroy');
         });
     });
-    
+
     Route::controller(UserController::class)->prefix('Users')->name('Users.')->group(function(){
         Route::get('/', 'index');
         Route::get('/{user}/profile', 'profile');
@@ -84,5 +84,5 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
 
 
 
-    
+
 });
