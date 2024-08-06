@@ -1,11 +1,11 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Add New Feature')
+@section('Title', 'Add New Feature')
 
 @section('Content')
 
     <div class="container-fluid py-4">
         <div class="card">
-            <form action="{{route('Features.store')}}" enctype="multipart/form-data" method="post" >
+            <form action="{{ route('Features.store') }}" enctype="multipart/form-data" method="post">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
@@ -30,7 +30,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="image" class="form-control-label">Image</label>
-                                        <input type="file" class="form-control" id="image" name="image" accept="image/*" style="padding: 4px;">
+                                        <input type="file" class="form-control" id="image" name="image"
+                                            accept="image/*" style="padding: 4px;">
                                     </div>
                                     @error('image')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -38,9 +39,20 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="Description" class="form-control-label w-100 text-center">Description</label>
+                                        <label for="Description"
+                                            class="form-control-label w-100 text-center">Description</label>
                                         <textarea class="form-control" id="Description" name="Description" required></textarea>
                                         @error('Description')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="Description_ar" class="form-control-label w-100 text-center">Arabic
+                                            Description</label>
+                                        <textarea class="form-control" id="Description_ar" name="Description_ar" required></textarea>
+                                        @error('Description_ar')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -57,7 +69,8 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <a href="{{route('Features.index')}}" class="btn btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                    <a href="{{ route('Features.index') }}"
+                                        class="btn btn-danger w-100 mt-4 mb-0">Cancel</a>
                                 </div>
                             </div>
                         </div>

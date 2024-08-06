@@ -34,7 +34,7 @@ class PromocodesController extends Controller
 
         }
 
-        return $this->data($promocodesWithUsage->toArray(), 'Promocode data retrieved successfully');
+        return $this->data($promocodesWithUsage, 'Promocode data retrieved successfully');
     }
 
     public function store(AddPromocodeRequest $request)
@@ -78,7 +78,7 @@ class PromocodesController extends Controller
 
             if($promocode->EndsIn > now()){
 
-                return $this->error('Cannot delete a promocode that has not expired yet. Expires on: ' . $promocode->EndsIn->format('Y-m-d H:i:s'));
+                return $this->error(['error' =>'Cannot delete a promocode that has not expired yet. Expires on: ' . $promocode->EndsIn->format('Y-m-d H:i:s')] ,'Eror');
 
             }else{
 
@@ -99,4 +99,3 @@ class PromocodesController extends Controller
 
     }
 }
-

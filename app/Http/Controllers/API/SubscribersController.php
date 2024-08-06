@@ -10,11 +10,12 @@ use App\Traits\ApiResponse;
 class SubscribersController extends Controller
 {
     use ApiResponse;
-    
+
     public function index(){
 
         $subscribers = Subscribers::all();
-        return view('Admin.Subscribers.index' , compact('subscribers'));
+
+        return $this->data(compact('subscribers') , 'All Subscribers Retrieved Successfully');
 
     }
 
@@ -28,9 +29,9 @@ class SubscribersController extends Controller
 
         try {
             Subscribers::create($data);
-            return response()->json(['success' => true]);
+            return $this->success('Email Subscribed Successfully' , 200);
         } catch (\Exception $e) {
-            return response()->json(['success' => false]);
+            return $this->error([] , 'An error occured');
         }
 
     }

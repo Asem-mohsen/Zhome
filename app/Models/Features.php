@@ -13,6 +13,6 @@ class Features extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'ProductID', 'ID');
+        return $this->belongsTo(Product::class, 'ProductID', 'ID','ID');
     }
 }

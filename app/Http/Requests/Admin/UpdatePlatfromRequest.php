@@ -24,9 +24,9 @@ class UpdatePlatfromRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Platform' => ['required', 'max:255', Rule::unique('platform', 'Platform')->ignore($this->id)],
+            'Name' => ['required', 'max:255', Rule::unique('platform', 'Platform')->ignore($this->id)],
             'image'=> ['nullable','max:2048'],
-            'VideoURL'=>['required', 'url'],
+            'VideoURL'=>['nullable', 'url'],
             'MainDescription' => ['required', 'max:1000'],
             'ArabicDescription' => ['max:1000' ,'required'],
             'Question' => ['max:2000' ,'nullable'],

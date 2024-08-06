@@ -39,10 +39,9 @@ class PlatformsController extends Controller
 
         $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Platforms');
 
-        $platformData = $request->except('image','_token','_method','Question','Answer');
-        
+        $platformData = $request->except('image','_token','_method','Question','Answer' , 'Name');
         $platformData['Logo'] = $newImageName;
-
+        $platformData['Platform']  = $request->Name;
         $platform = Platform::create($platformData);
 
         $FAQdata = $request->only('Question','Answer');
@@ -67,25 +66,25 @@ class PlatformsController extends Controller
         ];
 
         return $this->data($data, 'platform data for editing retrieved successfully');
-    
+
     }
 
     public function update(UpdatePlatfromRequest $request , Platform $platform)
     {
-        
-        $data = $request->except('image', '_token','_method','Question','Answer');
-        
+
+        $data = $request->except('image', '_token','_method','Question','Answer','Name');
+
         if($request->hasFile('image')){
 
             $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Platforms');
-            
+
             $data['Logo'] = $newImageName; // hashed name
-            
+
             Media::delete(public_path("Admin\dist\img\web\Platforms\\{$platform->Logo}"));
         }
-        
+        $data['Platform']  = $request->Name;
         $editedPlatform = Platform::where('ID' , $platform->ID)->update($data);
-        
+
         $FAQdata = $request->only('Question','Answer');
 
         PlatformFAQ::where('PlatformID' , $platform->ID)->update($FAQdata);
@@ -99,17 +98,17 @@ class PlatformsController extends Controller
         try {
 
             $FAQ::where('PlatformID', $platform->ID)->delete();
-            
+
             Media::delete(public_path("Admin\dist\img\web\Platforms\\{$platform->Logo}"));
-            
+
             $platform::where('ID', $platform->ID)->delete();
-            
+
             return $this->success('Platform Deleted Successfully');
 
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Platform');
-        
+
         }
 
     }

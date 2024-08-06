@@ -1,5 +1,5 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Add Platform')
+@section('Title', 'Add Platform')
 
 @section('Content')
 
@@ -23,9 +23,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Platform-name" class="form-control-label">Platform Name</label>
-                                    <input class="form-control" type="text" id="Platform-name" name="Platform" required>
+                                    <input class="form-control" type="text" id="Platform-name" name="Name" required>
                                 </div>
-                                @error('Platform')
+                                @error('Name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -43,7 +43,8 @@
                                     <label for="Brand-logo">Platform Logo</label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" name="image" class="custom-file-input" id="Platform-logo">
+                                            <input type="file" name="image" class="custom-file-input"
+                                                id="Platform-logo">
                                             <label class="custom-file-label" for="Platform-logo">Choose file</label>
                                         </div>
                                         <div class="input-group-append">
@@ -111,7 +112,8 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <a href="{{ route('Platform.index')}}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                    <a href="{{ route('Platform.index') }}"
+                                        class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
                                 </div>
                             </div>
                         </div>
@@ -125,7 +127,7 @@
 
 @section('Js')
     <script>
-        $(function () {
+        $(function() {
             bsCustomFileInput.init();
         });
     </script>

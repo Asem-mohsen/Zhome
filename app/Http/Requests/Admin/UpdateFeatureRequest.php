@@ -24,9 +24,10 @@ class UpdateFeatureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Feature'     => ['required','max:255', Rule::unique('features', 'Feature')->ignore($this->id)],
-            'image'       => ['nullable','max:4048'],
-            'Description' => ['required','max:1000'],
+            'Feature'        => ['required','max:255', Rule::unique('features', 'Feature')->ignore($this->id)],
+            'image'          => ['nullable','max:4048'],
+            'Description'    => ['required','max:1000'],
+            'Description_ar' => ['required','max:1000'],
         ];
     }
 }

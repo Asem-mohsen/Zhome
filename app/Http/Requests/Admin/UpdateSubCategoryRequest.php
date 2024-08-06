@@ -15,7 +15,7 @@ class UpdateSubCategoryRequest extends FormRequest
     {
         $this->id = (integer) $request->route()->subcategory->ID;
     }
-    
+
     public function authorize(): bool
     {
         return true;
@@ -23,13 +23,13 @@ class UpdateSubCategoryRequest extends FormRequest
 
     public function rules(): array
     {
-        
+
         return [
-            'SubName'           => ['required' , 'max:255' ],
+            'SubName'           => ['required' , 'max:255' , Rule::unique('subcategory', 'SubName')->ignore($this->id)],
             'SubArabicName'     => ['required' , 'max:255' , Rule::unique('subcategory', 'SubArabicName')->ignore($this->id)],
             'image'             => ['nullable' , 'max:2048'],
             'SubDescription'    => ['required' , 'max:1000'],
-            'ArabicDescription' => ['required' ],
+            'ArabicDescription' => ['required' , 'max:1000'],
         ];
     }
 }

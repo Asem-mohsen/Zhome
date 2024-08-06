@@ -30,7 +30,7 @@ class CollectionsController extends Controller
             $collectionsWithNumberOfProducts[] = $collection;
         }
 
-        return $this->data($collectionsWithNumberOfProducts->toArray(), 'Collection retrieved successfully');
+        return $this->data($collectionsWithNumberOfProducts, 'Collection retrieved successfully');
     }
 
     public function create()
@@ -45,7 +45,7 @@ class CollectionsController extends Controller
     {
         $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Collections');
 
-        $data = $request->except('_token', '_method', 'image', 'ProductID', 'features');
+        $data = $request->except('_token', '_method', 'image', 'ProductID', 'Feature' ,'Feature-Image' , 'EndDate', 'Feature-Description');
         $data['Image'] = $newImageName;
         $collection = Collections::create($data);
 
@@ -53,10 +53,15 @@ class CollectionsController extends Controller
         $productCollectionData = $request->only('ProductID');
         $productCollectionData['CollectionID'] = $collection->id;
         foreach ($request->ProductID as $productId) {
-            $productCollectionData['ProductID'] = $productId;
-            ProductCollections::create($productCollectionData);
+            // Check if the ProductID exists in the product table
+            if (Product::where('ID', $productId)->exists()) {
+                $productCollectionData['ProductID'] = $productId;
+                ProductCollections::create($productCollectionData);
+            } else {
+                // Handle the case where the ProductID doesn't exist
+                return $this->error(["error"=>"Product with ID {$productId} does not exist."], 422);
+            }
         }
-
         $features = $request->input('features', []);
         foreach ($features as $feature) {
             $featureImageName = Media::upload($feature->file('Feature-Image'), 'Admin\dist\img\web\Collections\Features');
@@ -79,7 +84,7 @@ class CollectionsController extends Controller
 
         $data = [
             'collection' => $collection,
-            'products' => $products,
+            'All products' => $products,
         ];
 
         return $this->data($data, 'data retrieved successfully');
@@ -101,8 +106,9 @@ class CollectionsController extends Controller
         Collections::where('ID' , $collection->ID)->update($data);
 
         // update Collection products
-        SyncChoices::Sync(ProductCollections::class , $collection->ID , $request->ProductID , 'ProductID' ,'CollectionID');
-
+        if($request->ProductID){
+            SyncChoices::Sync(ProductCollections::class , $collection->ID , $request->ProductID , 'ProductID' ,'CollectionID');
+        }
         // update Features products
         $features = $request->input('features', []);
         $existingFeatures = $collection->features->keyBy('ID');
@@ -145,6 +151,7 @@ class CollectionsController extends Controller
                 ]);
             }
         }
+
         // Delete features that are no longer present in the request
         foreach ($existingFeatures as $existingFeature) {
             $old_path = public_path("Admin/dist/img/web/Collections/Features/{$existingFeature->Image}");
@@ -161,33 +168,27 @@ class CollectionsController extends Controller
     public function destroy(Collections $collection){
 
         try {
-            
-            if($collection->products()->exists()){
 
-                return $this->error('Cannot delete a Collection that is associated to a product');
-    
-            }else{
+            ProductCollections::where('CollectionID', $collection->ID)->delete();
+            $collectionFeatures = CollectionFeatures::where('CollectionID', $collection->ID)->get();
+            foreach ($collectionFeatures as $feature) {
 
-                $collectionFeatures = CollectionFeatures::where('CollectionID', $collection->id)->get();
+                Media::delete(public_path("Admin/dist/img/web/Collections/Features/{$feature->Image}"));
 
-                foreach ($collectionFeatures as $feature) {
+                $feature->delete();
 
-                    Media::delete(public_path("Admin/dist/img/web/Collections/Features/{$feature->Image}"));
-                    
-                    $feature->delete();
-
-                }
-                $collection::where('ID' , $collection->ID)->delete();
-
-                Media::delete(public_path("Admin\dist\img\web\Collections\\{$collection->Image}"));
-
-                return $this->success('Collection Deleted Successfully');
             }
+            $collection::where('ID' , $collection->ID)->delete();
+
+
+            Media::delete(public_path("Admin\dist\img\web\Collections\\{$collection->Image}"));
+
+            return $this->success('Collection Deleted Successfully');
 
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Collection');
-        
+
         }
 
     }

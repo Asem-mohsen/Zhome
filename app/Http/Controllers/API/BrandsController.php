@@ -27,7 +27,7 @@ class BrandsController extends Controller
                 ->with('products')
                 ->get();
 
-        return $this->data($Brands->toArray(), 'Brands retrieved successfully');
+        return $this->data($brands->toArray(), 'Brands retrieved successfully');
     }
 
     public function store(AddBrandRequest $request){
@@ -45,7 +45,7 @@ class BrandsController extends Controller
 
     public function edit(Brand $brand){
 
-        return $this->data($brand, 'Brand data for editing retrieved successfully');
+        return $this->data($brand->toArray(), 'Brand data for editing retrieved successfully');
 
     }
 

@@ -1,6 +1,7 @@
 <?php
 // Admin
 use App\Http\Controllers\API\AdminController;
+use App\Http\Controllers\API\HomeController;
 use App\Http\Controllers\API\BrandsController;
 use App\Http\Controllers\API\CategoriesController;
 use App\Http\Controllers\API\PlatformsController;
@@ -19,6 +20,11 @@ use App\Http\Controllers\API\ShopOrdersController;
 use App\Http\Controllers\API\ToolsOrderController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\ToolsController;
+use App\Http\Controllers\API\ServicesController;
+use App\Http\Controllers\API\CartController;
+use App\Http\Controllers\API\CheckoutController;
+
 // Authentication
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -65,24 +71,277 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
 
     Route::prefix('products')->group(function(){
         Route::controller(ProductsController::class)->group(function(){
-            Route::get('/products', 'index');
             Route::get('/create', 'create');
             Route::get('/{product}/edit', 'edit');
             Route::get('/{product}/show', 'show');
-            Route::get('/{product}/userView', 'userShow');
             Route::post('/store', 'store');
             Route::put('/{product}/update', 'update');
             Route::delete('/{product}/delete', 'destroy');
         });
     });
 
-    Route::controller(UserController::class)->prefix('Users')->name('Users.')->group(function(){
+    Route::prefix('brands')->group(function(){
+        Route::controller(BrandsController::class)->group(function(){
+            Route::get('/', 'index');
+            Route::get('/{brand}/edit', 'edit');
+            Route::post('/store', 'store');
+            Route::put('/{brand}/update', 'update');
+            Route::delete('/{brand}/delete', 'destroy');
+        });
+    });
+
+    Route::prefix('category')->group(function(){
+        Route::controller(CategoriesController::class)->group(function(){
+            Route::get('/admin/categories', 'index');
+            Route::get('/{category}/edit', 'edit');
+            Route::post('/store', 'store');
+            Route::put('/{category}/update', 'update');
+            Route::delete('/{category}/delete', 'destroy');
+        });
+        Route::prefix('subcategory')->group(function(){
+            Route::controller(SubcategoriesController::class)->group(function(){
+                Route::get('/{subcategory}/edit', 'edit');
+                Route::get('/{category}/create', 'create');
+                Route::post('/{category}/store', 'store');
+                Route::put('/{subcategory}/update', 'update');
+                Route::delete('/{subcategory}/delete', 'destroy');
+            });
+        });
+    });
+
+    Route::prefix('platforms')->group(function(){
+        Route::controller(PlatformsController::class)->group(function(){
+            Route::get('/', 'index');
+            Route::get('/{platform}/edit', 'edit');
+            Route::post('/store', 'store');
+            Route::put('/{platform}/update', 'update');
+            Route::delete('/{platform}/delete', 'destroy');
+        });
+    });
+
+    Route::controller(UserController::class)->prefix('users')->group(function(){
         Route::get('/', 'index');
-        Route::get('/{user}/profile', 'profile');
+        Route::get('/{user}/profile/admin', 'profile');
+        Route::get('/{user}/profile/user', 'userProfile');
+        Route::get('/{user}/edit', 'edit');
+    });
+
+    Route::prefix('roles')->group(function(){
+        Route::controller(RolesController::class)->group(function(){
+            Route::get('/', 'index');
+            Route::get('/{role}/edit', 'edit');
+            Route::get('/create', 'create');
+            Route::post('/store', 'store');
+            Route::put('/{role}/update', 'update');
+            Route::delete('/{role}/delete', 'destroy');
+        });
+    });
+
+    Route::controller(DashboardController::class)->group(function(){
+        Route::get('/dashboard', 'index');
+    });
+
+    Route::prefix('payment')->group(function(){
+        Route::controller(PaymentsController::class)->group(function(){
+            Route::get('/', 'index');
+        });
+    });
+
+    Route::prefix('subscribers')->group(function(){
+        Route::controller(SubscribersController::class)->group(function(){
+            Route::get('/', 'index');
+        });
+    });
+
+    Route::prefix('contact')->group(function(){ //Zhome Contact
+        Route::controller(ContactController::class)->group(function(){
+            Route::get('/{contact}/edit', 'edit');
+            Route::put('/{contact}/update', 'update');
+        });
+    });
+
+    Route::prefix('inventory')->group(function(){
+        Route::controller(InventoryController::class)->group(function(){
+            Route::get('/', 'index');
+            Route::get('/{Inventory}/edit', 'edit');
+            Route::put('/update-quantity', 'update');
+        });
+    });
+
+    Route::prefix('features')->group(function(){
+        Route::controller(FeatureController::class)->group(function(){
+            Route::get('/', 'index');
+            Route::get('/{feature}/edit', 'edit');
+            Route::put('/{feature}/update', 'update');
+            Route::get('/{feature}/show', 'show');
+            Route::post('/store', 'store');
+            Route::delete('/{feature}/delete', 'destroy');
+        });
+    });
+
+    Route::prefix('collections')->group(function(){
+        Route::controller(CollectionsController::class)->group(function(){
+            Route::get('/', 'index');
+            Route::get('/create', 'create');
+            Route::get('/{collection}/edit', 'edit');
+            Route::put('/{collection}/update', 'update');
+            Route::post('/store', 'store');
+            Route::delete('/{collection}/delete', 'destroy');
+        });
+    });
+
+    Route::prefix('sales')->group(function(){
+        Route::controller(SalesController::class)->group(function(){
+            Route::get('/', 'index');
+            Route::get('/{sales}/edit', 'edit');
+            Route::get('/create', 'create');
+            Route::get('/getProductPrice/{productId}', 'getProductPrice');
+            Route::post('/store', 'store');
+            Route::put('/{sales}/update', 'update');
+            Route::delete('/{sales}/delete', 'destroy');
+        });
+        Route::prefix('promocode')->group(function(){
+            Route::controller(PromocodesController::class)->group(function(){
+                Route::get('/', 'index');
+                Route::get('/{promocode}/edit', 'edit');
+                Route::post('/store', 'store');
+                Route::put('/{promocode}/update', 'update');
+                Route::delete('/{promocode}/delete', 'destroy');
+            });
+        });
+    });
+
+    Route::prefix('orders')->group(function(){
+        Route::prefix('shop')->group(function(){
+            Route::controller(ShopOrdersController::class)->group(function(){
+                Route::get('/', 'index');
+                Route::get('/{shoporder}/show', 'show');
+                Route::delete('/{shoporder}/delete', 'destroy');
+            });
+        });
+        Route::prefix('tools')->group(function(){
+            Route::controller(ToolsOrdersController::class)->group(function(){
+                Route::get('/', 'index');
+                Route::get('/{toolsorders}/show', 'show');
+                Route::delete('/{toolsorders}/delete', 'destroy');
+            });
+        });
     });
 
 
+});
 
+// Public Routes
 
+// Home Page
+Route::controller(HomeController::class)->group(function(){
+    Route::get('/', 'index')->name('index');
+});
+
+// Contact Us Page
+Route::prefix('contact')->group(function(){
+    Route::controller(ContactController::class)->group(function(){
+        Route::get('/', 'index');
+    });
+});
+
+Route::prefix('Shop')->name('Shop.')->group(function(){
+    Route::controller(ShopController::class)->group(function(){
+        Route::get('/', 'index')->name('index');
+        Route::get('/shop', 'filterIndex')->name('FilterIndex');
+        Route::get('/shop/category/{id}', 'categoryFilter')->name('Filter.category');
+        Route::get('/shop/subcategory/{id}', 'subcategoryFilter')->name('Filter.subcategory');
+        Route::get('/shop/brand/{id}', 'brandFilter')->name('Filter.brand');
+        Route::get('/shop/platform/{id}', 'platformFilter')->name('Filter.platform');
+    });
+});
+
+// Tools Page
+Route::prefix('tools')->group(function(){
+    Route::controller(ToolsController::class)->group(function(){
+        Route::post('/store', 'store');
+        Route::get('/interior', 'interior');
+    });
+});
+
+// Product Page
+Route::prefix('products')->group(function(){
+    Route::controller(ProductsController::class)->group(function(){
+        Route::get('/products', 'index');
+        Route::get('/{product}/userView', 'userShow');
+    });
+});
+
+Route::prefix('cart')->group(function(){
+    Route::controller(CartController::class)->group(function(){
+        Route::get('/', 'index');
+        Route::post('/add', 'addToCart');
+        Route::get('/count', 'getCartCount');
+        Route::post('/update', 'updateCart');  //checkout update
+        Route::delete('/remove/{productId}','removeFromCart');
+    });
+});
+
+Route::prefix('services')->group(function(){
+    Route::controller(ServicesController::class)->group(function(){
+        Route::get('/', 'index');
+    });
+});
+
+Route::prefix('payment')->group(function(){
+    Route::controller(PaymentController::class)->group(function(){
+        Route::get('/payment', 'userPayment');
+    });
+});
+
+// Categories Page
+Route::prefix('category')->group(function(){
+    Route::controller(CategoriesController::class)->group(function(){
+        Route::get('/user/categories', 'userIndex');
+        Route::get('/{category}/show', 'show');
+    });
+});
+
+// Brands Page
+Route::prefix('brands')->group(function(){
+    Route::controller(BrandsController::class)->group(function(){
+        Route::get('/userShow', 'userIndex');
+        Route::get('/{brand}/brand', 'show');
+    });
+});
+
+// Platfroms Page
+Route::prefix('platforms')->group(function(){
+    Route::controller(PlatformsController::class)->group(function(){
+        Route::get('/userShow', 'userIndex');
+        Route::get('/{platform}/platform', 'show');
+    });
+});
+
+// Checkout Page
+Route::prefix('checkout')->group(function(){
+    Route::controller(CheckoutController::class)->group(function(){
+        Route::get('/', 'index');
+        Route::post('/check-promo-code','checkPromoCode');
+        Route::post('/get-delivery-cost', 'getDeliveryCost');
+    });
+});
+
+// Subscribers Store
+Route::prefix('subscribers')->group(function(){
+    Route::controller(SubscribersController::class)->group(function(){
+        Route::post('/newSubscriber', 'newSubscriber');
+    });
+});
+
+// User Routes
+Route::middleware('auth:web')->group(function () {
+
+    Route::controller(UserController::class)->prefix('Profile')->name('Profile.')->group(function(){
+        Route::get('/{user}/profile', 'userProfile')->name('profile');
+        Route::get('/{user}/edit', 'userProfile')->name('edit');
+        Route::put('/{user}/update', 'update')->name('update');
+        Route::delete('/{user}/delete', 'destroy')->name('delete');
+    });
 
 });

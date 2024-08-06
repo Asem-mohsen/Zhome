@@ -26,10 +26,11 @@ class UserController extends Controller
 
     public function profile(User $user){
 
-        $orderCount = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->count();
-        
-        $totalPayments  = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->sum('TotalAfterSaving');
+        $orderCount    = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->count();
 
+        $totalPayments = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->sum('TotalAfterSaving');
+
+        $recommededProducts = Product::all();
         $data = [
             'user' => $user,
             'orderCount' => $orderCount,
@@ -52,7 +53,7 @@ class UserController extends Controller
             ->groupBy('UserID')
             ->first();
 
-        return $this->data($orderStatistics, 'User order Statistics retrieved successfully');
+        return $orderStatistics;
 
     }
 
@@ -63,7 +64,7 @@ class UserController extends Controller
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
 
         $orderStatistics = $this->getUserOrderStatistics($user->id);
-        
+
         $data = [
             'user' => $user,
             'products' => $products,
@@ -79,7 +80,7 @@ class UserController extends Controller
     {
 
         return $this->data($user->toArray(), 'user retrieved successfully');
-        
+
     }
 
     public function update(User $user)
