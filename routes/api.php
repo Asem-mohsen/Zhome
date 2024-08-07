@@ -24,6 +24,7 @@ use App\Http\Controllers\API\ToolsController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\CheckoutController;
+use App\Http\Controllers\API\ShopController;
 
 // Authentication
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -52,8 +53,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-Route::post('/login',   [AuthenticatedSessionController::class, 'apiLogin']);
-Route::post('/register',[RegisteredUserController::class,       'apiStore']);
+Route::middleware('preventAuthenticated')->group(function(){
+    Route::post('/login',   [AuthenticatedSessionController::class, 'apiLogin']);
+    Route::post('/register',[RegisteredUserController::class,       'apiStore']);
+});
 
 Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
 
@@ -245,14 +248,17 @@ Route::prefix('contact')->group(function(){
     });
 });
 
-Route::prefix('Shop')->name('Shop.')->group(function(){
+// Shop Pages
+// 1- Main Shop Page
+// 2- Filter Shop Pages
+Route::prefix('shop')->group(function(){
     Route::controller(ShopController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
-        Route::get('/shop', 'filterIndex')->name('FilterIndex');
-        Route::get('/shop/category/{id}', 'categoryFilter')->name('Filter.category');
-        Route::get('/shop/subcategory/{id}', 'subcategoryFilter')->name('Filter.subcategory');
-        Route::get('/shop/brand/{id}', 'brandFilter')->name('Filter.brand');
-        Route::get('/shop/platform/{id}', 'platformFilter')->name('Filter.platform');
+        Route::get('/', 'index');
+        Route::get('/shop', 'filterIndex');
+        Route::get('/shop/category/{id}', 'categoryFilter');
+        Route::get('/shop/subcategory/{id}', 'subcategoryFilter');
+        Route::get('/shop/brand/{id}', 'brandFilter');
+        Route::get('/shop/platform/{id}', 'platformFilter');
     });
 });
 
@@ -260,6 +266,7 @@ Route::prefix('Shop')->name('Shop.')->group(function(){
 Route::prefix('tools')->group(function(){
     Route::controller(ToolsController::class)->group(function(){
         Route::post('/store', 'store');
+        Route::get('/proposal', 'index');
         Route::get('/interior', 'interior');
     });
 });
@@ -272,6 +279,7 @@ Route::prefix('products')->group(function(){
     });
 });
 
+// Cart Page
 Route::prefix('cart')->group(function(){
     Route::controller(CartController::class)->group(function(){
         Route::get('/', 'index');
@@ -282,12 +290,14 @@ Route::prefix('cart')->group(function(){
     });
 });
 
+// Serives Page
 Route::prefix('services')->group(function(){
     Route::controller(ServicesController::class)->group(function(){
         Route::get('/', 'index');
     });
 });
 
+// Payment Page  --not been done
 Route::prefix('payment')->group(function(){
     Route::controller(PaymentController::class)->group(function(){
         Route::get('/payment', 'userPayment');

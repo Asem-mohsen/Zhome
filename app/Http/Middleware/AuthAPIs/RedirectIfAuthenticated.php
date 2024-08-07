@@ -6,23 +6,21 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Admin;
 use App\Traits\ApiResponse;
 
-class AdminMiddleware
+class RedirectIfAuthenticated
 {
     use ApiResponse;
-    
+
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::guard('sanctum')->user();
-        
-        // Check if the user is an admin
-        if ($user && Admin::where('email', $user->email)->exists()) {
+        // If not a user so continue the request and show him the signin page
+        if (!$user) {
             return $next($request);
         }
-        
-        // If not an admin, return an unauthorized response
-        return $this->error(['message' => 'Unauthorized'], 403);
+
+        // If it's a user, return an unauthorized response
+        return $this->error(['message' => 'The user already logged in'], 404);
     }
 }
