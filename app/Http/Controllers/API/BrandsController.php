@@ -18,6 +18,13 @@ class BrandsController extends Controller
 
         $Brands = Brand::all();
 
+        // Modify the Brands data to include the full image path
+        $Brands->transform(function ($brand) {
+            $brand->Logo = $brand->Logo ? asset('Admin/dist/img/web/Brands/'. $brand->Logo) : null;
+            $brand->CoverImg = $brand->CoverImg ? asset('Admin/dist/img/web/Brands/Cover'. $brand->CoverImg) : null;
+            return $brand;
+        });
+
         return $this->data($Brands->toArray(), 'Brands retrieved successfully');
     }
 

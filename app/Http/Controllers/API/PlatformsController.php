@@ -9,6 +9,7 @@ use App\Models\PlatformFAQ;
 use App\Http\Requests\Admin\AddPlatformRequest;
 use App\Http\Requests\Admin\UpdatePlatfromRequest;
 use App\Http\Services\Media;
+use Illuminate\Support\Facades\Storage;
 use App\Traits\ApiResponse;
 
 class PlatformsController extends Controller
@@ -18,6 +19,13 @@ class PlatformsController extends Controller
     public function index(){
 
         $Platforms = Platform::all();
+
+        // Modify the Platforms data to include the full image path
+        $Platforms->transform(function ($platform) {
+            $platform->Logo = $platform->Logo ? asset('Admin/dist/img/web/Platforms/'. $platform->Logo) : null;
+            $platform->CoverImg = $platform->CoverImg ? asset('Admin/dist/img/web/Platforms/CoverImgs'. $platform->CoverImg) : null;
+            return $platform;
+        });
 
         return $this->data($Platforms->toArray(), 'platforms retrieved successfully');
 

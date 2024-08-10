@@ -85,7 +85,6 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
 
     Route::prefix('brands')->group(function(){
         Route::controller(BrandsController::class)->group(function(){
-            Route::get('/', 'index');
             Route::get('/{brand}/edit', 'edit');
             Route::post('/store', 'store');
             Route::put('/{brand}/update', 'update');
@@ -114,7 +113,6 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
 
     Route::prefix('platforms')->group(function(){
         Route::controller(PlatformsController::class)->group(function(){
-            Route::get('/', 'index');
             Route::get('/{platform}/edit', 'edit');
             Route::post('/store', 'store');
             Route::put('/{platform}/update', 'update');
@@ -315,6 +313,7 @@ Route::prefix('category')->group(function(){
 // Brands Page
 Route::prefix('brands')->group(function(){
     Route::controller(BrandsController::class)->group(function(){
+        Route::get('/', 'index');
         Route::get('/userShow', 'userIndex');
         Route::get('/{brand}/brand', 'show');
     });
@@ -323,6 +322,7 @@ Route::prefix('brands')->group(function(){
 // Platfroms Page
 Route::prefix('platforms')->group(function(){
     Route::controller(PlatformsController::class)->group(function(){
+        Route::get('/', 'index');
         Route::get('/userShow', 'userIndex');
         Route::get('/{platform}/platform', 'show');
     });
