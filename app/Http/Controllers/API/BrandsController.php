@@ -9,21 +9,23 @@ use App\Http\Requests\Admin\AddBrandRequest;
 use App\Http\Requests\Admin\UpdateBrandRequest;
 use App\Http\Services\Media;
 use App\Traits\ApiResponse;
+use App\Traits\HandleImgPath;
 
 class BrandsController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath ;
 
     public function index(){
 
         $Brands = Brand::all();
 
-        // Modify the Brands data to include the full image path
-        $Brands->transform(function ($brand) {
-            $brand->Logo = $brand->Logo ? asset('Admin/dist/img/web/Brands/'. $brand->Logo) : null;
-            $brand->CoverImg = $brand->CoverImg ? asset('Admin/dist/img/web/Brands/Cover'. $brand->CoverImg) : null;
-            return $brand;
-        });
+        $transformedBrands = $this->transformImagePaths(
+            $Brands,
+            [
+                'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
+                'CoverImage' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
+            ]
+        );
 
         return $this->data($Brands->toArray(), 'Brands retrieved successfully');
     }
@@ -33,6 +35,18 @@ class BrandsController extends Controller
         $brands = Brand::whereHas('products')
                 ->with('products')
                 ->get();
+
+        $transformedBrands = $this->transformImagePaths($brands, [
+            'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
+            'CoverImg' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
+        ]);
+
+        $transformedBrands->transform(function ($brand) {
+            $brand->products = $this->transformImagePaths($brand->products, [
+                'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage/'],
+            ]);
+            return $brand;
+        });
 
         return $this->data($brands->toArray(), 'Brands retrieved successfully');
     }
@@ -51,6 +65,14 @@ class BrandsController extends Controller
     }
 
     public function edit(Brand $brand){
+
+        $transformedBrands = $this->transformImagePaths(
+            $brand,
+            [
+                'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
+                'CoverImage' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
+            ]
+        );
 
         return $this->data($brand->toArray(), 'Brand data for editing retrieved successfully');
 
