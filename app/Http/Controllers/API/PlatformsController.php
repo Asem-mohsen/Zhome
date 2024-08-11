@@ -9,6 +9,7 @@ use App\Models\PlatformFAQ;
 use App\Http\Requests\Admin\AddPlatformRequest;
 use App\Http\Requests\Admin\UpdatePlatfromRequest;
 use App\Http\Services\Media;
+use Illuminate\Support\Facades\Storage;
 use App\Traits\ApiResponse;
 
 class PlatformsController extends Controller
@@ -18,6 +19,13 @@ class PlatformsController extends Controller
     public function index(){
 
         $Platforms = Platform::all();
+
+        // Modify the Platforms data to include the full image path
+        $Platforms->transform(function ($platform) {
+            $platform->Logo = $platform->Logo ? asset('Admin/dist/img/web/Platforms/'. $platform->Logo) : null;
+            $platform->CoverImg = $platform->CoverImg ? asset('Admin/dist/img/web/Platforms/CoverImgs'. $platform->CoverImg) : null;
+            return $platform;
+        });
 
         return $this->data($Platforms->toArray(), 'platforms retrieved successfully');
 
@@ -39,10 +47,9 @@ class PlatformsController extends Controller
 
         $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Platforms');
 
-        $platformData = $request->except('image','_token','_method','Question','Answer');
-        
+        $platformData = $request->except('image','_token','_method','Question','Answer' , 'Name');
         $platformData['Logo'] = $newImageName;
-
+        $platformData['Platform']  = $request->Name;
         $platform = Platform::create($platformData);
 
         $FAQdata = $request->only('Question','Answer');
@@ -67,25 +74,25 @@ class PlatformsController extends Controller
         ];
 
         return $this->data($data, 'platform data for editing retrieved successfully');
-    
+
     }
 
     public function update(UpdatePlatfromRequest $request , Platform $platform)
     {
-        
-        $data = $request->except('image', '_token','_method','Question','Answer');
-        
+
+        $data = $request->except('image', '_token','_method','Question','Answer','Name');
+
         if($request->hasFile('image')){
 
             $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Platforms');
-            
+
             $data['Logo'] = $newImageName; // hashed name
-            
+
             Media::delete(public_path("Admin\dist\img\web\Platforms\\{$platform->Logo}"));
         }
-        
+        $data['Platform']  = $request->Name;
         $editedPlatform = Platform::where('ID' , $platform->ID)->update($data);
-        
+
         $FAQdata = $request->only('Question','Answer');
 
         PlatformFAQ::where('PlatformID' , $platform->ID)->update($FAQdata);
@@ -99,17 +106,17 @@ class PlatformsController extends Controller
         try {
 
             $FAQ::where('PlatformID', $platform->ID)->delete();
-            
+
             Media::delete(public_path("Admin\dist\img\web\Platforms\\{$platform->Logo}"));
-            
+
             $platform::where('ID', $platform->ID)->delete();
-            
+
             return $this->success('Platform Deleted Successfully');
 
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Platform');
-        
+
         }
 
     }

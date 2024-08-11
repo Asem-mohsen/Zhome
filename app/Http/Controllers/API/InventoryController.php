@@ -14,18 +14,18 @@ class InventoryController extends Controller
     use ApiResponse;
 
     public function index(){
-        
+
         $products      = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
         $totalProducts = Product::all()->count();
         $soldOut       = Product::where('Quantity', 0)->count();
         $aboutToEnd    = Product::where('Quantity', '<=' , 3)->count();
         $newest        = Product::where('created_at', '>=' , Carbon::now())->count();
-        
+
         // Calculate the number of users who ordered each product
         $products->each(function ($product) {
 
             $product->orderedByUsersCount = $product->orderedByUsers()->distinct('UserID')->count();
-        
+
         });
 
         $data = [
@@ -33,6 +33,7 @@ class InventoryController extends Controller
             'totalProducts' => $totalProducts,
             'aboutToEnd' => $aboutToEnd,
             'newest' => $newest,
+            'soldOut' => $soldOut
         ];
 
         return $this->data($data, 'data retrieved successfully');
@@ -43,19 +44,17 @@ class InventoryController extends Controller
     {
         $request->validate([
 
-            'quantityId' => 'required|integer|exists:product,ID',
+            'quantityId'     => 'required|integer|exists:product,ID',
 
-            'updatedQuantity' => 'required|integer|min:0',
+            'updatedQuantity'=> 'required|integer|min:0',
 
         ]);
 
-        $product = Product::findOrFail($request->quantityId);
+        $product = Product::where('ID',$request->quantityId);
 
         $product->Quantity = $request->updatedQuantity;
 
-        $product->save();
-
-        if ($product->save()) {
+        if ($product->update(['Quantity'=>$product->Quantity])) {
 
             return $this->success('Inventory Updated Successfully');
 

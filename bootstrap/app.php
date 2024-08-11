@@ -45,6 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.admin' => \App\Http\Middleware\AdminMiddleware::class,
             'prevent.auth' => \App\Http\Middleware\PreventAuthUser::class,
             'admin' => \App\Http\Middleware\AuthAPIs\AdminMiddleware::class,
+            'preventAuthenticated' => \App\Http\Middleware\AuthAPIs\RedirectIfAuthenticated::class,
             'lang' =>\App\Http\Middleware\CheckIfLanguageExist::class
         ]);
 

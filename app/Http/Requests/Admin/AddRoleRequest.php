@@ -16,7 +16,9 @@ class AddRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Name'=>['required','max:255','unique:adminrole,Role']
+            'Name'=>['required','max:255','unique:adminrole,Role'],
+            'accessibility' => ['nullable','array'],
+            'accessibility.*' =>['nullable','boolean'],
         ];
     }
 }

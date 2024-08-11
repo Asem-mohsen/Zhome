@@ -107,7 +107,7 @@ class ProductsController extends Controller
 
         // Create Product
         $productData['MainImage'] = $mainImageName;
-        $productData['AddedBy'] = Auth::guard('admin')->user()->id;
+        $productData['AddedBy'] = Auth::guard('sanctum')->user()->id;
         $product = Product::create($productData);
 
         // Create ProductImages
@@ -137,7 +137,8 @@ class ProductsController extends Controller
 
         // Create ProductTechnology
         $productTechnologyData['ProductID'] = $product->id;
-        foreach ($request->Technology as $Technology) {
+        $technologies = is_array($request->Technology) ? $request->Technology : [$request->Technology];
+        foreach ($technologies as $Technology) {
             $productTechnologyData['Technology'] = $Technology;
             ProductTechnology::create($productTechnologyData);
         }
@@ -153,24 +154,29 @@ class ProductsController extends Controller
 
         // Create Product Evaluation
         $productEvaluationData['ProductID'] = $product->id;
-        $productEvaluationData['ExpertID'] = Auth::guard('admin')->user()->id;
+        $productEvaluationData['ExpertID'] = Auth::guard('sanctum')->user()->id;
         ProductEvaluation::create($productEvaluationData);
 
         // Create Product FAQ
         if (!empty($faqData['Question'])) {
-            foreach ($faqData['Question'] as $index => $question) {
+            // Check if 'Question' is an array or a single value
+            $questions = is_array($faqData['Question']) ? $faqData['Question'] : [$faqData['Question']];
+
+            foreach ($questions as $index => $question) {
                 if (!empty($question)) {
                     $faq = new ProductFaq();
                     $faq['ProductID']    = $product->id;
                     $faq->Question       = $question;
-                    $faq->Answer         = $faqData['Answer'][$index] ?? null;
-                    $faq->ArabicQuestion = $faqData['ArabicQuestion'][$index] ?? null;
-                    $faq->ArabicAnswer   = $faqData['ArabicAnswer'][$index] ?? null;
+
+                    // Handle associated data, making sure to handle both array and non-array cases
+                    $faq->Answer         = is_array($faqData['Answer'] ?? null) ? $faqData['Answer'][$index] ?? null : $faqData['Answer'] ?? null;
+                    $faq->ArabicQuestion = is_array($faqData['ArabicQuestion'] ?? null) ? $faqData['ArabicQuestion'][$index] ?? null : $faqData['ArabicQuestion'] ?? null;
+                    $faq->ArabicAnswer   = is_array($faqData['ArabicAnswer'] ?? null) ? $faqData['ArabicAnswer'][$index] ?? null : $faqData['ArabicAnswer'] ?? null;
+
                     $faq->save();
                 }
             }
         }
-        
         return $this->success('Product Added Successfully');
 
     }
@@ -181,9 +187,9 @@ class ProductsController extends Controller
 
         $productData           = $request->only('Name','ArabicName','Description','ArabicDescription','Price','Quantity','InstallationCost','SubCategoryID','BrandID','IsBundle');
         $productDetailsData    = $request->only('Title','Title2','ArabicTitle','ArabicTitle2','Video','Width','Height','Length','Color','Capacity','PowerConsumption','Weight');
-        $productPlatformsData  = $request->only('PlatformID');
-        $productTechnologyData = $request->only('Technology');
-        $productFeatureData    = $request->only('FeatureID');
+        $productPlatformsData  = ensureArray($request->PlatformID);
+        $productTechnologyData = ensureArray($request->Technology);
+        $productFeatureData    = ensureArray($request->FeatureID);
         $productFAQData        = $request->only('Question','Answer');
         $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
 
@@ -230,30 +236,48 @@ class ProductsController extends Controller
         ProductDetails::where('ProductID' , $product->ID)->update($productDetailsData);
 
         // Update ProductPlatforms
-        SyncChoices::Sync(ProductPlatforms::class , $product->ID , $request->PlatformID , 'PlatformID');
+        if (!empty($productPlatformsData)) {
+            SyncChoices::Sync(ProductPlatforms::class, $product->ID, $productPlatformsData, 'PlatformID');
+        }
 
         // Update ProductTechnology
-        SyncChoices::Sync(ProductTechnology::class , $product->ID , $request->Technology , 'Technology' );
+        if (!empty($productTechnologyData)) {
+            SyncChoices::Sync(ProductTechnology::class, $product->ID, $productTechnologyData, 'Technology');
+        }
 
         // Update Feature
-        SyncChoices::Sync(ProductFeatures::class , $product->ID , $request->FeatureID , 'FeatureID' );
+        if (!empty($productFeatureData)) {
+            SyncChoices::Sync(ProductFeatures::class, $product->ID, $productFeatureData, 'FeatureID');
+        }
 
         // Update Product Evaluation
         $productEvaluationData['ProductID'] = $product->ID;
         ProductEvaluation::where('ProductID' , $product->ID)->update($productEvaluationData);
 
         // Update Product FAQ
-        $productFAQData['ProductID'] = $product->ID;
-        $questions = $request->Question;
-        $answers = $request->Answer;
+        if (!empty($faqData['Question'])) {
+            // Check if 'Question' is an array or a single value
+            $questions = is_array($faqData['Question']) ? $faqData['Question'] : [$faqData['Question']];
+            $answers = is_array($faqData['Answer']) ? $faqData['Answer'] : [$faqData['Answer']];
+            $arabicQuestions = is_array($faqData['ArabicQuestion']) ? $faqData['ArabicQuestion'] : [$faqData['ArabicQuestion']];
+            $arabicAnswers = is_array($faqData['ArabicAnswer']) ? $faqData['ArabicAnswer'] : [$faqData['ArabicAnswer']];
 
-        foreach ($questions as $index => $question) {
-            $faqData = [
-                'Question' => $question,
-                'Answer' => $answers[$index],
-                    'ProductID' => $product->ID,
-                ];
-                ProductFaq::where('ProductID' , $product->ID)->update($faqData);
+            foreach ($questions as $index => $question) {
+                if (!empty($question)) {
+                    // Create or update FAQ entry
+                    ProductFaq::updateOrCreate(
+                        [
+                            'ProductID' => $product->ID,
+                            'Question' => $question, // Assuming the 'Question' field is unique for each FAQ entry
+                        ],
+                        [
+                            'Answer' => $answers[$index] ?? null,
+                            'ArabicQuestion' => $arabicQuestions[$index] ?? null,
+                            'ArabicAnswer' => $arabicAnswers[$index] ?? null,
+                        ]
+                    );
+                }
+            }
         }
 
         return $this->success('Product Updated Successfully');

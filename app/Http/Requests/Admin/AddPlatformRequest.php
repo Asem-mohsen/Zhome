@@ -15,7 +15,7 @@ class AddPlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Platform' => ['required', 'max:255', 'unique:platform,Platform'],
+            'Name' => ['required', 'max:255', 'unique:platform,Platform'],
             'image'=> ['required','max:2048'],
             'VideoURL'=>['required', 'url'],
             'MainDescription' => ['required', 'max:1000'],

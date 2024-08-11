@@ -34,7 +34,7 @@ class FeatureController extends Controller
 
         }
 
-        return $this->data($featuresWithNumberOfProducts->toArray(), 'features retrieved successfully');
+        return $this->data($featuresWithNumberOfProducts, 'features retrieved successfully');
 
     }
 
@@ -46,10 +46,10 @@ class FeatureController extends Controller
                                         })
                                 ->get();
         $countProducts = ProductFeatures::where('FeatureID',$feature->ID)->count();
-        
+
         $data = [
-            'products' => $products,
             'feature' => $feature,
+            'products within the feature' => $products,
             'countProducts' => $countProducts
         ];
 
@@ -90,7 +90,7 @@ class FeatureController extends Controller
             $data['Image'] = $newImageName;
 
             $oldImagePath = public_path("Admin/dist/img/web/Features/{$feature->Image}");
-           
+
             if (is_file($oldImagePath)) {
 
                 Media::delete($oldImagePath);
@@ -108,11 +108,14 @@ class FeatureController extends Controller
     public function destroy(Features $feature){
 
         try {
+            $isAssociated = Product::whereHas('features', function ($query) use ($feature) {
+                $query->where('FeatureID', $feature->ID);
+            })->exists();
 
-            if(Product::with(['features'])->exists()){
+        if ($isAssociated) {
 
-                return $this->error('Cannot delete a Feaure that is associated to a product');
-    
+                return $this->error(['error'=>'Cannot delete a Feature that is associated to a product'],'Cannot delete a Feaure that is associated to a product');
+
             }else{
 
                 $feature::where('ID' , $feature->ID)->delete();
@@ -126,7 +129,7 @@ class FeatureController extends Controller
         } catch (\Exception $e) {
 
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Feature');
-        
+
         }
 
     }

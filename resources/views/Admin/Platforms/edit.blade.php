@@ -23,9 +23,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Platform-name" class="form-control-label">Platform Name</label>
-                                    <input class="form-control" type="text" id="Platform-name" name="Platform" value="{{ $platform->Platform }}" required>
+                                    <input class="form-control" type="text" id="Platform-name" name="Name" value="{{ $platform->Platform }}" required>
                                 </div>
-                                @error('Platform')
+                                @error('Name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>

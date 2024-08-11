@@ -17,7 +17,7 @@ class AddProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Name'                   => ['required', 'max:255'],
+            'Name'                   => ['required', 'max:255' , 'unique:product,Name,except,id'],
             'ArabicName'             => ['required', 'max:255'],
             'Quantity'               => ['required', 'numeric'],
             'Price'                  => ['required', 'numeric'],
@@ -39,9 +39,9 @@ class AddProductRequest extends FormRequest
             'Width'                  => ['nullable','numeric'],
             'Height'                 => ['nullable','numeric'],
             'Length'                 => ['nullable','numeric'],
-            'Color'                  => ['required', 'string' , 'size:7'],
-            'Color2'                 => ['nullable', 'string' , 'size:7'],
-            'Color3'                 => ['nullable', 'string' , 'size:7'],
+            'Color'                  => ['required', 'string'],
+            'Color2'                 => ['nullable', 'string'],
+            'Color3'                 => ['nullable', 'string'],
             'Capacity'               => ['nullable','max:255'],
             'PowerConsumption'       => ['nullable','max:255'],
             'Weight'                 => ['nullable','max:255'],

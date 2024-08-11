@@ -9,14 +9,23 @@ use App\Http\Requests\Admin\AddBrandRequest;
 use App\Http\Requests\Admin\UpdateBrandRequest;
 use App\Http\Services\Media;
 use App\Traits\ApiResponse;
+use App\Traits\HandleImgPath;
 
 class BrandsController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath ;
 
     public function index(){
 
         $Brands = Brand::all();
+
+        $transformedBrands = $this->transformImagePaths(
+            $Brands,
+            [
+                'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
+                'CoverImage' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
+            ]
+        );
 
         return $this->data($Brands->toArray(), 'Brands retrieved successfully');
     }
@@ -27,7 +36,19 @@ class BrandsController extends Controller
                 ->with('products')
                 ->get();
 
-        return $this->data($Brands->toArray(), 'Brands retrieved successfully');
+        $transformedBrands = $this->transformImagePaths($brands, [
+            'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
+            'CoverImg' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
+        ]);
+
+        $transformedBrands->transform(function ($brand) {
+            $brand->products = $this->transformImagePaths($brand->products, [
+                'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage/'],
+            ]);
+            return $brand;
+        });
+
+        return $this->data($brands->toArray(), 'Brands retrieved successfully');
     }
 
     public function store(AddBrandRequest $request){
@@ -45,7 +66,15 @@ class BrandsController extends Controller
 
     public function edit(Brand $brand){
 
-        return $this->data($brand, 'Brand data for editing retrieved successfully');
+        $transformedBrands = $this->transformImagePaths(
+            $brand,
+            [
+                'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
+                'CoverImage' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
+            ]
+        );
+
+        return $this->data($brand->toArray(), 'Brand data for editing retrieved successfully');
 
     }
 

@@ -23,11 +23,11 @@ class CategoriesController extends Controller
         $subCounts = [];
         foreach ($Categories as $category) {
             $subNumber = Subcategory::where('MainCategoryID', $category->ID)->count();
-            $subCounts[$category->ID] = $subNumber;
+            $subCounts["Category with ID: " . $category->ID] = $subNumber;
         }
         $data = [
             'Categories' => $Categories,
-            'subCounts' => $subCounts
+            'Number of sub for each category' => $subCounts
         ];
 
         return $this->data($data, 'Categories retrieved successfully');
@@ -58,8 +58,8 @@ class CategoriesController extends Controller
         $subCategories = Subcategory::where('MainCategoryID', $category->ID)->get();
 
         $data = [
-            'subCategories' => $subCategories,
-            'category'      => $category
+            'category'      => $category,
+            'subCategories' => $subCategories
         ];
 
         return $this->data($data, 'category retrieved successfully');
