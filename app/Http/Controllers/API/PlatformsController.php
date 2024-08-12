@@ -9,23 +9,26 @@ use App\Models\PlatformFAQ;
 use App\Http\Requests\Admin\AddPlatformRequest;
 use App\Http\Requests\Admin\UpdatePlatfromRequest;
 use App\Http\Services\Media;
-use Illuminate\Support\Facades\Storage;
 use App\Traits\ApiResponse;
+use App\Traits\HandleImgPath;
 
 class PlatformsController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath;
 
     public function index(){
 
         $Platforms = Platform::all();
 
         // Modify the Platforms data to include the full image path
-        $Platforms->transform(function ($platform) {
-            $platform->Logo = $platform->Logo ? asset('Admin/dist/img/web/Platforms/'. $platform->Logo) : null;
-            $platform->CoverImg = $platform->CoverImg ? asset('Admin/dist/img/web/Platforms/CoverImgs'. $platform->CoverImg) : null;
-            return $platform;
-        });
+        $transformedBrands = $this->transformImagePaths(
+            $Platforms,
+            [
+                'Logo' => ['path' => 'Admin/dist/img/web/Platforms/'],
+                'CoverImage' => ['path' => 'Admin/dist/img/web/Platforms/CoverImgs/'],
+            ]
+        );
+
 
         return $this->data($Platforms->toArray(), 'platforms retrieved successfully');
 
@@ -35,9 +38,24 @@ class PlatformsController extends Controller
 
         $platformsIds = Platform::distinct()->pluck('ID');
 
-        $platforms    = Platform::with('products' , 'Faqs')
+        $platforms    = Platform::with('products.brand' , 'Faqs')
                     ->whereIn('ID', $platformsIds)
                     ->get();
+
+        // Modify the Platforms data to include the full image path
+        $transformedPlatforms = $this->transformImagePaths(
+            $platforms,
+            [
+                'Logo' => ['path' => 'Admin/dist/img/web/Platforms/'],
+                'CoverImage' => ['path' => 'Admin/dist/img/web/Platforms/CoverImgs/'],
+            ]
+        );
+        $transformedPlatforms->transform(function ($platform) {
+            $platform->products = $this->transformImagePaths($platform->products, [
+                'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage/'],
+            ]);
+            return $platform;
+        });
 
         return $this->data($platforms->toArray(), 'platforms retrieved successfully');
 

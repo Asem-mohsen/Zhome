@@ -25,15 +25,15 @@ use App\Models\ProductPlatforms;
 use App\Models\ProductTechnology;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\App;
-
+use App\Traits\HandleImgPath;
 
 class ProductsController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath;
 
     public function index(){
 
-        $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
+        $products = Product::with(['brand', 'platforms', 'subcategory.category' , 'sale'])->get();
 
         $platforms = [];
 
@@ -45,9 +45,24 @@ class ProductsController extends Controller
 
         }
 
+        $transformedProducts = $this->transformImagePaths($products, [
+            'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage'],
+        ]);
+
+        $transformedProducts->transform(function ($product) {
+            if ($product->brand) {
+                $product->brand = $this->transformImagePaths($product->brand, [
+                    'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
+                ]);
+            }
+
+            return $product;
+        });
+        
         $data = [
             'products'  => $products,
         ];
+
 
         return $this->data($data, 'All Products data retrieved successfully');
 
