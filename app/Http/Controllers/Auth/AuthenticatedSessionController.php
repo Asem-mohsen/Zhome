@@ -19,7 +19,7 @@ use App\Models\Admin;
 class AuthenticatedSessionController extends Controller
 {
     use ApiResponse;
-    
+
     public function create(): View
     {
         return view('auth.login');
@@ -47,7 +47,7 @@ class AuthenticatedSessionController extends Controller
         $guard = Auth::guard('admin')->check() ? 'admin' : 'web';
 
         Auth::guard($guard)->logout();
-        
+
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
@@ -66,17 +66,17 @@ class AuthenticatedSessionController extends Controller
         ]);
         $user  = User::where('email' , $request->email)->first();
         $admin = Admin::where('email' , $request->email)->first();
-        
+
         // Check for User authentication
         if ($user && Hash::check($request->password, $user->password)) {
-            $user->token = "Bearer " . $user->createToken($request->device_name)->plainTextToken;
-            return $this->data(compact('user'), 'User logged in successfully');
+            $token = "Bearer " . $user->createToken($request->device_name)->plainTextToken;
+            return $this->data(['token' => $token, 'user' => $user], 'User logged in successfully');
         }
 
         // Check for Admin authentication
         if ($admin && Hash::check($request->password, $admin->password)) {
-            $admin->token = "Bearer " . $admin->createToken($request->device_name)->plainTextToken;
-            return $this->data(compact('admin'), 'Admin logged in successfully');
+            $token = "Bearer " . $admin->createToken($request->device_name)->plainTextToken;
+            return $this->data(['token' => $token, 'admin' => $admin], 'Admin logged in successfully');
         }
 
         // If both checks fail, return an error response

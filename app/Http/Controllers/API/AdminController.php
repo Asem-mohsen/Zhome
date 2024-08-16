@@ -21,16 +21,20 @@ class AdminController extends Controller
 
         $Admins = Admin::leftJoin('adminrole', 'admin.RoleID', '=', 'adminrole.ID')->select('admin.*', 'adminrole.Role')->get();
 
-        $authenticatedAdmin = Auth::guard('admin')->user();
+        $authenticatedAdmin = Auth::guard('sanctum')->user();
+        $data = [
+            'admins' => $Admins->toArray(),
+            'authenticatedAdmin' => $authenticatedAdmin ? $authenticatedAdmin->toArray() : null,
+        ];
 
-        return $this->data($Admins->toArray(), 'Admins retrieved successfully');
+        return $this->data($data, 'Admins retrieved successfully');
     }
 
     public function profile(Admin $admin){
 
         $Roles= Roles::select('Role')->where('ID', $admin->RoleID)->first();
 
-        $authenticatedAdmin = Auth::guard('admin')->user();
+        $authenticatedAdmin = Auth::guard('sanctum')->user();
 
 
         $data = [
