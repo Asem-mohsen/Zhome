@@ -11,10 +11,11 @@ use App\Http\Requests\Admin\AddCategoryReqeust;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Traits\ApiResponse;
 use App\Http\Services\Media;
+use App\Traits\HandleImgPath;
 
 class CategoriesController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath ;
 
     public function index()
     {
@@ -25,6 +26,12 @@ class CategoriesController extends Controller
             $subNumber = Subcategory::where('MainCategoryID', $category->ID)->count();
             $subCounts["Category with ID: " . $category->ID] = $subNumber;
         }
+        $transformedBrands = $this->transformImagePaths(
+            $Categories,
+            [
+                'MainImage' => ['path' => 'Admin/dist/img/web/Categories/'],
+            ]
+        );
         $data = [
             'Categories' => $Categories,
             'Number of sub for each category' => $subCounts
@@ -42,7 +49,12 @@ class CategoriesController extends Controller
                     $query->whereHas('products');
                 }])
                 ->get();
-
+        $transformedBrands = $this->transformImagePaths(
+            $categories,
+            [
+                'MainImage' => ['path' => 'Admin/dist/img/web/Categories/'],
+            ]
+        );
         return $this->data($categories->toArray(), 'Categories retrieved successfully');
 
     }

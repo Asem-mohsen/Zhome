@@ -333,12 +333,12 @@ class ProductsController extends Controller
         $features   = Features::all();
 
         $data = [
-            'product'   => $product,
-            'brands'    => $brands,
-            'platforms' => $platforms,
-            'categories'=> $categories,
-            'subs'      => $subs,
-            'features'  => $features,
+            'product'   => $this->transformImagePaths($product),
+            'brands'    => $this->transformImagePaths($brands),
+            'platforms' => $this->transformImagePaths($platforms),
+            'categories'=> $this->transformImagePaths($categories),
+            'subs'      => $this->transformImagePaths($subs),
+            'features'  => $this->transformImagePaths($features),
         ];
 
         return $this->data($data, 'Product data for editing retrieved successfully');

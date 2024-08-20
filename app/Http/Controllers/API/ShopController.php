@@ -14,10 +14,11 @@ use App\Models\ProductTechnology;
 use App\Models\Platform;
 use App\Traits\NavigationTrait;
 use App\Traits\ApiResponse;
+use App\Traits\HandleImgPath;
 
 class ShopController extends Controller
 {
-    use ApiResponse , NavigationTrait;
+    use ApiResponse , NavigationTrait , HandleImgPath;
 
 
     protected $filterableFields = [
@@ -65,26 +66,28 @@ class ShopController extends Controller
         $promocodes     = Promocode::where('EndsIn', '>', $currentDate)->where('Status' , '1')->orderBy('EndsIn')->limit(1)->first();
         $bundle         = Product::with(['brand', 'platforms', 'subcategory.category'])->where('IsBundle' , '1')->limit(1)->first();
 
-        $data = [
-            'Navbar data'    => $navData,
-            'All Brands'     => $brands,
-            'All Platforms'  => $platforms,
-            'All Categories' => $categories,
-            'All Bundles'    => $bundles,
-            'All Products On Sale' => $productsOnSale,
-            'Promocode'      => $promocodes,
-            'All Bundles'    => $bundles,
-            "Bundle to Show" => $bundle,
-            'Brand to show'  => ["Brand"   => $brand ,
-                                "Products"=> $productsBrand
-                                ],
-            'Category 1 to show'=> ["Category"   => $category ,
-                                    "Products"=> $categoriesProduct
-                                    ],
-            'Category 2 to show'=> ["Category"   => $category2 ,
-                                    "Products"=> $categoriesProduct2
-                                    ],
 
+        $data = [
+            'Navbar data' => $navData,
+            'All Brands' => $this->transformImagePaths($brands),
+            'All Platforms' => $this->transformImagePaths($platforms),
+            'All Categories' => $this->transformImagePaths($categories),
+            'All Bundles' => $this->transformImagePaths($bundles),
+            'All Products On Sale' => $this->transformImagePaths($productsOnSale),
+            'Promocode' => $promocodes,
+            "Bundle to Show" => $this->transformImagePaths($bundle),
+            'Brand to show' => [
+                "Brand" => $this->transformImagePaths($brand),
+                "Products" => $this->transformImagePaths($productsBrand)
+            ],
+            'Category 1 to show' => [
+                "Category" => $this->transformImagePaths($category),
+                "Products" => $this->transformImagePaths($categoriesProduct)
+            ],
+            'Category 2 to show' => [
+                "Category" => $this->transformImagePaths($category2),
+                "Products" => $this->transformImagePaths($categoriesProduct2)
+            ],
         ];
         return $this->data($data , 'data retrieved successfully');
     }
