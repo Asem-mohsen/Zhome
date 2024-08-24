@@ -10,7 +10,7 @@ return [
         'MainImage' => ['path' => 'Admin/dist/img/web/Categories/'],
     ],
     'Subcategory' => [
-        'image' => ['path' => 'Admin/dist/img/web/Subcategories/'],
+        'image' => ['path' => 'Admin/dist/img/web/Categories/Subcategory/'],
     ],
     'Product' => [
         'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage/'],
@@ -20,5 +20,8 @@ return [
     ],
     'images' =>[
         'Image' => ['path' => 'Admin/dist/img/web/Products/OtherImages/'],
+    ],
+    'product_details'=> [
+        'CoverImage'=> ['path'=> 'Admin/dist/img/web/Products/CoverImage/']
     ]
 ];

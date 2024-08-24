@@ -45,10 +45,16 @@ class CategoriesController extends Controller
     {
 
         $categories = Category::whereHas('subcategories.products')
-                ->with(['subcategories' => function ($query) {
-                    $query->whereHas('products');
-                }])
-                ->get();
+        ->with([
+            'products' => function ($query) {
+                $query->with(['brand', 'platforms']);
+            },
+            'subcategories' => function ($query) {
+                $query->whereHas('products');
+            }
+        ])
+        ->get();
+
         $transformedBrands = $this->transformImagePaths(
             $categories,
             [

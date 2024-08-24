@@ -64,23 +64,31 @@ class AuthenticatedSessionController extends Controller
             'password'   => 'required',
             'device_name'=> 'required',
         ]);
-        $user  = User::where('email' , $request->email)->first();
-        $admin = Admin::where('email' , $request->email)->first();
+        // $user  = User::where('email' , $request->email)->first();
+        // $admin = Admin::where('email' , $request->email)->first();
 
-        // Check for User authentication
-        if ($user && Hash::check($request->password, $user->password)) {
-            $token = "Bearer " . $user->createToken($request->device_name)->plainTextToken;
-            return $this->data(['token' => $token, 'user' => $user], 'User logged in successfully');
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::guard('sanctum')->user();
+            $accessToken = $user->createToken($request->device_name)->plainTextToken;
+            return response(['user' => $user, 'token' => $accessToken]);
         }
 
-        // Check for Admin authentication
+        // If user authentication fails, try admin authentication
+        $admin = Admin::where('email', $request->email)->first();
         if ($admin && Hash::check($request->password, $admin->password)) {
-            $token = "Bearer " . $admin->createToken($request->device_name)->plainTextToken;
-            return $this->data(['token' => $token, 'admin' => $admin], 'Admin logged in successfully');
+            // Manually authenticate the admin
+            Auth::guard('admin')->login($admin);
+            $accessToken = $admin->createToken($request->device_name)->plainTextToken;
+            return response(['admin' => $admin, 'token' => $accessToken]);
         }
 
         // If both checks fail, return an error response
-        return $this->error(['message' => 'Authentication failed'], 401);
+        return $this->error(['message' => 'Authentication failed'], 'Please make sure that your data is valid' , 401);
     }
 
+    public function Currentuser(Request $request)
+    {
+        $user = Auth::guard('sanctum')->user();
+        return $this->data(['user' => $user] , 'User Retrived Successfully');
+    }
 }

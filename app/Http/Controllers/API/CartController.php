@@ -9,68 +9,81 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Traits\ApiResponse;
+use App\Traits\HandleImgPath;
 
 
 class CartController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath;
 
-    private function getIdentifier()
+    private function getIdentifier(Request $request)
     {
-        if (Auth::guard('web')->check()) {
-            return ['UserID'    => Auth::guard('web')->user()->id];
+        if (Auth::guard('sanctum')->check()) {
+            return ['UserID' => Auth::guard('sanctum')->user()->id];
         } else {
-            return ['SessionID' => Session::getId()];
+            $sessionId = $request->header('X-Session-ID');
+
+            if ($sessionId) {
+                // Ensure Laravel uses the provided session ID
+                Session::setId($sessionId);
+                Session::start();
+            } else {
+                $sessionId = Session::getId();
+            }
+
+            return ['CartID' => $sessionId];
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $identifier = $this->getIdentifier();
+        $identifier = $this->getIdentifier($request);
         $cartItems = ShopOrders::where($identifier)
-                    ->with('product')
-                    ->get();
+                            ->with('product')
+                            ->get();
 
-        $total = 0;
+        $count = $cartItems->sum('Quantity');
 
-        $products = Product::all();
-
-        $count = ShopOrders::where($identifier)->sum('Quantity');
-
-        $data = [
-            'count'    => $count,
-            'cartItems'=> $cartItems,
-            'products' => $products,
-        ];
-
-        return $this->data($data , 'Cart data retrived successfully');
+        return $this->getUpdatedCartResponse($request);
     }
 
     public function addToCart(Request $request)
     {
-        $identifier = $this->getIdentifier();
-        $productId = $request->product_id;
-        $quantity = $request->quantity ?? 1;
-        $price = $request->price;
-        $installationCost = $request->installation_cost ?? 0;
-        $cartItem = ShopOrders::where($identifier)
-                    ->where('ProductID', $productId)
-                    ->first();
+        $identifier = $this->getIdentifier($request);
+        $sessionId = $request->header('X-Session-ID');
 
-        if ($cartItem) {
-            $cartItem->quantity += $quantity;
-            $cartItem->save();
-        } else {
-            ShopOrders::create(array_merge($identifier, [
-                'ProductID'        => $productId,
-                'CartID'           => Session::getId(),
-                'Quantity'         => $quantity,
-                'Price'            => $price,
-                'Status'           => 0,  //User just insrted data into the cart
-            ]));
+        if (!$sessionId) {
+            return $this->error(['error' => 'Session ID is required'], 'Session ID is required', 400);
         }
 
-        return $this->success('Product added to cart');
+        $productId = $request->product_id;
+        $quantity = $request->quantity ?? 1;
+
+        $product = Product::with('sale')->where('ID', $productId)->first();
+        if (!$product) {
+            return $this->error(['error' => 'Product not found'], 404);
+        }
+
+        $price = $product->sale ? $product->sale->PriceAfter : $product->Price;
+
+        $cartItem = ShopOrders::where($identifier)
+                            ->where('ProductID', $productId)
+                            ->first();
+
+        if ($cartItem) {
+            $cartItem->Quantity += $quantity;
+            $cartItem->save();
+        } else {
+            ShopOrders::create([
+                'CartID'    => $sessionId,
+                'ProductID' => $productId,
+                'Quantity'  => $quantity,
+                'Price'     => $price,
+                'Status'    => 0,
+            ]);
+        }
+
+        return $this->getUpdatedCartResponse($request);
     }
 
     // Checkout Update
@@ -97,13 +110,15 @@ class CartController extends Controller
         return $this->success('Cart updated successfully');
     }
 
-    public function removeFromCart($productId)
+    public function removeFromCart(Request $request, $productId)
     {
-        $identifier = $this->getIdentifier();
+        $identifier = $this->getIdentifier($request);
 
-        ShopOrders::where($identifier)->where('ProductID', $productId)->delete();
+        ShopOrders::where($identifier)
+                ->where('ProductID', $productId)
+                ->delete();
 
-        return $this->success('Product with id: ' .  $productId . ' removed from cart');
+        return $this->getUpdatedCartResponse($request);
     }
 
     public function getCartCount()
@@ -113,12 +128,42 @@ class CartController extends Controller
         return response()->json(['count' => $count]);
     }
 
-    public function clearCart()
+    public function clearCart(Request $request)
     {
-        $identifier = $this->getIdentifier();
+        $identifier = $this->getIdentifier($request);
 
         ShopOrders::where($identifier)->delete();
 
-        return $this->success('Cart cleared');
+        return $this->getUpdatedCartResponse($request);
+    }
+
+    private function getUpdatedCartResponse(Request $request)
+    {
+        $identifier = $this->getIdentifier($request);
+
+        $cartItems = ShopOrders::where($identifier)
+                    ->with('product')
+                    ->get();
+
+        $total = $cartItems->sum(function($item) {
+            return $item->Quantity * $item->Price;
+        });
+
+        $count = $cartItems->sum('Quantity');
+
+        $products = Product::with(['brand', 'platforms'])->get();
+
+        $data = [
+            'count'    => $count,
+            'total'    => $total,
+            'cartItems'=> $this->transformImagePaths($cartItems),
+            'products' => $this->transformImagePaths($products),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cart updated successfully',
+            'data'    => $data,
+        ]);
     }
 }

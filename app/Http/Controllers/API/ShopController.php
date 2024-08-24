@@ -68,23 +68,23 @@ class ShopController extends Controller
 
 
         $data = [
-            'Navbar data' => $navData,
-            'All Brands' => $this->transformImagePaths($brands),
-            'All Platforms' => $this->transformImagePaths($platforms),
-            'All Categories' => $this->transformImagePaths($categories),
-            'All Bundles' => $this->transformImagePaths($bundles),
-            'All Products On Sale' => $this->transformImagePaths($productsOnSale),
+            // 'Navbar data' => $navData,
+            'All_Brands' => $this->transformImagePaths($brands),
+            'All_Platforms' => $this->transformImagePaths($platforms),
+            'All_Categories' => $this->transformImagePaths($categories),
+            'All_Bundles' => $this->transformImagePaths($bundles),
+            'All_Products_On_Sale' => $this->transformImagePaths($productsOnSale),
             'Promocode' => $promocodes,
-            "Bundle to Show" => $this->transformImagePaths($bundle),
-            'Brand to show' => [
+            "Bundle_to_Show" => $this->transformImagePaths($bundle),
+            'Brand_to_show' => [
                 "Brand" => $this->transformImagePaths($brand),
                 "Products" => $this->transformImagePaths($productsBrand)
             ],
-            'Category 1 to show' => [
+            'Category1_to_show' => [
                 "Category" => $this->transformImagePaths($category),
                 "Products" => $this->transformImagePaths($categoriesProduct)
             ],
-            'Category 2 to show' => [
+            'Category2_to_show' => [
                 "Category" => $this->transformImagePaths($category2),
                 "Products" => $this->transformImagePaths($categoriesProduct2)
             ],
@@ -92,12 +92,27 @@ class ShopController extends Controller
         return $this->data($data , 'data retrieved successfully');
     }
 
+    protected function transformAllData($data)
+    {
+        $transformed = [];
+        foreach ($data as $key => $value) {
+            if (is_array($value) || $value instanceof \Illuminate\Support\Collection) {
+                $transformed[$key] = $this->transformImagePaths($value);
+            } elseif ($value instanceof Model) {
+                $transformed[$key] = $this->transformImagePaths($value);
+            } else {
+                $transformed[$key] = $value;
+            }
+        }
+        return $transformed;
+    }
+
     protected function getFilterData()
     {
         return [
-            'categories'   => Category::with('subcategories')->get(),
-            'brands'       => Brand::all(),
-            'platforms'    => Platform::all(),
+            'categories'   => $this->transformImagePaths(Category::with('subcategories')->get()),
+            'brands'       => $this->transformImagePaths(Brand::all()),
+            'platforms'    => $this->transformImagePaths(Platform::all()),
             'technologies' => ProductTechnology::distinct()->pluck('Technology'),
             'minPrice'     => Product::min('Price'),
             'maxPrice'     => Product::max('Price'),
@@ -160,22 +175,22 @@ class ShopController extends Controller
         $filterData = $this->getFilterData();
         $currentFilters = $this->getCurrentFilters($request);
 
-        $query = Product::with(['brand', 'subcategory.category']);
+        $query = Product::with(['brand', 'subcategory.category', 'platforms']);
         $query = $this->applyFilters($query, $currentFilters);
         $products = $query->paginate(12);
 
         $data = [
-            "Filter Data"     => $filterData,
-            "products"        => $products,
-            "current Filters" => $currentFilters,
+            "Filter_Data" => $filterData,
+            "products" => $this->transformImagePaths($products),
+            "current_Filters" => $currentFilters,
         ];
 
-        return $this->data($data , 'data retrieved successfully');
+        return $this->data($data, 'data retrieved successfully');
     }
 
     public function categoryFilter($id)
     {
-        $filterData = $this->getFilterData();
+       $filterData = $this->getFilterData();
 
         $category = Category::findOrFail($id);
         $subcategories = $category->subcategories;
@@ -186,10 +201,10 @@ class ShopController extends Controller
         $currentFilters = ['CategoryIDs' => [$id]];
 
         $data = [
-            "Filter Data"     => $filterData,
-            "category"        => $category,
-            'products of the category'=> $products,
-            "current Filters" => $currentFilters,
+            "Filter_Data" => $filterData,
+            'category' => $this->transformImagePaths($category),
+            'products_of_the_category' => $this->transformImagePaths($products),
+            "current_Filters" => $currentFilters,
         ];
 
         return $this->data($data, 'data retrieved successfully');
@@ -197,7 +212,7 @@ class ShopController extends Controller
 
     public function subcategoryFilter($id)
     {
-        $filterData = $this->getFilterData();
+       $filterData = $this->getFilterData();
 
         $subcategory = Subcategory::findOrFail($id);
         $category = $subcategory->category;
@@ -206,10 +221,10 @@ class ShopController extends Controller
         $currentFilters = ['CategoryIDs' => [$category->ID]];
 
         $data = [
-            "Filter Data"     => $filterData,
-            'subcategory'     => $subcategory,
-            'products of the subcategory'=> $products,
-            "current Filters" => $currentFilters,
+            "Filter_Data" => $filterData,
+            'subcategory' => $this->transformImagePaths($subcategory),
+            'products_of_the_subcategory' => $this->transformImagePaths($products),
+            "current_Filters" => $currentFilters,
         ];
 
         return $this->data($data , 'data retrieved successfully');
@@ -218,7 +233,7 @@ class ShopController extends Controller
 
     public function brandFilter($id)
     {
-        $filterData = $this->getFilterData();
+       $filterData = $this->getFilterData();
 
         $brand       = Brand::findOrFail($id);
 
@@ -229,11 +244,10 @@ class ShopController extends Controller
         $currentFilters = ['BrandIDs' => [$id]];
 
         $data = [
-            "Filter Data"     => $filterData,
-            'brand'           => $brand,
-            'products of the brand'=> $products,
-            'Other Brands'     => $otherBrands,
-            "current Filters" => $currentFilters,
+            "Filter_Data" => $filterData,
+            'brand' => $this->transformImagePaths($brand),
+            'products_of_the_brand' => $this->transformImagePaths($products),
+            "current_Filters" => $currentFilters,
         ];
 
         return $this->data($data , 'data retrieved successfully');
@@ -241,7 +255,7 @@ class ShopController extends Controller
 
     public function platformFilter($id)
     {
-        $filterData = $this->getFilterData();
+       $filterData = $this->getFilterData();
 
         $platform = Platform::findOrFail($id);
         $products = Product::whereHas('platforms', function ($query) use ($id) {
@@ -252,11 +266,11 @@ class ShopController extends Controller
         $currentFilters = ['PlatformIDs' => [$id]];
 
         $data = [
-            "Filter Data"     => $filterData,
-            'platform'        => $platform,
-            'products of the platform'=> $products,
-            'Other Platforms'     => $otherPlatforms,
-            "current Filters" => $currentFilters,
+            "Filter_Data" => $filterData,
+            'platform' => $this->transformImagePaths($platform),
+            'products_of_the_platform' => $this->transformImagePaths($products),
+            'Other_Platforms'     => $this->transformImagePaths($otherPlatforms),
+            "current_Filters" => $currentFilters,
         ];
 
         return $this->data($data , 'data retrieved successfully');

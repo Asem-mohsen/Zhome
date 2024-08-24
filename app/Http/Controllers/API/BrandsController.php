@@ -33,7 +33,11 @@ class BrandsController extends Controller
     public function userIndex()
     {
         $brands = Brand::whereHas('products')
-                ->with('products')
+                ->with([
+                    'products' => function ($query) {
+                        $query->with('platforms','brand');
+                    }
+                ])
                 ->get();
 
         $transformedBrands = $this->transformImagePaths($brands, [

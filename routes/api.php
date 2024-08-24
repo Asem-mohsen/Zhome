@@ -39,7 +39,9 @@ use Illuminate\Support\Facades\Route;
 
 // Authentication
 
+
 Route::middleware('auth:sanctum')->group(function () {
+
     Route::controller(VerifyEmailController::class)->group(function(){
         Route::post('/send-email' ,'send'  );
         Route::post('/verify-code','verify');
@@ -51,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/all', 'all');
         });
     });
+    Route::get('/currentUserData', [AuthenticatedSessionController::class, 'Currentuser']);
 });
 
 Route::middleware('preventAuthenticated')->group(function(){

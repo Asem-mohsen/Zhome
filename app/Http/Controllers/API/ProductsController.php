@@ -58,7 +58,7 @@ class ProductsController extends Controller
 
             return $product;
         });
-        
+
         $data = [
             'products'  => $products,
         ];
@@ -303,19 +303,24 @@ class ProductsController extends Controller
 
         $product = $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
 
-        return $this->data(compact('product'), 'Product data retrieved successfully');
+        $transformedProduct = $this->transformProductImagePaths($product);
+
+        return $this->data(compact('transformedProduct'), 'Product data retrieved successfully');
 
     }
 
     public function userShow(Product $product)
     {
-        $product = $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
+        $productDisplay = $product::with(['brand', 'platforms', 'subcategory.category', 'faqs', 'images', 'technologies', 'features', 'sale', 'collections', 'evaluations.admin', 'productDetails'])->where('ID', $product->ID)->first();
 
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
 
+        $transformedProduct = $this->transformProductImagePaths($productDisplay);
+        $transformedProducts = $this->transformImagePaths($products);
+
         $data = [
-            'Recommended-Products' => $products,
-            'Product' => $product,
+            'Recommended-Products' => $transformedProducts,
+            'Product' => $transformedProduct,
         ];
 
         return $this->data($data, 'Product data retrieved successfully');

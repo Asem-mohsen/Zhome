@@ -55,7 +55,7 @@ class Product extends Model
     {
         return $this->hasMany(ProductImages::class, 'ProductID', 'ID');
     }
-
+    
     public function sale()
     {
         return $this->hasOne(Sale::class, 'ProductID', 'ID');
