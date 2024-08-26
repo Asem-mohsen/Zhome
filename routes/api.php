@@ -287,7 +287,9 @@ Route::prefix('cart')->group(function(){
         Route::post('/add', 'addToCart');
         Route::get('/count', 'getCartCount');
         Route::post('/update', 'updateCart');  //checkout update
+        Route::post('/updateQuantity', 'updateCartQuantity');  //update cart quantity
         Route::delete('/remove/{productId}','removeFromCart');
+        Route::delete('/clearCart','clearCart');
     });
 });
 
