@@ -99,6 +99,41 @@ class CartController extends Controller
         return $this->getUpdatedCartResponse($request);
     }
 
+    public function updateCartQuantity(Request $request)
+    {
+        $identifier = $this->getIdentifier($request);
+        $sessionId = $request->header('X-Session-ID');
+
+        if (!$sessionId) {
+            return $this->error(['error' => 'Session ID is required'], 'Session ID is required', 400);
+        }
+
+        $productId = $request->product_id;
+        $quantity = $request->quantity;
+
+        $cartItem = ShopOrders::where($identifier)
+                            ->where('ProductID', $productId)
+                            ->first();
+
+        if (!$cartItem) {
+            return $this->error(['error' => 'Cart item not found'], 'Cart item not found', 404);
+        }
+
+        if ($quantity < 1) {
+            return $this->error(['error' => 'Quantity must be at least 1'], 'Invalid quantity', 400);
+        }
+
+
+        // Update the quantity and total price
+    $total = $quantity * $cartItem->Price;
+    ShopOrders::where('ProductID', $productId)
+              ->where($identifier)
+              ->where('CartID', $sessionId)
+              ->update(['Quantity' => $quantity, 'Total' => $total]);
+
+        return $this->getUpdatedCartResponse($request);
+    }
+
     // Checkout Update
     public function updateCart(Request $request)
     {
@@ -122,6 +157,7 @@ class CartController extends Controller
 
         return $this->success('Cart updated successfully');
     }
+
 
     public function removeFromCart(Request $request, $productId)
     {
