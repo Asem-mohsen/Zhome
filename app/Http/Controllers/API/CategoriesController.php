@@ -26,12 +26,7 @@ class CategoriesController extends Controller
             $subNumber = Subcategory::where('MainCategoryID', $category->ID)->count();
             $subCounts["Category with ID: " . $category->ID] = $subNumber;
         }
-        $transformedBrands = $this->transformImagePaths(
-            $Categories,
-            [
-                'MainImage' => ['path' => 'Admin/dist/img/web/Categories/'],
-            ]
-        );
+        $Categories = $this->transformImagePaths($Categories);
         $data = [
             'Categories' => $Categories,
             'Number of sub for each category' => $subCounts
@@ -55,12 +50,7 @@ class CategoriesController extends Controller
         ])
         ->get();
 
-        $transformedBrands = $this->transformImagePaths(
-            $categories,
-            [
-                'MainImage' => ['path' => 'Admin/dist/img/web/Categories/'],
-            ]
-        );
+        $categories = $this->transformImagePaths($categories);
         return $this->data($categories->toArray(), 'Categories retrieved successfully');
 
     }

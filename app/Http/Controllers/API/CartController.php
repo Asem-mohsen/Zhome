@@ -49,32 +49,45 @@ class CartController extends Controller
 
     public function addToCart(Request $request)
     {
-        $identifier = $this->getIdentifier($request);
         $sessionId = $request->header('X-Session-ID');
-
+    
         if (!$sessionId) {
             return $this->error(['error' => 'Session ID is required'], 'Session ID is required', 400);
         }
-
+    
         $productId = $request->product_id;
         $quantity = $request->quantity ?? 1;
-
+    
         $product = Product::with('sale')->where('ID', $productId)->first();
         if (!$product) {
             return $this->error(['error' => 'Product not found'], 404);
         }
-
+    
         $price = $product->sale ? $product->sale->PriceAfter : $product->Price;
-
+    
+        // Check if the user is logged in
+        $user = Auth::guard('sanctum')->user();
+        $userId = $user ? $user->id : null;
+    
+        if ($user) {
+            // User is logged in
+            $userId = $user->id;
+            $identifier = ['UserID' => $userId];
+        } else {
+            // User is not logged in
+            $identifier = ['CartID' => $sessionId];
+        }
+    // dd( $identifier);
         $cartItem = ShopOrders::where($identifier)
-                            ->where('ProductID', $productId)
-                            ->first();
-
+                              ->where('ProductID', $productId)
+                              ->first();
+    
         if ($cartItem) {
             $cartItem->Quantity += $quantity;
             $cartItem->save();
         } else {
             ShopOrders::create([
+                'UserID'    => $userId,
                 'CartID'    => $sessionId,
                 'ProductID' => $productId,
                 'Quantity'  => $quantity,
@@ -82,14 +95,14 @@ class CartController extends Controller
                 'Status'    => 0,
             ]);
         }
-
+    
         return $this->getUpdatedCartResponse($request);
     }
 
     // Checkout Update
     public function updateCart(Request $request)
     {
-        $identifier = $this->getIdentifier();
+        $identifier = $this->getIdentifier($request);
         $cartData   = $request->input('cart');
         $totalPrice = $request->input('total_price');
         $savedAmount= $request->input('saved_amount');
@@ -121,9 +134,9 @@ class CartController extends Controller
         return $this->getUpdatedCartResponse($request);
     }
 
-    public function getCartCount()
+    public function getCartCount(Request $request)
     {
-        $identifier = $this->getIdentifier();
+        $identifier = $this->getIdentifier($request);
         $count = ShopOrders::where($identifier)->sum('Quantity');
         return response()->json(['count' => $count]);
     }

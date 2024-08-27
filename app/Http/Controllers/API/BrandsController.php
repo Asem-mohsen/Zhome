@@ -19,15 +19,9 @@ class BrandsController extends Controller
 
         $Brands = Brand::all();
 
-        $transformedBrands = $this->transformImagePaths(
-            $Brands,
-            [
-                'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
-                'CoverImage' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
-            ]
-        );
+        $Brands = $this->transformImagePaths($Brands);
 
-        return $this->data($Brands->toArray(), 'Brands retrieved successfully');
+        return $this->data(compact('Brands'), 'Brands retrieved successfully');
     }
 
     public function userIndex()
@@ -40,19 +34,9 @@ class BrandsController extends Controller
                 ])
                 ->get();
 
-        $transformedBrands = $this->transformImagePaths($brands, [
-            'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
-            'CoverImg' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
-        ]);
+        $brands = $this->transformImagePaths($brands);
 
-        $transformedBrands->transform(function ($brand) {
-            $brand->products = $this->transformImagePaths($brand->products, [
-                'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage/'],
-            ]);
-            return $brand;
-        });
-
-        return $this->data($brands->toArray(), 'Brands retrieved successfully');
+        return $this->data(compact('brands'), 'Brands retrieved successfully');
     }
 
     public function store(AddBrandRequest $request){
@@ -70,15 +54,9 @@ class BrandsController extends Controller
 
     public function edit(Brand $brand){
 
-        $transformedBrands = $this->transformImagePaths(
-            $brand,
-            [
-                'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
-                'CoverImage' => ['path' => 'Admin/dist/img/web/Brands/Cover/'],
-            ]
-        );
+        $brand = $this->transformImagePaths($brand);
 
-        return $this->data($brand->toArray(), 'Brand data for editing retrieved successfully');
+        return $this->data(compact('brand'), 'Brand data for editing retrieved successfully');
 
     }
 

@@ -20,17 +20,9 @@ class PlatformsController extends Controller
 
         $Platforms = Platform::all();
 
-        // Modify the Platforms data to include the full image path
-        $transformedBrands = $this->transformImagePaths(
-            $Platforms,
-            [
-                'Logo' => ['path' => 'Admin/dist/img/web/Platforms/'],
-                'CoverImage' => ['path' => 'Admin/dist/img/web/Platforms/CoverImgs/'],
-            ]
-        );
+        $Platforms = $this->transformImagePaths($Platforms);
 
-
-        return $this->data($Platforms->toArray(), 'platforms retrieved successfully');
+        return $this->data(compact('Platforms'), 'platforms retrieved successfully');
 
     }
 
@@ -38,26 +30,15 @@ class PlatformsController extends Controller
 
         $platformsIds = Platform::distinct()->pluck('ID');
 
-        $platforms    = Platform::with('products.brand' , 'Faqs')
+        $platforms    = Platform::with('products.brand' , 'Faqs' , 'products.platforms')
                     ->whereIn('ID', $platformsIds)
                     ->get();
 
         // Modify the Platforms data to include the full image path
-        $transformedPlatforms = $this->transformImagePaths(
-            $platforms,
-            [
-                'Logo' => ['path' => 'Admin/dist/img/web/Platforms/'],
-                'CoverImage' => ['path' => 'Admin/dist/img/web/Platforms/CoverImgs/'],
-            ]
-        );
-        $transformedPlatforms->transform(function ($platform) {
-            $platform->products = $this->transformImagePaths($platform->products, [
-                'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage/'],
-            ]);
-            return $platform;
-        });
+        $platforms = $this->transformImagePaths($platforms);
 
-        return $this->data($platforms->toArray(), 'platforms retrieved successfully');
+
+        return $this->data(compact('platforms'), 'platforms retrieved successfully');
 
     }
 
