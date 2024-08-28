@@ -39,7 +39,7 @@ class CartController extends Controller
     {
         $identifier = $this->getIdentifier($request);
         $cartItems = ShopOrders::where($identifier)
-                            ->with('product')
+                            ->with('product.sale')
                             ->get();
 
         $count = $cartItems->sum('Quantity');
@@ -77,7 +77,7 @@ class CartController extends Controller
             // User is not logged in
             $identifier = ['CartID' => $sessionId];
         }
-    // dd( $identifier);
+
         $cartItem = ShopOrders::where($identifier)
                               ->where('ProductID', $productId)
                               ->first();
@@ -191,7 +191,7 @@ class CartController extends Controller
         $identifier = $this->getIdentifier($request);
 
         $cartItems = ShopOrders::where($identifier)
-                    ->with('product')
+                    ->with(['product.sale'])
                     ->get();
 
         $total = $cartItems->sum(function($item) {
@@ -200,7 +200,7 @@ class CartController extends Controller
 
         $count = $cartItems->sum('Quantity');
 
-        $products = Product::with(['brand', 'platforms'])->get();
+        $products = Product::with(['brand', 'platforms' , 'sale'])->get();
 
         $data = [
             'count'    => $count,

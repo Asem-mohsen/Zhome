@@ -36,19 +36,19 @@ class ShopController extends Controller
 
         // Selscted brands
         $brand         = Brand::findOrFail(1);
-        $productsBrand = Product::with(['brand', 'platforms', 'subcategory.category'])
+        $productsBrand = Product::with(['brand', 'platforms', 'subcategory.category' ,'sale'])
                         ->where('BrandID', $brand->ID)
                         ->get();
 
         // Selected category
         $category           = Category::with('subcategories')->findOrFail(4);
         $category2          = Category::with('subcategories')->findOrFail(3);
-        $categoriesProduct  = Product::with(['brand', 'platforms', 'subcategory.category'])
+        $categoriesProduct  = Product::with(['brand', 'platforms', 'sale' , 'subcategory.category'])
                                 ->whereHas('subcategory', function ($query) use ($category) {
                                     $query->where('MainCategoryID', $category->ID);
                                 })
                                 ->get();
-        $categoriesProduct2 = Product::with(['brand', 'platforms', 'subcategory.category'])
+        $categoriesProduct2 = Product::with(['brand', 'sale' , 'platforms', 'subcategory.category'])
                                 ->whereHas('subcategory', function ($query) use ($category2) {
                                     $query->where('MainCategoryID', $category2->ID);
                                 })
@@ -60,11 +60,14 @@ class ShopController extends Controller
         $categories= Category::all();
 
         // conditions
-        $bundles        = Product::with(['brand', 'platforms', 'subcategory.category'])->where('IsBundle' , '1')->limit(3)->get();
-        $productsOnSale = Product::with(['sale' , 'brand' , 'subcategory'])
-                                ->get();
+        $bundles        = Product::with(['brand', 'platforms','sale' ,  'subcategory.category'])->where('IsBundle' , '1')->limit(3)->get();
+        $productsOnSale = Product::with(['sale', 'brand', 'platforms'])
+                        ->whereHas('sale', function ($query) {
+                            $query->where('EndDate', '>', Carbon::now()); // Assuming the sale model has an 'end_date' field
+                        })
+                        ->get();
         $promocodes     = Promocode::where('EndsIn', '>', $currentDate)->where('Status' , '1')->orderBy('EndsIn')->limit(1)->first();
-        $bundle         = Product::with(['brand', 'platforms', 'subcategory.category'])->where('IsBundle' , '1')->limit(1)->first();
+        $bundle         = Product::with(['brand', 'platforms','sale' ,  'subcategory.category'])->where('IsBundle' , '1')->limit(1)->first();
 
 
         $data = [
@@ -175,7 +178,7 @@ class ShopController extends Controller
         $filterData = $this->getFilterData();
         $currentFilters = $this->getCurrentFilters($request);
 
-        $query = Product::with(['brand', 'subcategory.category', 'platforms']);
+        $query = Product::with(['brand', 'subcategory.category', 'platforms','sale' ]);
         $query = $this->applyFilters($query, $currentFilters);
         $products = $query->paginate(12);
 

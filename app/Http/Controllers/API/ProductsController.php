@@ -45,22 +45,8 @@ class ProductsController extends Controller
 
         }
 
-        $transformedProducts = $this->transformImagePaths($products, [
-            'MainImage' => ['path' => 'Admin/dist/img/web/Products/MainImage'],
-        ]);
-
-        $transformedProducts->transform(function ($product) {
-            if ($product->brand) {
-                $product->brand = $this->transformImagePaths($product->brand, [
-                    'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
-                ]);
-            }
-
-            return $product;
-        });
-
         $data = [
-            'products'  => $products,
+            'products'  => $this->transformImagePaths($products),
         ];
 
 

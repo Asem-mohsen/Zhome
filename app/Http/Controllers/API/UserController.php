@@ -10,11 +10,12 @@ use App\Models\Delivery;
 use Illuminate\Support\Facades\DB;
 use App\Models\ShopOrders;
 use App\Traits\ApiResponse;
+use App\Traits\HandleImgPath;
 
 
 class UserController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse ,HandleImgPath;
 
     public function index(){
 
@@ -34,7 +35,7 @@ class UserController extends Controller
         $data = [
             'user' => $user,
             'orderCount' => $orderCount,
-            'totalPayments' => $totalPayments
+            'totalPayments' => $totalPayments,
         ];
 
         return $this->data($data, 'User data profile retrieved successfully');
@@ -61,14 +62,13 @@ class UserController extends Controller
     {
         $userProducts = $user->products;
 
-        $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
+        $products = Product::with(['brand', 'platforms', 'subcategory.category', 'sale'])->get();
 
         $orderStatistics = $this->getUserOrderStatistics($user->id);
-
+        
         $data = [
             'user' => $user,
-            'products' => $products,
-            'userProducts' => $userProducts,
+            'products' =>$this->transformImagePaths($products),
             'orderStatistics'=> $orderStatistics
         ];
 

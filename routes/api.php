@@ -126,7 +126,6 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
     Route::controller(UserController::class)->prefix('users')->group(function(){
         Route::get('/', 'index');
         Route::get('/{user}/profile/admin', 'profile');
-        Route::get('/{user}/profile/user', 'userProfile');
         Route::get('/{user}/edit', 'edit');
     });
 
@@ -350,13 +349,13 @@ Route::prefix('subscribers')->group(function(){
 });
 
 // User Routes
-Route::middleware('auth:web')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
 
-    Route::controller(UserController::class)->prefix('Profile')->name('Profile.')->group(function(){
-        Route::get('/{user}/profile', 'userProfile')->name('profile');
-        Route::get('/{user}/edit', 'userProfile')->name('edit');
-        Route::put('/{user}/update', 'update')->name('update');
-        Route::delete('/{user}/delete', 'destroy')->name('delete');
+    Route::controller(UserController::class)->prefix('users')->group(function(){
+        Route::get('/{user}/profile/user', 'userProfile');
+        // Route::get('/{user}/edit', 'userProfile')->name('edit');
+        Route::put('/{user}/update', 'update');
+        Route::delete('/{user}/delete', 'destroy');
     });
 
 });
