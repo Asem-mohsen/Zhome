@@ -86,9 +86,4 @@ class AuthenticatedSessionController extends Controller
         return $this->error(['message' => 'Authentication failed'], 'Please make sure that your data is valid' , 401);
     }
 
-    public function Currentuser(Request $request)
-    {
-        $user = Auth::guard('sanctum')->user();
-        return $this->data(['user' => $user] , 'User Retrived Successfully');
-    }
 }

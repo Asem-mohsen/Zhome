@@ -15,6 +15,6 @@ class ServicesController extends Controller
     {
         $services = Services::all();
 
-        return $this->data($services->toArray(), 'All Services Retrived Successfully');
+        return $this->data(compact('services'), 'All Services Retrived Successfully');
     }
 }
