@@ -53,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/all', 'all');
         });
     });
-    Route::get('/currentUserData', [AuthenticatedSessionController::class, 'Currentuser']);
+
 });
 
 Route::middleware('preventAuthenticated')->group(function(){
@@ -336,7 +336,7 @@ Route::prefix('platforms')->group(function(){
 Route::prefix('checkout')->group(function(){
     Route::controller(CheckoutController::class)->group(function(){
         Route::get('/', 'index');
-        Route::post('/check-promo-code','checkPromoCode');
+
         Route::post('/get-delivery-cost', 'getDeliveryCost');
     });
 });
@@ -354,8 +354,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(UserController::class)->prefix('users')->group(function(){
         Route::get('/{user}/profile/user', 'userProfile');
         // Route::get('/{user}/edit', 'userProfile')->name('edit');
+        Route::get('/profile', 'profile');
         Route::put('/{user}/update', 'update');
         Route::delete('/{user}/delete', 'destroy');
     });
+
+    Route::prefix('checkout')->group(function(){
+        Route::controller(CheckoutController::class)->group(function(){
+            Route::post('/save-user-data','saveUserInfo');
+            Route::post('/check-promocode','checkPromoCode');
+        });
+    });
+
+    Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
 
 });

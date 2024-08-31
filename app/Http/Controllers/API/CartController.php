@@ -31,7 +31,7 @@ class CartController extends Controller
                 $sessionId = Session::getId();
             }
 
-            return ['CartID' => $sessionId];
+            return ['SessionID' => $sessionId];
         }
     }
 
@@ -50,52 +50,52 @@ class CartController extends Controller
     public function addToCart(Request $request)
     {
         $sessionId = $request->header('X-Session-ID');
-    
+
         if (!$sessionId) {
             return $this->error(['error' => 'Session ID is required'], 'Session ID is required', 400);
         }
-    
+
         $productId = $request->product_id;
         $quantity = $request->quantity ?? 1;
-    
+
         $product = Product::with('sale')->where('ID', $productId)->first();
         if (!$product) {
             return $this->error(['error' => 'Product not found'], 404);
         }
-    
+
         $price = $product->sale ? $product->sale->PriceAfter : $product->Price;
-    
+
         // Check if the user is logged in
         $user = Auth::guard('sanctum')->user();
         $userId = $user ? $user->id : null;
-    
+
         if ($user) {
             // User is logged in
             $userId = $user->id;
             $identifier = ['UserID' => $userId];
         } else {
             // User is not logged in
-            $identifier = ['CartID' => $sessionId];
+            $identifier = ['SessionID' => $sessionId];
         }
 
         $cartItem = ShopOrders::where($identifier)
                               ->where('ProductID', $productId)
                               ->first();
-    
+
         if ($cartItem) {
             $cartItem->Quantity += $quantity;
             $cartItem->save();
         } else {
             ShopOrders::create([
                 'UserID'    => $userId,
-                'CartID'    => $sessionId,
+                'SessionID' => $sessionId,
                 'ProductID' => $productId,
                 'Quantity'  => $quantity,
                 'Price'     => $price,
                 'Status'    => 0,
             ]);
         }
-    
+
         return $this->getUpdatedCartResponse($request);
     }
 
@@ -128,7 +128,7 @@ class CartController extends Controller
     $total = $quantity * $cartItem->Price;
     ShopOrders::where('ProductID', $productId)
               ->where($identifier)
-              ->where('CartID', $sessionId)
+              ->where('SessionID', $sessionId)
               ->update(['Quantity' => $quantity, 'Total' => $total]);
 
         return $this->getUpdatedCartResponse($request);

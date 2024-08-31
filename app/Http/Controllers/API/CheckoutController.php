@@ -5,43 +5,64 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ShopOrders;
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Delivery;
 use App\Models\Promocode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Str;
+use App\Traits\HandleImgPath;
+use App\Http\Requests\User\SaveUserInfoCheckout;
+
 
 class CheckoutController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath;
 
-    private function getIdentifier()
+    private function getIdentifier(Request $request)
     {
-        if (Auth::guard('web')->check()) {
-            return ['UserID'    => Auth::guard('web')->user()->id];
+        if (Auth::guard('sanctum')->check()) {
+            return ['UserID' => Auth::guard('sanctum')->user()->id];
         } else {
-            return ['SessionID' => Session::getId()];
+            $sessionId = $request->header('X-Session-ID');
+
+            if ($sessionId) {
+                // Ensure Laravel uses the provided session ID
+                Session::setId($sessionId);
+                Session::start();
+            } else {
+                $sessionId = Session::getId();
+            }
+
+            return ['SessionID' => $sessionId];
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $identifier = $this->getIdentifier();
+        $identifier = $this->getIdentifier($request);
         $orders = ShopOrders::where($identifier)
-                    ->with('product.sale' , 'transaction' , 'user' , 'promocode')
+                    ->with('product.sale' , 'transaction', 'promocode')
                     ->get();
         $total = $orders->sum(function ($order) {
                 return $order->Quantity * $order->Price +
                     ($order->WithInstallation ? $order->product->InstallationCost : 0);
                 });
 
+        // Generate a unique CartID
+        $cartId = Str::random(32);
+
+        // Update orders with the generated CartID
+        ShopOrders::where($identifier)->update(['CartID' => $cartId]);
+
         $userData = null;
         $firstName = '';
         $lastName = '';
 
-        if (Auth::guard('web')->check()) {
-            $user = Auth::guard('web')->user();
+        if (Auth::guard('sanctum')->check()) {
+            $user = Auth::guard('sanctum')->user();
             $userData = $user;
 
             $nameParts = explode(' ', $user->Name);
@@ -59,11 +80,12 @@ class CheckoutController extends Controller
             }
         }
         $data = [
-                'Orders' => $orders,
-                'User'   => $userData,
+                'CartID' => $cartId,
                 'firstName'=> $firstName,
                 'lastName' => $lastName,
                 'total'  => $total,
+                'Orders' => $this->transformImagePaths($orders),
+                'User'   => $userData,
             ];
 
         if($userData != NULL){
@@ -73,6 +95,27 @@ class CheckoutController extends Controller
         }
 
 
+    }
+
+    public function saveUserInfo(SaveUserInfoCheckout $request)
+    {
+        $identifier = $this->getIdentifier($request);
+
+         // Prepare data for the orders table
+        $orderData = $request->except('_token', '_method' , 'Address', 'UserShippingAddress');
+        $orderData['Address'] = $request->UserShippingAddress;
+        $orderData['Email']   = $request->email; 
+
+        // Update orders table
+        ShopOrders::where($identifier)
+                ->where('CartID', $request->CartID)
+                ->update($orderData);
+                
+        $userData = $request->only('Name', 'Email', 'Address' , 'Phone');
+        $userIdentifier = ['id' => $request->UserID];
+        User::where($userIdentifier)->update($userData);
+
+        return $this->success('User data updated successfully' , 200);
     }
 
     public function checkPromoCode(Request $request)
@@ -89,9 +132,10 @@ class CheckoutController extends Controller
 
         if ($promoCodeData) {
                 $discount = $totalPrice * ($promoCodeData->Save / 100);
-                return response()->json(['discount' => $discount]);
+                $total = $totalPrice - $discount ;
+                return $this->data(['discount' => $discount , 'total' => $total] , 'Disscount Applied Successfully' , 200);
         } else {
-            return response()->json(['discount' => 0], 400);
+            return $this->error(['message'=>'Invalid Promocode'] , 'Invalid Promocode' , 404);
         }
     }
 

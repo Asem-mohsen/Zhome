@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Delivery;
@@ -21,25 +22,28 @@ class UserController extends Controller
 
         $Users = User::all();
 
-        return $this->data($Users->toArray(), 'Users data retrieved successfully');
+        return $this->data(compact('Users'), 'Users data retrieved successfully');
 
     }
 
-    public function profile(User $user){
+    public function profile(Request $request)
+    {
+        $user = Auth::guard('sanctum')->user();
 
         $orderCount    = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->count();
 
         $totalPayments = ShopOrders::where('UserID', $user->id)->where('Status' , 1)->sum('TotalAfterSaving');
 
         $recommededProducts = Product::all();
+
         $data = [
             'user' => $user,
             'orderCount' => $orderCount,
             'totalPayments' => $totalPayments,
+            'recommended-products'=> $recommededProducts,
         ];
 
-        return $this->data($data, 'User data profile retrieved successfully');
-
+        return $this->data($data , 'User Retrived Successfully');
     }
 
     public function getUserOrderStatistics($userId)
@@ -65,7 +69,7 @@ class UserController extends Controller
         $products = Product::with(['brand', 'platforms', 'subcategory.category', 'sale'])->get();
 
         $orderStatistics = $this->getUserOrderStatistics($user->id);
-        
+
         $data = [
             'user' => $user,
             'products' =>$this->transformImagePaths($products),
