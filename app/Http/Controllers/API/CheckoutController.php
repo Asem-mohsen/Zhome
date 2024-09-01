@@ -104,13 +104,13 @@ class CheckoutController extends Controller
          // Prepare data for the orders table
         $orderData = $request->except('_token', '_method' , 'Address', 'UserShippingAddress');
         $orderData['Address'] = $request->UserShippingAddress;
-        $orderData['Email']   = $request->email; 
+        $orderData['Email']   = $request->email;
 
         // Update orders table
         ShopOrders::where($identifier)
                 ->where('CartID', $request->CartID)
                 ->update($orderData);
-                
+
         $userData = $request->only('Name', 'Email', 'Address' , 'Phone');
         $userIdentifier = ['id' => $request->UserID];
         User::where($userIdentifier)->update($userData);

@@ -149,15 +149,27 @@ class CartController extends Controller
         $productId = $request->product_id;
         $withInstallation = $request->installation_cost ?? 0;
 
+        // Check if the user is logged in
+        $user = Auth::guard('sanctum')->user();
+        $userId = $user ? $user->id : null;
+
+        if ($user) {
+            // User is logged in
+            $userId = $user->id;
+            $identifier = ['UserID' => $userId];
+        } else {
+            // User is not logged in
+            $identifier = ['SessionID' => $sessionId];
+        }
+
         $cartItem = ShopOrders::where($identifier)
                             ->where('ProductID', $productId)
                             ->first();
-
         if (!$cartItem) {
             return $this->error(['error' => 'Cart item not found'], 'Cart item not found', 404);
         }
 
-        $total = $cartItem->Quantity * $cartItem->Price + $withInstallation; // Update total including installation
+        $total = $cartItem->Quantity * $cartItem->Price + $withInstallation;
         ShopOrders::where('ProductID', $productId)
             ->where($identifier)
             ->where('SessionID', $sessionId)
@@ -230,7 +242,8 @@ class CartController extends Controller
                     ->get();
 
         $total = $cartItems->sum(function($item) {
-            return $item->Quantity * $item->Price;
+            // Add the quantity * price and the installation cost (WithInstallation) if available
+            return ($item->Quantity * $item->Price) + ($item->WithInstallation ?? 0);
         });
 
         $count = $cartItems->sum('Quantity');
