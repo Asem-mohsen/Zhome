@@ -132,7 +132,38 @@ class CartController extends Controller
               ->update([
                     'Quantity'         => $quantity,
                     'Total'            => $total,
-                    'WithInstallation' => $installationCost,
+                ]);
+
+        return $this->getUpdatedCartResponse($request);
+    }
+
+    public function toggleInstallation(Request $request)
+    {
+        $identifier = $this->getIdentifier($request);
+        $sessionId = $request->header('X-Session-ID');
+
+        if (!$sessionId) {
+            return $this->error(['error' => 'Session ID is required'], 'Session ID is required', 400);
+        }
+
+        $productId = $request->product_id;
+        $withInstallation = $request->installation_cost ?? 0;
+
+        $cartItem = ShopOrders::where($identifier)
+                            ->where('ProductID', $productId)
+                            ->first();
+
+        if (!$cartItem) {
+            return $this->error(['error' => 'Cart item not found'], 'Cart item not found', 404);
+        }
+
+        $total = $cartItem->Quantity * $cartItem->Price + $withInstallation; // Update total including installation
+        ShopOrders::where('ProductID', $productId)
+            ->where($identifier)
+            ->where('SessionID', $sessionId)
+            ->update([
+                    'WithInstallation' => $withInstallation,
+                    'Total'            => $total,
                 ]);
 
         return $this->getUpdatedCartResponse($request);
