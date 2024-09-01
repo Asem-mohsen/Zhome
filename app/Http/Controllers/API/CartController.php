@@ -110,6 +110,7 @@ class CartController extends Controller
 
         $productId = $request->product_id;
         $quantity = $request->quantity;
+        $installationCost = $request->installation_cost ?? 0;
 
         $cartItem = ShopOrders::where($identifier)
                             ->where('ProductID', $productId)
@@ -124,12 +125,15 @@ class CartController extends Controller
         }
 
 
-        // Update the quantity and total price
-    $total = $quantity * $cartItem->Price;
-    ShopOrders::where('ProductID', $productId)
+        $total = $quantity * $cartItem->Price + $installationCost;
+        ShopOrders::where('ProductID', $productId)
               ->where($identifier)
               ->where('SessionID', $sessionId)
-              ->update(['Quantity' => $quantity, 'Total' => $total]);
+              ->update([
+                    'Quantity'         => $quantity,
+                    'Total'            => $total,
+                    'WithInstallation' => $installationCost,
+                ]);
 
         return $this->getUpdatedCartResponse($request);
     }
@@ -202,9 +206,14 @@ class CartController extends Controller
 
         $products = Product::with(['brand', 'platforms' , 'sale'])->get();
 
+        $totalSaved = $cartItems->sum(function ($item) {
+            return $item->product->sale ? ($item->product->Price - $item->product->sale->PriceAfter) * $item->Quantity : 0;
+        });
+
         $data = [
             'count'    => $count,
             'total'    => $total,
+            'totalSaved' => $totalSaved,
             'cartItems'=> $this->transformImagePaths($cartItems),
             'products' => $this->transformImagePaths($products),
         ];
