@@ -10,24 +10,26 @@ use App\Http\Requests\User\AddNewToolRequest;
 use App\Http\Services\Media;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\ApiResponse;
-
+use Illuminate\Support\Composer;
+use App\Traits\HandleImgPath;
 
 class ToolsController extends Controller
 {
-    use ApiResponse;
+    use ApiResponse , HandleImgPath;
 
     public function index()
     {
         $platforms = Platform::all();
+        $platforms = $this->transformImagePaths($platforms);
 
-        return $this->data($platforms->toArray() , 'Platforms Retrieved Successfully');
+        return $this->data(compact('platforms') , 'Platforms Retrieved Successfully');
     }
 
     public function interior()
     {
         $platforms = Platform::all();
 
-        return $this->data($platforms->toArray() , 'Platforms Retrieved Successfully');
+        return $this->data(compact('platforms') , 'Platforms Retrieved Successfully');
     }
 
     public function store(AddNewToolRequest $request)

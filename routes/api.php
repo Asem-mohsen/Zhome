@@ -25,6 +25,8 @@ use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\CheckoutController;
 use App\Http\Controllers\API\ShopController;
+use App\Http\Controllers\API\StripeController;
+use App\Http\Controllers\API\StripeWebhook;
 
 // Authentication
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -223,7 +225,7 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
             });
         });
         Route::prefix('tools')->group(function(){
-            Route::controller(ToolsOrdersController::class)->group(function(){
+            Route::controller(ToolsOrderController::class)->group(function(){
                 Route::get('/', 'index');
                 Route::get('/{toolsorders}/show', 'show');
                 Route::delete('/{toolsorders}/delete', 'destroy');
@@ -300,12 +302,6 @@ Route::prefix('services')->group(function(){
     });
 });
 
-// Payment Page  --not been done
-Route::prefix('payment')->group(function(){
-    Route::controller(PaymentController::class)->group(function(){
-        Route::get('/payment', 'userPayment');
-    });
-});
 
 // Categories Page
 Route::prefix('category')->group(function(){
@@ -364,9 +360,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::controller(CheckoutController::class)->group(function(){
             Route::post('/save-user-data','saveUserInfo');
             Route::post('/check-promocode','checkPromoCode');
+            
         });
     });
 
-    Route::post('/create-payment-intent', [StripeController::class, 'createPaymentIntent']);
+    Route::prefix('payment')->group(function(){
+        Route::controller(StripeController::class)->group(function(){
+            Route::post('/create-payment','createCheckoutSession');
+            Route::post('/cash-payment','cashPayment');
+            Route::get('/success','success');
+        });
+    });
 
+    Route::post('/stripe/webhook', [StripeWebhook::class, 'handleWebhook']);
 });
