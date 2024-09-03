@@ -12,6 +12,6 @@ class PlatformFAQ extends Model
     protected $guarded = [];
 
     public function platfroms(){
-        return $this->belongsTo(Platfrom::class , 'PlatformID' , 'ID');
+        return $this->belongsTo(Platform::class , 'PlatformID' , 'ID');
     }
 }

@@ -39,6 +39,7 @@ class CartController extends Controller
     {
         $identifier = $this->getIdentifier($request);
         $cartItems = ShopOrders::where($identifier)
+                            ->where('Status','0')
                             ->with('product.sale')
                             ->get();
 
@@ -92,7 +93,7 @@ class CartController extends Controller
                 'ProductID' => $productId,
                 'Quantity'  => $quantity,
                 'Price'     => $price,
-                'Status'    => 0,
+                'Status'    => 0, //the user added a product to cart just added
             ]);
         }
 

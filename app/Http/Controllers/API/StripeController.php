@@ -50,10 +50,12 @@ class StripeController extends Controller
     {
         $request->validate([
             'CartID' => 'required',
+            'amount' => 'required',
         ]);
 
         // Retrieve the CartID from the request
-        $cartID = $request->input('cartID');
+        $cartID = $request->input('CartID');
+        $amount = $request->input('amount');
         
         // Retrieve all orders associated with the CartID
         $orders = ShopOrders::where('CartID', $cartID)->get();
@@ -63,24 +65,25 @@ class StripeController extends Controller
         }
 
         foreach ($orders as $order) {
-            $order->status = '1';
+            $order->Status = '1';
             $order->save();
         }
 
         // Create a record in the Payment table for cash payment
         Payments::create([
-            'CartID' => $cartID,
+            'OrderID' => $cartID,
             'TransactionID' => null,
-            // 'currency' => 'EGP',
+            'currency' => 'EGP',
+            'amount' => $amount,
             'status' => '2', // Payment is pending until cash is received
             'source_data_type' => 'cash',
             'source_data_sub_type'=>'cash',
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Cash payment option selected. Please pay upon delivery.']);
+        return $this->success('Cash payment option done');
     }
 
-    public function success(Request $request)
+    public function successPage(Request $request)
     {
         $cartID = $request->query('CartID');
         $transactionID = $request->query('transactionID');

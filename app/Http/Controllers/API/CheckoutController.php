@@ -43,28 +43,32 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $identifier = $this->getIdentifier($request);
-        $orders = ShopOrders::where($identifier)
-                    ->with('product.sale' , 'transaction', 'promocode')
-                    ->get();
-        $total = $orders->sum(function ($order) {
-                return $order->Quantity * $order->Price +
-                    ($order->WithInstallation ? $order->product->InstallationCost : 0);
-                });
-
+    
         // Generate a unique CartID
         $cartId = Str::random(32);
-
+    
         // Update orders with the generated CartID
-        ShopOrders::where($identifier)->update(['CartID' => $cartId]);
-
+        $updated = ShopOrders::where($identifier)->update(['CartID' => $cartId]);
+    
+        // Fetch the updated orders to ensure correct CartID is included
+        $orders = ShopOrders::where($identifier)
+                    ->with('product.sale', 'transaction', 'promocode')
+                    ->get();
+    
+        // Calculate the total after fetching updated orders
+        $total = $orders->sum(function ($order) {
+            return $order->Quantity * $order->Price +
+                ($order->WithInstallation ? $order->product->InstallationCost : 0);
+        });
+    
         $userData = null;
         $firstName = '';
         $lastName = '';
-
+    
         if (Auth::guard('sanctum')->check()) {
             $user = Auth::guard('sanctum')->user();
             $userData = $user;
-
+    
             $nameParts = explode(' ', $user->Name);
             $firstName = $nameParts[0];
             $lastName = count($nameParts) > 1 ? end($nameParts) : '';
@@ -73,47 +77,60 @@ class CheckoutController extends Controller
             $latestOrder = $orders->last();
             if ($latestOrder) {
                 $userData = $latestOrder;
-
+    
                 $nameParts = explode(' ', $latestOrder->Name);
                 $firstName = $nameParts[0];
                 $lastName = count($nameParts) > 1 ? end($nameParts) : '';
             }
         }
+    
         $data = [
-                'CartID' => $cartId,
-                'firstName'=> $firstName,
-                'lastName' => $lastName,
-                'total'  => $total,
-                'Orders' => $this->transformImagePaths($orders),
-                'User'   => $userData,
-            ];
-
-        if($userData != NULL){
-            return $this->data($data, 'Checkout data retrived successfully');
-        }else{
+            'CartID' => $cartId,  // The correct CartID is returned
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'total' => $total,
+            'Orders' => $this->transformImagePaths($orders),
+            'User' => $userData,
+        ];
+    
+        if ($userData != null) {
+            return $this->data($data, 'Checkout data retrieved successfully');
+        } else {
             return $this->data($data, 'User must sign in or create an account to show his data and to continue to checkout');
         }
-
-
     }
 
     public function saveUserInfo(SaveUserInfoCheckout $request)
     {
         $identifier = $this->getIdentifier($request);
-
+        
          // Prepare data for the orders table
-        $orderData = $request->except('_token', '_method' , 'Address', 'UserShippingAddress');
-        $orderData['Address'] = $request->UserShippingAddress;
-        $orderData['Email']   = $request->email;
+        $orderData = $request->except('_token', '_method', 'Address');
+        
+        $orderData['Name'] = $request->Name;
+        $orderData['Email'] = $request->email;
+        $orderData['Phone'] = $request->Phone;
+        $orderData['Address'] = $request->UserShippingAddress; // Shipping address for the order
+        $orderData['Building'] = $request->Building;
+        $orderData['Floor'] = $request->Floor;
+        $orderData['Apartment'] = $request->Apartment;
+        unset($orderData['UserShippingAddress']);
 
-        // Update orders table
         ShopOrders::where($identifier)
-                ->where('CartID', $request->CartID)
-                ->update($orderData);
-
-        $userData = $request->only('Name', 'Email', 'Address' , 'Phone');
-        $userIdentifier = ['id' => $request->UserID];
-        User::where($userIdentifier)->update($userData);
+                    ->where('CartID', $request->CartID)
+                    ->update($orderData);
+                    
+        $userData = $request->except('_token', '_method','UserShippingAddress');
+        
+        $userData = [
+            'Name' => $request->Name,
+            'Email' => $request->email,
+            'Phone' => $request->Phone,
+            'Address' => $request->Address,
+        ];
+    
+        // Update user table
+        User::where('id', $request->UserID)->update($userData);
 
         return $this->success('User data updated successfully' , 200);
     }
