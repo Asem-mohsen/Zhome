@@ -34,6 +34,8 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +63,13 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('preventAuthenticated')->group(function(){
     Route::post('/login',   [AuthenticatedSessionController::class, 'apiLogin']);
     Route::post('/register',[RegisteredUserController::class,       'apiStore']);
+
+    Route::controller(ForgotPasswordController::class)->group(function(){
+        Route::post('/forget-password/send-code', 'sendCode');
+        Route::post('/forget-password/verify-code', 'verifyCode');
+        Route::post('/forget-password/reset','resetPassword');
+    });
+
 });
 
 Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
@@ -349,18 +358,19 @@ Route::prefix('subscribers')->group(function(){
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(UserController::class)->prefix('users')->group(function(){
-        Route::get('/{user}/profile/user', 'userProfile');
-        // Route::get('/{user}/edit', 'userProfile')->name('edit');
+        Route::get('/profile/user', 'userProfile');
+        Route::get('/edit', 'edit');
         Route::get('/profile', 'profile');
-        Route::put('/{user}/update', 'update');
-        Route::delete('/{user}/delete', 'destroy');
+        Route::put('/update', 'update');
+        Route::delete('/delete', 'destroy');
+        Route::post('/deactivate', 'deactivate');
     });
 
     Route::prefix('checkout')->group(function(){
         Route::controller(CheckoutController::class)->group(function(){
             Route::post('/save-user-data','saveUserInfo');
             Route::post('/check-promocode','checkPromoCode');
-            
+
         });
     });
 

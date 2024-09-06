@@ -38,8 +38,7 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $identifier = $this->getIdentifier($request);
-        $cartItems = ShopOrders::where($identifier)
-                            ->where('Status','0')
+        $cartItems = ShopOrders::where($identifier)->where('Status','0')
                             ->with('product.sale')
                             ->get();
 
@@ -221,8 +220,10 @@ class CartController extends Controller
     public function getCartCount(Request $request)
     {
         $identifier = $this->getIdentifier($request);
-        $count = ShopOrders::where($identifier)->sum('Quantity');
-        return response()->json(['count' => $count]);
+
+        $count = ShopOrders::where($identifier)->where('Status' , '0')->count();
+
+        return $this->data(['count' => $count] , 'data retrived successfully');
     }
 
     public function clearCart(Request $request)
@@ -239,11 +240,11 @@ class CartController extends Controller
         $identifier = $this->getIdentifier($request);
 
         $cartItems = ShopOrders::where($identifier)
+                    ->where('Status' , '0')
                     ->with(['product.sale'])
                     ->get();
 
         $total = $cartItems->sum(function($item) {
-            // Add the quantity * price and the installation cost (WithInstallation) if available
             return ($item->Quantity * $item->Price) + ($item->WithInstallation ?? 0);
         });
 

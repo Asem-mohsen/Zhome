@@ -13,6 +13,7 @@ use App\Models\Payments;
 class StripeController extends Controller
 {
     use ApiResponse ;
+
     public function createCheckoutSession(Request $request)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
@@ -56,17 +57,11 @@ class StripeController extends Controller
         // Retrieve the CartID from the request
         $cartID = $request->input('CartID');
         $amount = $request->input('amount');
-        
-        // Retrieve all orders associated with the CartID
-        $orders = ShopOrders::where('CartID', $cartID)->get();
 
-        if ($orders->isEmpty()) {
+        $updatedRows = ShopOrders::where('CartID', $cartID)->update(['Status' => 1]);
+
+        if ($updatedRows === 0) {
             return response()->json(['error' => 'No orders found for the given CartID'], 404);
-        }
-
-        foreach ($orders as $order) {
-            $order->Status = '1';
-            $order->save();
         }
 
         // Create a record in the Payment table for cash payment
@@ -90,7 +85,7 @@ class StripeController extends Controller
 
         // Update the ShopOrders table
         $orders = ShopOrders::where('CartID', $cartID)->get();
-        
+
         foreach ($orders as $order) {
             $order->Status = 1 ;
             $order->TransactionID = $transactionID;
@@ -107,6 +102,6 @@ class StripeController extends Controller
             ]
         );
 
-        
+
     }
 }

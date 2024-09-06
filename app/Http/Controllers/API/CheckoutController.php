@@ -15,7 +15,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Support\Str;
 use App\Traits\HandleImgPath;
 use App\Http\Requests\User\SaveUserInfoCheckout;
-
+use Carbon\Carbon;
 
 class CheckoutController extends Controller
 {
@@ -43,70 +43,77 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $identifier = $this->getIdentifier($request);
-    
-        // Generate a unique CartID
+
+        // Generate a unique CartID only once
         $cartId = Str::random(32);
-    
+
         // Update orders with the generated CartID
         $updated = ShopOrders::where($identifier)->update(['CartID' => $cartId]);
-    
-        // Fetch the updated orders to ensure correct CartID is included
-        $orders = ShopOrders::where($identifier)
-                    ->with('product.sale', 'transaction', 'promocode')
-                    ->get();
-    
-        // Calculate the total after fetching updated orders
-        $total = $orders->sum(function ($order) {
-            return $order->Quantity * $order->Price +
-                ($order->WithInstallation ? $order->product->InstallationCost : 0);
-        });
-    
-        $userData = null;
-        $firstName = '';
-        $lastName = '';
-    
-        if (Auth::guard('sanctum')->check()) {
-            $user = Auth::guard('sanctum')->user();
-            $userData = $user;
-    
-            $nameParts = explode(' ', $user->Name);
-            $firstName = $nameParts[0];
-            $lastName = count($nameParts) > 1 ? end($nameParts) : '';
-        } else {
-            // Get the latest order for non-authenticated users
-            $latestOrder = $orders->last();
-            if ($latestOrder) {
-                $userData = $latestOrder;
-    
-                $nameParts = explode(' ', $latestOrder->Name);
+
+        if ($updated) {
+
+            $orders = ShopOrders::where($identifier)->where('Status' , '0')
+                        ->with('product.sale', 'transaction', 'promocode')
+                        ->get();
+
+            $cartIdFromDb = optional($orders->first())->CartID;
+
+            if ($cartId !== $cartIdFromDb) {
+                return $this->data([], 'Mismatch in CartID saved and retrieved.');
+            }
+
+            // Calculate the total after fetching updated orders
+            $total = $orders->sum(function ($order) {
+                return $order->Quantity * $order->Price +
+                    ($order->WithInstallation ? $order->product->InstallationCost : 0);
+            });
+
+            $userData = null;
+            $firstName = '';
+            $lastName = '';
+
+            if (Auth::guard('sanctum')->check()) {
+                $user = Auth::guard('sanctum')->user();
+                $userData = $user;
+
+                $nameParts = explode(' ', $user->Name);
                 $firstName = $nameParts[0];
                 $lastName = count($nameParts) > 1 ? end($nameParts) : '';
+            } else {
+                // Get the latest order for non-authenticated users
+                $latestOrder = $orders->last();
+                if ($latestOrder) {
+                    $userData = $latestOrder;
+
+                    $nameParts = explode(' ', $latestOrder->Name);
+                    $firstName = $nameParts[0];
+                    $lastName = count($nameParts) > 1 ? end($nameParts) : '';
+                }
             }
-        }
-    
-        $data = [
-            'CartID' => $cartId,  // The correct CartID is returned
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-            'total' => $total,
-            'Orders' => $this->transformImagePaths($orders),
-            'User' => $userData,
-        ];
-    
-        if ($userData != null) {
+
+            // Prepare the data to be sent in the response
+            $data = [
+                'CartID' => $cartIdFromDb,
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'total' => $total,
+                'Orders' => $this->transformImagePaths($orders),
+                'User' => $userData,
+            ];
+
             return $this->data($data, 'Checkout data retrieved successfully');
         } else {
-            return $this->data($data, 'User must sign in or create an account to show his data and to continue to checkout');
+            return $this->data([], 'Failed to update CartID in orders');
         }
     }
 
     public function saveUserInfo(SaveUserInfoCheckout $request)
     {
         $identifier = $this->getIdentifier($request);
-        
+
          // Prepare data for the orders table
         $orderData = $request->except('_token', '_method', 'Address');
-        
+
         $orderData['Name'] = $request->Name;
         $orderData['Email'] = $request->email;
         $orderData['Phone'] = $request->Phone;
@@ -119,16 +126,16 @@ class CheckoutController extends Controller
         ShopOrders::where($identifier)
                     ->where('CartID', $request->CartID)
                     ->update($orderData);
-                    
+
         $userData = $request->except('_token', '_method','UserShippingAddress');
-        
+
         $userData = [
             'Name' => $request->Name,
             'Email' => $request->email,
             'Phone' => $request->Phone,
             'Address' => $request->Address,
         ];
-    
+
         // Update user table
         User::where('id', $request->UserID)->update($userData);
 
@@ -145,7 +152,10 @@ class CheckoutController extends Controller
         $promoCode = $request->promoCode;
         $totalPrice = $request->totalPrice;
 
-        $promoCodeData = PromoCode::where('Promocode', $promoCode)->where('Status', 1)->first();
+        $promoCodeData = PromoCode::where('Promocode', $promoCode)
+                        ->where('Status', 1)
+                        ->where('EndsIn', '>', Carbon::now())
+                        ->first();
 
         if ($promoCodeData) {
                 $discount = $totalPrice * ($promoCodeData->Save / 100);

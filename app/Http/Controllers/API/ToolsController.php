@@ -53,19 +53,21 @@ class ToolsController extends Controller
             $data['Rooms'] = $request->input('RoomsInput');
         }
         // Handle user data
-        if (Auth::guard('web')->check()) {
-            $user = Auth::guard('web')->user();
+        if (Auth::guard('sanctum')->check()) {
+            $user = Auth::guard('sanctum')->user();
             $data['UserID'] = $user->id;
             $data['Name'] = $user->Name;
             $data['Email'] = $user->email;
             $data['Phone'] = $user->Phone;
             $data['Address'] = $user->Address;
-            // Add Country and City if they are stored in the user model
+
             $data['Country'] = $user->Country ?? $request->input('Country');
             $data['City'] = $user->City ?? $request->input('City');
         } else {
-            $data['UnkownID'] = session()->getId();
-            // For non-authenticated users, use the form input data
+            $sessionId = $request->header('X-Session-ID');
+
+            $data['UnkownID'] = $sessionId ;
+
             $data['Name'] = $request->input('Name');
             $data['Email'] = $request->input('Email');
             $data['Phone'] = $request->input('Phone');
