@@ -17,8 +17,8 @@ use App\Traits\ApiResponse;
 
 class RegisteredUserController extends Controller
 {
-    use ApiResponse ; 
-    
+    use ApiResponse ;
+
     public function create(): View
     {
         return view('auth.register');
@@ -38,7 +38,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        
+
         event(new Registered($user));
 
         Auth::guard('web')->login($user);
@@ -46,10 +46,10 @@ class RegisteredUserController extends Controller
         return redirect(route('index', absolute: false));
     }
 
-    
+
     public function apiStore(Request $request)
     {
-        
+
         $request->validate([
             'name' =>     ['required', 'string', 'max:255'],
             'email' =>    ['required', 'email' , 'max:255', 'unique:user,email,except,id'],
@@ -65,8 +65,7 @@ class RegisteredUserController extends Controller
         ]);
 
         // Generate a token for the user
-        $user->token = "Bearer " . $user->createToken($request->device_name)->plainTextToken;
-        
+        $user->token = $user->createToken($request->device_name)->plainTextToken;
         // Return a JSON response with the user and token information
         $data = [
             'user' => $user,
@@ -74,10 +73,10 @@ class RegisteredUserController extends Controller
             'device_name' => $request->device_name,
             'operating_system' => $request->operating_system,
         ];
-        
+
         return $this->data($data, 'User registered successfully');
-            
-        
-        
+
+
+
     }
 }

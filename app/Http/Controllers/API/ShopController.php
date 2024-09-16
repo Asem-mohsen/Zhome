@@ -178,7 +178,7 @@ class ShopController extends Controller
         $filterData = $this->getFilterData();
         $currentFilters = $this->getCurrentFilters($request);
 
-        $query = Product::with(['brand', 'subcategory.category', 'platforms','sale' ]);
+        $query = Product::with(['brand', 'subcategory.category', 'platforms','sale' , 'technologies' ]);
         $query = $this->applyFilters($query, $currentFilters);
         $products = $query->paginate(12);
 
