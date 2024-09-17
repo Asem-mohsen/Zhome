@@ -1,0 +1,117 @@
+# services:
+
+#     nginx:
+#         build:
+#             context: .
+#             dockerfile: ./docker/nginx.Dockerfile
+#         depends_on:
+#             - php
+#             - mysql
+#         container_name: laravel_nginx
+#         ports:
+#             - 80:80
+#             - 443:443
+#         volumes:
+#             - ./src:/var/www/html
+
+#     php:
+#         build:
+#             context: .
+#             dockerfile: ./docker/php.Dockerfile
+#         container_name: laravel_php
+#         volumes:
+#             - ./src:/var/www/html
+
+#     mysql:
+#         image: mysql:8.0.27
+#         platform: linux/amd64
+#         container_name: laravel_mysql
+#         ports:
+#             - 3306:3306
+#         volumes:
+#             - ./mysql:/var/lib/mysql
+#         environment:
+#             MYSQL_DATABASE: laraveldb
+#             MYSQL_USER: laravel
+#             MYSQL_PASSWORD: secret
+#             MYSQL_ROOT_PASSWORD: secret
+
+#     composer:
+#         image: composer:latest
+#         container_name: laravel_composer
+#         volumes:
+#             - ./src:/var/www/html
+#         working_dir: /var/www/html
+
+#     artisan:
+#         build:
+#             context: .
+#             dockerfile: ./docker/php.Dockerfile
+#         container_name: laravel_artisan
+#         volumes:
+#             - ./src:/var/www/html
+#         working_dir: /var/www/html
+#         entrypoint: ['php', 'artisan']
+
+#     npm:
+#         image: node:current-alpine
+#         container_name: laravel_npm
+#         volumes:
+#             - ./src:/var/www/html
+#         working_dir: /var/www/html
+#         entrypoint: ['npm']
+
+
+
+
+version: '3.8'
+
+services:
+  # PHP Service
+  app:
+    image: php:8.1-fpm
+    container_name: laravel_app
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - laravel
+
+  # Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: nginx_webserver
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - laravel
+    depends_on:
+      - app
+
+  # MySQL Service
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_DATABASE: zhomecom_zhome
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+    volumes:
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - laravel
+
+networks:
+  laravel:
+
+volumes:
+  dbdata:
+
