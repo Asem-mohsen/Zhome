@@ -14,7 +14,7 @@ class SalesController extends Controller
 {
     public function index()
     {
-        $sales = Sale::with(['products'])->get();
+        $sales = Sale::with(['product.translations'])->get();
         
         return view('Admin.Sales.index' , compact('sales'));
     }
@@ -22,12 +22,13 @@ class SalesController extends Controller
     public function create()
     {
         $products = Product::all();
+
         return view('Admin.Sales.create' , compact('products'));
     }
 
-    public function edit(Sale $sales)
+    public function edit(Sale $sale)
     {
-        $sale = Sale::with(['products'])->where('ProductID' , $sales->ProductID)->first();
+        $sale->load('product');
         
         return view('Admin.Sales.edit' , compact('sale'));
     }
@@ -36,31 +37,24 @@ class SalesController extends Controller
     public function createGroup()
     {
         $products = Product::whereDoesntHave('sale')->get();
+
         return view('Admin.Sales.createGroup' , compact('products'));
-    }
-    public function getProductPrice($productId)
-    {
-        
-        $price = Product::where('ID' ,$productId)->select('Price')->first();
-        
-        return response()->json($price);
     }
 
     public function store(AddSaleRequest $request)
     {
         $data = $request->except('_token','_method');
-        $data['StartDate'] = now();
 
-        if (is_array($data['ProductID'])) {
+        if (is_array($data['product_id'])) 
+        {
             // Group Sale
-            foreach ($data['ProductID'] as $productId) {
-                $product = Product::where('ID', $productId)->first();
-                $data['PriceAfter'] = $product->Price - ($product->Price * $request->Amount / 100 );
-                Sale::create(array_merge($data, ['ProductID' => $productId]));
+            foreach ($data['product_id'] as $productId) 
+            {
+                Sale::create(array_merge($data, ['product_id' => $productId]));
             }
         } else {
-            // Sigle Sale
-            Sale::create($data);
+             
+            Sale::create($data); // Sigle Sale
         }
 
         return redirect()->route('Sales.index')->with('success','Sale Created Successfully');
@@ -69,10 +63,8 @@ class SalesController extends Controller
     public function update(UpdateSaleRequest $request , Sale $sale)
     {
         $data = $request->except('_token','_method');
-        $data['StartDate'] = now();
- 
-        Sale::where('ProductID' , $request->ProductID)->update($data);
 
+        $sale->update($data);
 
         return redirect()->route('Sales.index')->with('success','Sale Updated Successfully');
     }

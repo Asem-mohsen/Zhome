@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Features;
+use App\Models\Feature;
 use App\Models\ProductFeatures;
 use App\Http\Requests\Admin\AddFeatureRequest;
 use App\Http\Requests\Admin\UpdateFeatureRequest;
@@ -17,25 +17,16 @@ class FeatureController extends Controller
 {
     public function index()
     {
-        $features = Features::all();
-        $featuresWithNumberOfProducts = [];
-        foreach($features as $feature){
-            $countUsed = ProductFeatures::where('FeatureID',$feature->ID)->count();
-            $feature->countUsed = $countUsed;
-            $featuresWithNumberOfProducts[] = $feature;
-        }
-        return view('Admin.Features.index' , compact('featuresWithNumberOfProducts'));
+        $features = Feature::withCount(['products' , 'collections'])->get();
+
+        return view('Admin.Features.index' , compact('features'));
     }
 
-    public function show(Features $feature)
+    public function show(Feature $feature)
     {
-        $products      = Product::with(['features' , 'brand' , 'platforms'])
-                                ->whereHas('features', function ($query) use ($feature) {
-                                            $query->where('FeatureID', $feature->ID);
-                                        })
-                                ->get();
-        $countProducts = ProductFeatures::where('FeatureID',$feature->ID)->count();
-        return view('Admin.Features.show' , compact('products' , 'feature' , 'countProducts'));
+        $feature->load(['products']);
+
+        return view('Admin.Features.show' , compact('feature'));
     }
 
     public function create()
@@ -45,45 +36,44 @@ class FeatureController extends Controller
 
     public function store(AddFeatureRequest $request)
     {
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Features');
-
         $data = $request->except('_token','_method','image');
-        $data['Image'] = $newImageName;
-        Features::create($data);
+
+        $feature = Feature::create($data);
+
+        if ($request->hasFile('image')) {
+            $feature->addMediaFromRequest('image')->toMediaCollection('feature-image');
+        }
+
         return redirect()->route('Features.index')->with('success','Feature Added Successfully');
     }
 
-    public function edit(Features $feature)
+    public function edit(Feature $feature)
     {
         return view('Admin.Features.edit' , compact('feature'));
     }
 
-    public function update(UpdateFeatureRequest $request , Features $feature)
+    public function update(UpdateFeatureRequest $request , Feature $feature)
     {
         $data = $request->except('_token','_method','image');
 
-        if($request->hasFile('image')){
-            $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Features');
-            $data['Image'] = $newImageName;
-            $oldImagePath = public_path("Admin/dist/img/web/Features/{$feature->Image}");
-            if (is_file($oldImagePath)) {
-                Media::delete($oldImagePath);
-            }
+        $feature->update($data);
+
+        if ($request->hasFile('image')) {
+
+            $feature->clearMediaCollection('feature-image');
+
+            $feature->addMediaFromRequest('image')->toMediaCollection('feature-image');
         }
 
-        Features::where('ID' , $feature->ID)->update($data);
-        return redirect()->route('Features.show', $feature->ID)->with('success',"Feature {$request->Feature} Updated Successfully");
+        return redirect()->route('Features.show', $feature->id)->with('success',"Feature {$request->name} Updated Successfully");
     }
 
-    public function destroy(Features $feature){
+    public function destroy(Feature $feature){
 
-        if(Product::with(['features'])->exists()){
-            return redirect()->route('Features.index')->with('error', 'Cannot delete a Feaure that is associated to a product');
+        $feature->clearMediaCollection('feature-image');
 
-        }else{
-            $feature::where('ID' , $feature->ID)->delete();
-            Media::delete(public_path("Admin\dist\img\web\Features\\{$feature->Image}"));
-            return redirect()->route('Features.index')->with('success','Feature Deleted Successfully');
-        }
+        $feature->delete();
+        
+        return redirect()->route('Features.index')->with('success','Feature Deleted Successfully');
     }
 }

@@ -2,35 +2,24 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
     use HasApiTokens , HasFactory, Notifiable;
 
-    protected $table = 'user';
-    protected $fillable = [
-        'google_id',
-        'session_id',
-        'Name',
-        'email',
-        'password',
-        'Status',
-        'remember_token',
-        'email_verified_at',
-        'verification_code',
-        'Address',
-        'Phone',
-        'DeletedOn',
-    ];
+    protected $table = 'users';
 
-    protected $hidden = [
-        'password',
-    ];
+    protected $guarded = ['id'];
+
+    protected $hidden = ['password'];
 
     protected function casts(): array
     {
@@ -39,13 +28,39 @@ class User extends Authenticatable
         ];
     }
 
-    public function orders()
+    public function role() : BelongsTo
     {
-        return $this->hasMany(ShopOrders::class,'UserID', 'ID');
+        return $this->belongsTo(Role::class);
     }
-    public function products()
+
+    public function orders() : HasMany
     {
-        return $this->belongsToMany(Product::class, 'orders', 'UserID' , 'ID');
+        return $this->hasMany(Order::class);
+    }
+
+    public function orderItems() : HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function products() : BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'orders', 'user_id');
+    }
+
+    public function phones(): HasMany
+    {
+        return $this->hasMany(UserPhone::class);
+    }
+
+    public function address(): HasOne
+    {
+        return $this->hasOne(UserAddress::class);
+    }
+
+    public function promotions(): BelongsToMany
+    {
+        return $this->belongsToMany(Promotion::class, 'orders_promotions')->withTimestamps()->withPivot('order_id');
     }
 
 }

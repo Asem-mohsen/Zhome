@@ -4,134 +4,69 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Features;
-use App\Models\ProductFeatures;
-use App\Http\Requests\Admin\AddFeatureRequest;
-use App\Http\Requests\Admin\UpdateFeatureRequest;
+use App\Models\{Product , Feature};
+use App\Http\Requests\Admin\{AddFeatureRequest , UpdateFeatureRequest};
 use App\Traits\ApiResponse;
-use App\Http\Services\Media;
-
 
 class FeatureController extends Controller
 {
-
     use ApiResponse;
 
     public function index()
     {
-        $features = Features::all();
+        $features = Feature::withCount(['products' , 'collections'])->get();
 
-        $featuresWithNumberOfProducts = [];
-
-        foreach($features as $feature){
-
-            $countUsed = ProductFeatures::where('FeatureID',$feature->ID)->count();
-
-            $feature->countUsed = $countUsed;
-
-            $featuresWithNumberOfProducts[] = $feature;
-
-        }
-
-        return $this->data($featuresWithNumberOfProducts, 'features retrieved successfully');
-
+        return $this->data($features, 'features retrieved successfully');
     }
 
-    public function show(Features $feature)
+    public function show(Feature $feature)
     {
-        $products      = Product::with(['features' , 'brand' , 'platforms'])
-                                ->whereHas('features', function ($query) use ($feature) {
-                                            $query->where('FeatureID', $feature->ID);
-                                        })
-                                ->get();
-        $countProducts = ProductFeatures::where('FeatureID',$feature->ID)->count();
+        $feature->load(['products']);
 
-        $data = [
-            'feature' => $feature,
-            'products within the feature' => $products,
-            'countProducts' => $countProducts
-        ];
-
-        return $this->data($data, 'data retrieved successfully');
-
+        return $this->data(compact('feature'), 'data retrieved successfully');
     }
 
     public function store(AddFeatureRequest $request)
     {
-
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Features');
-
         $data = $request->except('_token','_method','image');
 
-        $data['Image'] = $newImageName;
+        $feature = Feature::create($data);
 
-        Features::create($data);
+        if ($request->hasFile('image')) {
+            $feature->addMediaFromRequest('image')->toMediaCollection('feature-image');
+        }
 
         return $this->success('Feature Added Successfully');
     }
 
-    public function edit(Features $feature)
+    public function edit(Feature $feature)
     {
-
         return $this->data($feature->toArray(), 'feature data retrieved successfully');
-
     }
 
-    public function update(UpdateFeatureRequest $request , Features $feature)
+    public function update(UpdateFeatureRequest $request , Feature $feature)
     {
-
         $data = $request->except('_token','_method','image');
 
-        if($request->hasFile('image')){
+        $feature->update($data);
 
-            $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Features');
+        if ($request->hasFile('image')) {
 
-            $data['Image'] = $newImageName;
+            $feature->clearMediaCollection('feature-image');
 
-            $oldImagePath = public_path("Admin/dist/img/web/Features/{$feature->Image}");
-
-            if (is_file($oldImagePath)) {
-
-                Media::delete($oldImagePath);
-
-            }
-
+            $feature->addMediaFromRequest('image')->toMediaCollection('feature-image');
         }
-
-        Features::where('ID' , $feature->ID)->update($data);
 
         return $this->success('Feature Updated Successfully');
-
     }
 
-    public function destroy(Features $feature){
+    public function destroy(Feature $feature)
+    {
+        $feature->clearMediaCollection('feature-image');
 
-        try {
-            $isAssociated = Product::whereHas('features', function ($query) use ($feature) {
-                $query->where('FeatureID', $feature->ID);
-            })->exists();
+        $feature->delete();
 
-        if ($isAssociated) {
-
-                return $this->error(['error'=>'Cannot delete a Feature that is associated to a product'],'Cannot delete a Feaure that is associated to a product');
-
-            }else{
-
-                $feature::where('ID' , $feature->ID)->delete();
-
-                Media::delete(public_path("Admin\dist\img\web\Features\\{$feature->Image}"));
-
-                return $this->success('Feature Deleted Successfully');
-
-            }
-
-        } catch (\Exception $e) {
-
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Feature');
-
-        }
-
+        return $this->success('Feature Deleted Successfully');
     }
 
 }

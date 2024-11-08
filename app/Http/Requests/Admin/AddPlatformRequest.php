@@ -15,13 +15,15 @@ class AddPlatformRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Name' => ['required', 'max:255', 'unique:platform,Platform'],
-            'image'=> ['required','max:2048'],
-            'VideoURL'=>['required', 'url'],
-            'MainDescription' => ['required', 'max:1000'],
-            'ArabicDescription' => ['max:1000' ,'required'],
-            'Question' => ['max:2000' ,'nullable'],
-            'Answer' => ['max:2000' ,'nullable'],
+            'name'           => ['required', 'max:255', 'unique:platforms,name'],
+            'image'          => ['required', 'image', 'mimes:jpeg,png,jpg,gif' , 'max:2048'],
+            'video_url'      => ['required', 'url'],
+            'description'    => ['required', 'max:1000'],
+            'ar_description' => ['max:1000' ,'required'],
+            'question'       => ['array', 'nullable'],
+            'question.*'     => ['max:2000', 'nullable'],
+            'answer'         => ['array', 'nullable'],
+            'answer.*'       => ['max:2000', 'nullable'],
         ];
     }
 }

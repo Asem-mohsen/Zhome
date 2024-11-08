@@ -11,55 +11,61 @@ use App\Http\Services\Media;
 
 class BrandController extends Controller
 {
-    public function index(){
-        $Brands = Brand::all();
-        return view('Admin.Brands.index' , compact('Brands'));
+    public function index()
+    {
+        $brands = Brand::with('media')->withCount('products')->get();
+
+        return view('Admin.Brands.index' , compact('brands'));
     }
 
-    public function create(){
+    public function create()
+    {
         return view('Admin.Brands.create');
     }
 
-    public function userIndex()
+    public function store(AddBrandRequest $request)
     {
-        $brands = Brand::whereHas('products')
-                ->with('products')
-                ->get();
+        $data = $request->except('image', '_token','_method');
 
-        return view('User.Brands.index' , compact('brands'));
-    }
+        $brand = Brand::create($data);
 
-    public function store(AddBrandRequest $request){
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Brands');
-        $data = $request->except('image','_token','_method');
-        $data['Logo'] = $newImageName;
-        Brand::create($data);
+        if ($request->hasFile('image')) {
+            $brand->addMediaFromRequest('image')->toMediaCollection('brand-image');
+        }
 
         return redirect()->route('Brands.index')->with('success', 'Brand Added Successfully');
     }
 
-    public function edit(Brand $brand){
+    public function edit(Brand $brand)
+    {
+        $brand->load('media');
+
         return view('Admin.Brands.edit' ,compact('brand'));
     }
 
-    public function update(UpdateBrandRequest $request , Brand $brand){
+    public function update(UpdateBrandRequest $request , Brand $brand)
+    {
         $data = $request->except('image', '_token','_method');
-        if($request->hasFile('image')){
-            $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Brands');
-            $data['Logo'] = $newImageName;
-            Media::delete(public_path("Admin\dist\img\web\Brands\\{$brand->Logo}"));
-        }
-        Brand::where('ID' , $brand->ID)->update($data);
 
-        return redirect()->route('Brands.edit', $brand->ID)->with('success' , 'Brand Updated Successfully');
+        $brand->update($data);
+
+        if ($request->hasFile('image')) {
+
+            $brand->clearMediaCollection('brand-image');
+
+            $brand->addMediaFromRequest('image')->toMediaCollection('brand-image');
+        }
+
+        return redirect()->route('Brands.edit', $brand->id)->with('success' , 'Brand Updated Successfully');
 
     }
 
-    public function destroy(Brand $brand){
+    public function destroy(Brand $brand)
+    {
+        $brand->clearMediaCollection('brand-image');
 
-        Media::delete(public_path("Admin\dist\img\web\Brands\\{$brand->Logo}"));
-        $brand::where('ID', $brand->ID)->delete();
+        $brand->delete();
+
         return redirect()->route('Brands.index')->with('success', 'Brand Deleted Successfully');
-
     }
 }

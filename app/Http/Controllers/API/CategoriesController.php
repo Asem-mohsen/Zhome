@@ -10,109 +10,74 @@ use App\Models\Subcategory;
 use App\Http\Requests\Admin\AddCategoryReqeust;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
 use App\Traits\ApiResponse;
-use App\Http\Services\Media;
-use App\Traits\HandleImgPath;
+use App\Http\Resources\CategoryResource;
 
 class CategoriesController extends Controller
 {
-    use ApiResponse , HandleImgPath ;
+    use ApiResponse;
 
     public function index()
     {
+        $categories = Category::with(['subcategories', 'products'])->get();
 
-        $Categories = Category::all();
-        $subCounts = [];
-        foreach ($Categories as $category) {
-            $subNumber = Subcategory::where('MainCategoryID', $category->ID)->count();
-            $subCounts["Category with ID: " . $category->ID] = $subNumber;
-        }
-        $Categories = $this->transformImagePaths($Categories);
         $data = [
-            'Categories' => $Categories,
-            'Number of sub for each category' => $subCounts
+            'categories' => CategoryResource::collection($categories),
         ];
 
         return $this->data($data, 'Categories retrieved successfully');
-
     }
 
-    public function userIndex()
+    public function edit(Category $category)
     {
-
-        $categories = Category::whereHas('subcategories.products')
-        ->with([
-            'products' => function ($query) {
-                $query->with(['brand', 'platforms']);
-            },
-            'subcategories' => function ($query) {
-                $query->whereHas('products');
-            }
-        ])
-        ->get();
-
-        $categories = $this->transformImagePaths($categories);
-        return $this->data($categories->toArray(), 'Categories retrieved successfully');
-
+        return $this->data($category->toArray(), 'category retrieved successfully');
     }
 
-    public function edit(Category $category){
+    public function show(Category $category)
+    {
+        $category->load('subcategories');
 
         return $this->data($category->toArray(), 'category retrieved successfully');
-
     }
 
-    public function show(Category $category){
-
-        $subCategories = Subcategory::where('MainCategoryID', $category->ID)->get();
-
-        $data = [
-            'category'      => $category,
-            'subCategories' => $subCategories
-        ];
-
-        return $this->data($data, 'category retrieved successfully');
-
-    }
-
-    public function update(UpdateCategoryRequest $request ,Category $category){
-
+    public function update(UpdateCategoryRequest $request ,Category $category)
+    {
         $data = $request->except('image', '_token','_method');
+        
+        $category->update($data);
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
 
-            $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Categories');
+            $category->clearMediaCollection('category-image');
 
-            $data['MainImage'] = $newImageName;
-
-            Media::delete(public_path("Admin\dist\img\web\Categories\\{$category->MainImage}"));
-
+            $category->addMediaFromRequest('image')->toMediaCollection('category-image');
         }
 
-        Category::where('ID' , $category->ID)->update($data);
-
         return $this->success('Category Updated Successfully');
-
     }
 
-    public function store(AddCategoryReqeust $request){
-
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Categories');
+    public function store(AddCategoryReqeust $request)
+    {
+        $data = $request->validated();
 
         $data = $request->except('image','_token','_method');
+        
+        $category = Category::create($data);
 
-        $data['MainImage'] = $newImageName;
-
-        Category::create($data);
+        if ($request->hasFile('image')) 
+        {
+            $category->addMediaFromRequest('image')->toMediaCollection('category-image');
+        }
 
         return $this->success('Category Added Successfully');
-
     }
 
     public function destroy(Category $category){
 
         try {
-            Media::delete(public_path("Admin\dist\img\web\Categories\\{$category->MainImage}"));
-            Category::where('ID', $category->ID)->delete();
+            
+            $category->clearMediaCollection('category-image');
+
+            $category->delete();
 
             return $this->success('Category Deleted Successfully');
 

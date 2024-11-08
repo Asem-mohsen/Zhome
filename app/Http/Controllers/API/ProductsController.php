@@ -4,309 +4,300 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ProductImages;
 use Illuminate\Http\Request;
-use App\Models\Category;
-use App\Models\Subcategory;
-use App\Models\Product;
-use App\Models\Platform;
-use App\Models\Brand;
-use App\Models\Features;
-use App\Models\ProductEvaluation;
-use App\Models\ProductFaq;
-use App\Models\ProductDetails;
-use App\Models\Admin;
+use App\Models\{User, Category , Subcategory , Product ,Platform ,Brand ,Feature, ProductFaqTranslation, ProductReview , ProductDimension};
 use App\Http\Requests\Admin\AddProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
-use App\Http\Services\Media;
-use App\Http\Services\SyncChoices;
-use App\Models\ProductFeatures;
-use App\Models\ProductPlatforms;
-use App\Models\ProductTechnology;
 use App\Traits\ApiResponse;
-use Illuminate\Support\Facades\App;
-use App\Traits\HandleImgPath;
+use Illuminate\Support\Facades\DB;
+use App\Enums\CommentStatusEnum;
 
 class ProductsController extends Controller
 {
-    use ApiResponse , HandleImgPath;
+    use ApiResponse;
 
-    public function index(){
-
-        $products = Product::with(['brand', 'platforms', 'subcategory.category' , 'sale'])->get();
-
-        $platforms = [];
-
-        foreach($products as $product){
-
-            $productplatforms = ProductPlatforms::where('ProductID' , $product->ID);
-
-            $platforms[] = $productplatforms;
-
-        }
-
-        $data = [
-            'products'  => $this->transformImagePaths($products),
-        ];
-
-
-        return $this->data($data, 'All Products data retrieved successfully');
-
-    }
-
-    public function create(){
-
-        $brands     = Brand::all();
-        $platforms  = Platform::all();
-        $categories = Category::all();
-        $subs       = Subcategory::all();
-        $features   = Features::all();
-
-        $data = [
-            'brands'     => $brands,
-            'platforms'  => $platforms,
-            'categories' => $categories,
-            'features'   => $features,
-            'subs'       => $subs,
-        ];
-
-        return $this->data($data, 'All Products data retrieved successfully');
-
-    }
-
-    public function getSubcategories($categoryId)
+    public function index() // all products for admin
     {
+        $products = Product::with(['translations', 'brand', 'platforms', 'subcategory.category' , 'sale'])->get();
 
-        $subcategories = SubCategory::where('MainCategoryID', $categoryId)->get();
+        return $this->data($data = ['products' => $products], 'All Products data retrieved successfully');
+    }
+
+    public function productCards(Request $request) // a products card api for only the prodicts
+    {
+        $products = Product::with(['translations', 'brand', 'platforms'])->get();
+
+        return $this->data($data = ['products' => $products], 'Products data retrieved successfully');
+    }
+
+    public function create()
+    {
+        $data = [
+            'brands'     => Brand::all(),
+            'platforms'  => Platform::all(),
+            'categories' => ategory::all(),
+            'features'   => Feature::all(),
+            'subs'       => Subcategory::all(),
+        ];
+
+        return $this->data($data, 'All Products data retrieved successfully');
+    }
+
+    public function getSubcategories($categoryId) //for creation
+    {
+        $subcategories = SubCategory::where('category_id', $categoryId)->get();
 
         return response()->json($subcategories);
-
     }
 
     public function store(AddProductRequest $request)
     {
-        $mainImageName  = Media::upload($request->file('MainImage'), 'Admin\dist\img\web\Products\MainImage');
-        $coverImageName = Media::upload($request->file('CoverImage'),'Admin\dist\img\web\Products\CoverImage');
+        DB::transaction(function () use ($request) {
+            $product = Product::create([
+                'quantity'              => $request->input('quantity'),
+                'price'                 => $request->input('price'),
+                'installation_cost'     => $request->input('installation_cost'),
+                'is_bundle'             => $request->boolean('is_bundle'),
+                'subcategory_id'        => $request->input('subcategory_id'),
+                'brand_id'              => $request->input('brand_id'),
+                'video_url'             => $request->input('video_url'),
+                'added_by'              => Auth::guard('sanctum')->user()->id,
+                'updated_by'            => Auth::guard('sanctum')->user()->id,
+            ]);
 
-        $productData           = $request->only('Name','ArabicName','Description','ArabicDescription','Price','Quantity','InstallationCost','SubCategoryID','BrandID','IsBundle');
-        $productDetailsData    = $request->only('Title','Title2','ArabicTitle','ArabicTitle2','Video','Width','Height','Length','Color','Capacity','PowerConsumption','Weight');
-        $productPlatformsData  = $request->only('PlatformID');
-        $productTechnologyData = $request->only('Technology');
-        $productFeatureData    = $request->only('FeatureID');
-        $faqData               = $request->only(['Question', 'Answer', 'ArabicQuestion', 'ArabicAnswer']);
-        $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
+             // Handle media files using Spatie Media Library
+            if ($request->hasFile('cover_image')) {
+                $product->addMediaFromRequest('cover_image')->toMediaCollection('cover_image');
+            }
 
-        $colorData = [
-                'Color' => $request->input('Color'),
-                'Color2' => $request->input('Color2'),
-                'Color3' => $request->input('Color3')
+            if ($request->hasFile('image')) {
+                $product->addMediaFromRequest('image')->toMediaCollection('product_featured_image');
+            }
+
+            if ($request->hasFile('other_images')) {
+                foreach ($request->file('other_images') as $otherImage) {
+                    $product->addMedia($otherImage)->toMediaCollection('other_product_images');
+                }
+            }
+
+            // Handling relationships and translations
+            $product->platforms()->attach($request->input('platform_id'));
+            $product->technologies()->attach($request->input('technology_id'));
+            $product->features()->attach($request->input('feature_id'));
+
+            $dimensionsData = [
+                'product_id'        => $product->id,
+                'width'             => $request->input('width'),
+                'height'            => $request->input('height'),
+                'length'            => $request->input('length'),
+                'capacity'          => $request->input('capacity'),
+                'noise_level'       => $request->input('noise_level'),
+                'weight'            => $request->input('weight'),
+                'power_consumption' => $request->input('power_consumption'),
             ];
 
-        $colorData = array_filter($colorData, function($value) {
-            return !is_null($value);
+            $hasDimensionData = collect($dimensionsData)->except('product_id')->filter()->isNotEmpty();
+
+            if ($hasDimensionData) {
+                $product->dimensions()->create($dimensionsData);
+            }
+
+            // Add color records
+            foreach ($request->input('color') as $color) {
+                $product->colors()->create(['color' => $color]);
+            }
+
+            // FAQ Translations
+            if ($request->input('question') && $request->input('answer')) {
+
+                $faq = $product->faqs()->create();
+
+                $faq->translations()->createMany([
+                    [
+                        'question' => $request->input('question'),
+                        'answer'   => $request->input('answer'),
+                        'locale'   => 'en',
+                    ],
+                    [
+                        'question' => $request->input('ar_question'),
+                        'answer'   => $request->input('ar_answer'),
+                        'locale'   => 'ar',
+                    ],
+                ]);
+            }
+
+            // Product reviews Translation
+            $product->reviews()->create([
+                'user_id' => $product->added_by,
+                'comment' => $request->input('comment'),
+                'ar_comment' => $request->input('ar_comment'),
+                'status' => CommentStatusEnum::Published->value
+            ]);
+
+            // Product Description Translation
+            $product->translations()->createMany([
+                [
+                    'name'                  => $request->input('name'),
+                    'description'           => $request->input('description'),
+                    'additional_description'=> $request->input('additional_description'),
+                    'title'                 => $request->input('title'),
+                    'second_title'          => $request->input('second_title'),
+                    'locale'                => 'en',
+                ],
+                [
+                    'name'                  => $request->input('ar_name'),
+                    'description'           => $request->input('ar_description'),
+                    'additional_description'=> $request->input('ar_additional_description'),
+                    'title'                 => $request->input('ar_title'),
+                    'second_title'          => $request->input('ar_second_title'),
+                    'locale'                => 'ar',
+                ],
+            ]);
+
         });
 
-        // Create Product
-        $productData['MainImage'] = $mainImageName;
-        $productData['AddedBy'] = Auth::guard('sanctum')->user()->id;
-        $product = Product::create($productData);
-
-        // Create ProductImages
-        $productImagesData['ProductID'] = $product->id;
-        if ($request->hasFile('OtherImages')) {
-            foreach ($request->file('OtherImages') as $otherImage) {
-                $otherImagesName = Media::upload($otherImage, 'Admin\dist\img\web\Products\OtherImages');
-                $productImagesData['Image'] = $otherImagesName;
-                ProductImages::create($productImagesData);
-            }
-        }
-
-        // Create ProductDetails
-        $productDetailsData['ProductID'] = $product->id;
-        $productDetailsData['CoverImage'] = $coverImageName;
-        $productDetailsData['Color']  = $colorData['Color'] ?? null;
-        $productDetailsData['Color2'] = $colorData['Color2'] ?? null;
-        $productDetailsData['Color3'] = $colorData['Color3'] ?? null;
-        ProductDetails::create($productDetailsData);
-
-        // Create ProductPlatforms
-        $productPlatformsData['ProductID'] = $product->id;
-        foreach ($request->PlatformID as $platforms) {
-            $productPlatformsData['PlatformID'] = $platforms;
-            ProductPlatforms::create($productPlatformsData);
-        }
-
-        // Create ProductTechnology
-        $productTechnologyData['ProductID'] = $product->id;
-        $technologies = is_array($request->Technology) ? $request->Technology : [$request->Technology];
-        foreach ($technologies as $Technology) {
-            $productTechnologyData['Technology'] = $Technology;
-            ProductTechnology::create($productTechnologyData);
-        }
-
-        // Create Feature
-        if ($request->has('FeatureID')) {
-            $productFeatureData['ProductID'] = $product->id;
-            foreach ($request->FeatureID as $Feature) {
-                $productFeatureData['FeatureID'] = $Feature;
-                ProductFeatures::create($productFeatureData);
-            }
-        }
-
-        // Create Product Evaluation
-        $productEvaluationData['ProductID'] = $product->id;
-        $productEvaluationData['ExpertID'] = Auth::guard('sanctum')->user()->id;
-        ProductEvaluation::create($productEvaluationData);
-
-        // Create Product FAQ
-        if (!empty($faqData['Question'])) {
-            // Check if 'Question' is an array or a single value
-            $questions = is_array($faqData['Question']) ? $faqData['Question'] : [$faqData['Question']];
-
-            foreach ($questions as $index => $question) {
-                if (!empty($question)) {
-                    $faq = new ProductFaq();
-                    $faq['ProductID']    = $product->id;
-                    $faq->Question       = $question;
-
-                    // Handle associated data, making sure to handle both array and non-array cases
-                    $faq->Answer         = is_array($faqData['Answer'] ?? null) ? $faqData['Answer'][$index] ?? null : $faqData['Answer'] ?? null;
-                    $faq->ArabicQuestion = is_array($faqData['ArabicQuestion'] ?? null) ? $faqData['ArabicQuestion'][$index] ?? null : $faqData['ArabicQuestion'] ?? null;
-                    $faq->ArabicAnswer   = is_array($faqData['ArabicAnswer'] ?? null) ? $faqData['ArabicAnswer'][$index] ?? null : $faqData['ArabicAnswer'] ?? null;
-
-                    $faq->save();
-                }
-            }
-        }
         return $this->success('Product Added Successfully');
-
     }
 
-    public function update(UpdateProductRequest $request , Product $product, ProductDetails $details , ProductImages $images)
+    public function update(UpdateProductRequest $request , Product $product)
     {
-        $productDetails = $details::where('ProductID' , $product->ID)->first();
+        DB::transaction(function () use ($request, $product) {
+            // Update main product fields
+            $product->update([
+                'quantity'              => $request->input('quantity'),
+                'price'                 => $request->input('price'),
+                'installation_cost'     => $request->input('installation_cost'),
+                'is_bundle'             => $request->boolean('is_bundle'),
+                'category_id'           => $request->input('category_id'),
+                'subcategory_id'        => $request->input('subcategory_id'),
+                'brand_id'              => $request->input('brand_id'),
+                'video_url'             => $request->input('video_url'),
+                'updated_by'            => Auth::guard('sanctum')->user()->id,
+            ]);
 
-        $productData           = $request->only('Name','ArabicName','Description','ArabicDescription','Price','Quantity','InstallationCost','SubCategoryID','BrandID','IsBundle');
-        $productDetailsData    = $request->only('Title','Title2','ArabicTitle','ArabicTitle2','Video','Width','Height','Length','Color','Capacity','PowerConsumption','Weight');
-        $productPlatformsData  = ensureArray($request->PlatformID);
-        $productTechnologyData = ensureArray($request->Technology);
-        $productFeatureData    = ensureArray($request->FeatureID);
-        $productFAQData        = $request->only('Question','Answer');
-        $productEvaluationData = $request->only('Evaluation','ArabicEvaluation');
-
-        if($request->hasFile('MainImage')){
-            $mainImageName = Media::upload($request->file('MainImage') , 'Admin\dist\img\web\Products\MainImage');
-            $data['MainImage'] = $mainImageName;
-            Media::delete(public_path("Admin\dist\img\web\Products\MainImage\\{$product->MainImage}"));
-            $productData['MainImage'] = $mainImageName;
-        }
-        if($request->hasFile('CoverImage')){
-            $coverImageName = Media::upload($request->file('CoverImage') , 'Admin\dist\img\web\Products\CoverImage');
-            $data['CoverImage'] = $coverImageName;
-            $oldCoverImagePath = public_path("Admin/dist/img/web/Products/CoverImage/{$productDetails->CoverImage}");
-            if (is_file($oldCoverImagePath)) {
-                Media::delete($oldCoverImagePath);
+            // Update media files
+            if ($request->hasFile('cover_image')) {
+                $product->clearMediaCollection('cover_image');
+                $product->addMediaFromRequest('cover_image')->toMediaCollection('cover_image');
             }
-            $productDetailsData['CoverImage'] = $coverImageName;
-        }
 
-        // Update Product
-        $product::where('ID' , $product->ID)->update($productData);
-
-        // Update ProductImages
-        $productImagesData['ProductID'] = $product->ID;
-        if ($request->hasFile('OtherImages')) {
-
-            $existingImages = ProductImages::where('ProductID' , $product->ID)->get();
-            foreach ($existingImages as $existingImage) {
-                $oldImagePath = public_path("Admin/dist/img/web/Products/OtherImages/{$existingImage->Image}");
-                if (is_file($oldImagePath)) {
-                    Media::delete($oldImagePath);
-                }
-                $existingImage::where('ProductID' , $product->ID)->delete();
+            if ($request->hasFile('image')) {
+                $product->clearMediaCollection('product_featured_image');
+                $product->addMediaFromRequest('image')->toMediaCollection('product_featured_image');
             }
-            foreach ($request->file('OtherImages') as $otherImage) {
-                $otherImagesName = Media::upload($otherImage , 'Admin\dist\img\web\Products\OtherImages');
-                $productImagesData['Image'] = $otherImagesName;
-                ProductImages::create($productImagesData);
-            }
-        }
 
-        // Update ProductDetails
-        $productDetailsData['ProductID'] = $product->ID;
-        ProductDetails::where('ProductID' , $product->ID)->update($productDetailsData);
-
-        // Update ProductPlatforms
-        if (!empty($productPlatformsData)) {
-            SyncChoices::Sync(ProductPlatforms::class, $product->ID, $productPlatformsData, 'PlatformID');
-        }
-
-        // Update ProductTechnology
-        if (!empty($productTechnologyData)) {
-            SyncChoices::Sync(ProductTechnology::class, $product->ID, $productTechnologyData, 'Technology');
-        }
-
-        // Update Feature
-        if (!empty($productFeatureData)) {
-            SyncChoices::Sync(ProductFeatures::class, $product->ID, $productFeatureData, 'FeatureID');
-        }
-
-        // Update Product Evaluation
-        $productEvaluationData['ProductID'] = $product->ID;
-        ProductEvaluation::where('ProductID' , $product->ID)->update($productEvaluationData);
-
-        // Update Product FAQ
-        if (!empty($faqData['Question'])) {
-            // Check if 'Question' is an array or a single value
-            $questions = is_array($faqData['Question']) ? $faqData['Question'] : [$faqData['Question']];
-            $answers = is_array($faqData['Answer']) ? $faqData['Answer'] : [$faqData['Answer']];
-            $arabicQuestions = is_array($faqData['ArabicQuestion']) ? $faqData['ArabicQuestion'] : [$faqData['ArabicQuestion']];
-            $arabicAnswers = is_array($faqData['ArabicAnswer']) ? $faqData['ArabicAnswer'] : [$faqData['ArabicAnswer']];
-
-            foreach ($questions as $index => $question) {
-                if (!empty($question)) {
-                    // Create or update FAQ entry
-                    ProductFaq::updateOrCreate(
-                        [
-                            'ProductID' => $product->ID,
-                            'Question' => $question, // Assuming the 'Question' field is unique for each FAQ entry
-                        ],
-                        [
-                            'Answer' => $answers[$index] ?? null,
-                            'ArabicQuestion' => $arabicQuestions[$index] ?? null,
-                            'ArabicAnswer' => $arabicAnswers[$index] ?? null,
-                        ]
-                    );
+            if ($request->hasFile('other_images')) {
+                $product->clearMediaCollection('other_product_images');
+                foreach ($request->file('other_images') as $otherImage) {
+                    $product->addMedia($otherImage)->toMediaCollection('other_product_images');
                 }
             }
-        }
+
+            // Update relationships
+            $product->platforms()->sync($request->input('platform_id', []));
+            $product->technologies()->sync($request->input('technology_id', []));
+            $product->features()->sync($request->input('feature_id', []));
+
+            // Update or create dimensions
+            $product->dimensions()->updateOrCreate(
+                ['product_id' => $product->id],
+                [
+                    'width'             => $request->input('width'),
+                    'height'            => $request->input('height'),
+                    'length'            => $request->input('length'),
+                    'capacity'          => $request->input('capacity'),
+                    'noise_level'       => $request->input('noise_level'),
+                    'weight'            => $request->input('weight'),
+                    'power_consumption' => $request->input('power_consumption'),
+                ]
+            );
+
+            // Update colors
+            $product->colors()->delete();
+            foreach ($request->input('color', []) as $color) {
+                $product->colors()->create(['color' => $color]);
+            }
+
+            // Update FAQs with translations
+            $product->faqs()->delete();
+            if ($request->input('question') && $request->input('answer')) {
+                $faq = $product->faqs()->create();
+
+                $faq->translations()->createMany([
+                    [
+                        'question' => $request->input('question'),
+                        'answer'   => $request->input('answer'),
+                        'locale'   => 'en',
+                    ],
+                    [
+                        'question' => $request->input('ar_question'),
+                        'answer'   => $request->input('ar_answer'),
+                        'locale'   => 'ar',
+                    ],
+                ]);
+            }
+
+            // Update reviews translations
+            $product->reviews()->delete();
+            $product->reviews()->create(
+                [
+                    'user_id' => $product->added_by,
+                    'comment' => $request->input('comment'),
+                    'ar_comment' => $request->input('ar_comment'),
+                    'status' => CommentStatusEnum::Published->value
+                ],
+            );
+
+            // Update description translations
+            $product->translations()->delete();
+            $product->translations()->createMany([
+                [
+                    'name'                  => $request->input('name'),
+                    'description'           => $request->input('description'),
+                    'additional_description'=> $request->input('additional_description'),
+                    'title'                 => $request->input('title'),
+                    'second_title'          => $request->input('second_title'),
+                    'locale'                => 'en',
+                ],
+                [
+                    'name'                  => $request->input('ar_name'),
+                    'description'           => $request->input('ar_description'),
+                    'additional_description'=> $request->input('ar_additional_description'),
+                    'title'                 => $request->input('ar_title'),
+                    'second_title'          => $request->input('ar_second_title'),
+                    'locale'                => 'ar',
+                ],
+            ]);
+        });
 
         return $this->success('Product Updated Successfully');
-
     }
 
-    public function show(Product $product){
-
-        $product = $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations.admin' , 'productDetails'])->first();
-
-        $transformedProduct = $this->transformProductImagePaths($product);
-
-        return $this->data(compact('transformedProduct'), 'Product data retrieved successfully');
-
-    }
-
-    public function userShow(Product $product)
+    public function show(Product $product)
     {
-        $productDisplay = $product::with(['brand', 'platforms', 'subcategory.category', 'faqs', 'images', 'technologies', 'features', 'sale', 'collections', 'evaluations.admin', 'productDetails'])->where('ID', $product->ID)->first();
+        $product->load([
+            'translations',
+            'brand',
+            'platforms',
+            'subcategory.category',
+            'faqs.translations',
+            'technologies',
+            'features',
+            'sale',
+            'collections',
+            'reviews' => function ($query) {
+                $query->latest()->limit(1);
+            },
+            'colors',
+            'dimensions'
+        ]);
 
-        $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
-
-        $transformedProduct = $this->transformProductImagePaths($productDisplay);
-        $transformedProducts = $this->transformImagePaths($products);
+        $products = Product::with(['brand', 'platforms' ,'translations'])->get();
 
         $data = [
-            'Recommended-Products' => $transformedProducts,
-            'Product' => $transformedProduct,
+            'recommended_products' => $products,
+            'product' => $product,
+            'other_images' => $product->other_images,
         ];
 
         return $this->data($data, 'Product data retrieved successfully');
@@ -315,21 +306,15 @@ class ProductsController extends Controller
     public function edit(Product $product)
     {
 
-        $product::with(['brand', 'platforms', 'subcategory.category','faqs','images' ,'technologies', 'features', 'sale', 'collections' , 'evaluations' , 'productDetails'])->findOrFail($product->ID);
-
-        $brands     = Brand::all();
-        $platforms  = Platform::all();
-        $categories = Category::all();
-        $subs       = Subcategory::all();
-        $features   = Features::all();
+        $product->load(['translations' , 'brand', 'platforms', 'subcategory.category', 'faqs', 'technologies', 'features', 'sale', 'collections', 'reviews', 'colors', 'dimensions']);
 
         $data = [
-            'product'   => $this->transformImagePaths($product),
-            'brands'    => $this->transformImagePaths($brands),
-            'platforms' => $this->transformImagePaths($platforms),
-            'categories'=> $this->transformImagePaths($categories),
-            'subs'      => $this->transformImagePaths($subs),
-            'features'  => $this->transformImagePaths($features),
+            'product'   => $product,
+            'brands'    => Brand::all(),
+            'platforms' => Platform::all(),
+            'categories'=> Category::all(),
+            'subs'      => Subcategory::all(),
+            'features'  => Feature::all(),
         ];
 
         return $this->data($data, 'Product data for editing retrieved successfully');
@@ -338,31 +323,26 @@ class ProductsController extends Controller
 
     public function destroy(Product $product)
     {
-
         try {
 
-            // Delete platforms
-            ProductPlatforms::where('ProductID',$product->ID)->delete();
+            DB::transaction(function () use ($product) {
 
-            // Delete related FAQs
-            ProductFaq::where('ProductID',$product->ID)->delete();
+                $product->clearMediaCollection('cover_image');
+                $product->clearMediaCollection('product_featured_image');
+                $product->clearMediaCollection('other_product_images');
 
-            // Delete related images
-            ProductImages::where('ProductID',$product->ID)->delete();
+                $product->translations()->delete();
+                $product->features()->detach();
+                $product->platforms()->detach();
+                $product->technologies()->detach();
+                $product->dimensions()->delete();
+                $product->faqs()->delete();
+                $product->reviews()->delete();
+                $product->colors()->delete();
 
-            // Delete related technologies
-            ProductTechnology::where('ProductID',$product->ID)->delete();
+                $product->delete();
 
-            // Delete related features
-            ProductFeatures::where('ProductID',$product->ID)->delete();
-
-            // Delete related Details
-            ProductDetails::where('ProductID',$product->ID)->delete();
-
-            // Delete related Evaluations
-            ProductEvaluation::where('ProductID',$product->ID)->delete();
-
-            $product->where('ID',$product->ID)->delete();
+            });
 
             return $this->success('Product Deleted Successfully');
 
@@ -371,8 +351,6 @@ class ProductsController extends Controller
             return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Product');
 
         }
-
-
 
     }
 

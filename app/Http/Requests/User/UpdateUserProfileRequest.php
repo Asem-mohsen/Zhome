@@ -8,30 +8,31 @@ use Illuminate\Validation\Rule;
 
 class UpdateUserProfileRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         $userId = $this->route('id');
 
         return [
-            'Name' => ['required' , 'max:240' , 'min:3'],
-            'email'=> ['required' , 'email' , Rule::unique('users')->ignore($userId)],
-            'Phone'=> ['required' , 'numeric'],
-            'Address'=>['required', 'max:255'],
-            'Password'=>['nullable', 'max:255']
-
+            'name'    => ['required', 'max:255'],
+            'email'   => ['required', 'max:255','unique:user', 'email:rfc,dns', Rule::unique('user')->ignore($this->id)],
+            'role_id' => ['required', 'exists:roles,id'],
+            'Address' => ['required', 'max:255'],
+            'phone'    => ['required', 'max:15' , 'unique:user_phones'],
+            'phone-2'  => ['nullable', 'max:15', 'unique:user_phones'],
+            'password' => ['required', 'min:9', 'max:255'],
+            'floor'    => ['nullable', 'max:15'],
+            'building' => ['nullable', 'max:15'],
+            'apartment'=> ['nullable', 'max:15'],
+            'street_address'=> ['required', 'max:255'],
+            'zip_code' => ['nullable', 'max:100'],
+            'country'  => ['required', 'max:255'],
+            'city'     => ['required', 'max:255'],
         ];
     }
 }

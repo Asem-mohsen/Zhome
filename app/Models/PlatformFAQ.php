@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class PlatformFAQ extends Model
 {
     use HasFactory;
-    protected $table ='platformq&a';
-    protected $guarded = [];
+
+    protected $table ='platforms_faq';
+
+    protected $guarded = ['id'];
 
     public function platfroms(){
-        return $this->belongsTo(Platform::class , 'PlatformID' , 'ID');
+
+        return $this->belongsTo(Platform::class);
+        
     }
 }

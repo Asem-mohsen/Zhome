@@ -9,11 +9,17 @@ class ProductFaq extends Model
 {
     use HasFactory;
 
-    protected $table = 'productfaq';
-    protected $guarded = [];
+    protected $table = 'product_faqs';
+
+    protected $guarded = ['id'];
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'ProductID', 'ID');
+        return $this->belongsTo(Product::class);
+    }
+
+    public function translations()
+    {
+        return $this->hasMany(ProductFaqTranslation::class, 'faq_id');
     }
 }

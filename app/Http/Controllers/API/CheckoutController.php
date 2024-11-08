@@ -4,140 +4,101 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ShopOrders;
-use App\Models\User;
-use App\Models\Product;
-use App\Models\Delivery;
-use App\Models\Promocode;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use App\Models\{ Order , User , Product , Promotion , Shipping , UserPhone , UserAddress};
+use Illuminate\Support\Facades\{ Auth , Session };
 use App\Traits\ApiResponse;
 use Illuminate\Support\Str;
-use App\Traits\HandleImgPath;
 use App\Http\Requests\User\SaveUserInfoCheckout;
 use Carbon\Carbon;
+use App\Enums\OrderStatusEnum;
 
 class CheckoutController extends Controller
 {
-    use ApiResponse , HandleImgPath;
+    use ApiResponse ;
+
+    protected $pending = OrderStatusEnum::PENDING->value;
 
     private function getIdentifier(Request $request)
     {
-        if (Auth::guard('sanctum')->check()) {
-            return ['UserID' => Auth::guard('sanctum')->user()->id];
-        } else {
-            $sessionId = $request->header('X-Session-ID');
+        $user = Auth::guard('sanctum')->user();
 
-            if ($sessionId) {
-                // Ensure Laravel uses the provided session ID
-                Session::setId($sessionId);
-                Session::start();
-            } else {
-                $sessionId = Session::getId();
-            }
-
-            return ['SessionID' => $sessionId];
+        if ($user) {
+            return ['user_id' => $user->id];
         }
+
+        $sessionId = $request->header('X-Session-ID') ?: Session::getId();
+        return ['session_id' => $sessionId];
     }
 
     public function index(Request $request)
     {
         $identifier = $this->getIdentifier($request);
 
-        // Generate a unique CartID only once
-        $cartId = Str::random(32);
+        $orders = Order::where($identifier)->where('status' , $this->pending)->with(['product.brand' , 'product.translations' , 'product.platforms'])->get();
+                    
+        $total = $orders->sum(function ($order) {
+            return ($order->quantity * $order->price) +
+                ($order->with_installation ? $order->product->InstallationCost : 0);
+        });    
 
-        // Update orders with the generated CartID
-        $updated = ShopOrders::where($identifier)->update(['CartID' => $cartId]);
+        $user = null;
 
-        if ($updated) {
-
-            $orders = ShopOrders::where($identifier)->where('Status' , '0')
-                        ->with('product.sale', 'transaction', 'promocode')
-                        ->get();
-
-            $cartIdFromDb = optional($orders->first())->CartID;
-
-            if ($cartId !== $cartIdFromDb) {
-                return $this->data([], 'Mismatch in CartID saved and retrieved.');
-            }
-
-            // Calculate the total after fetching updated orders
-            $total = $orders->sum(function ($order) {
-                return $order->Quantity * $order->Price +
-                    ($order->WithInstallation ? $order->product->InstallationCost : 0);
-            });
-
-            $userData = null;
-            $firstName = '';
-            $lastName = '';
-
-            if (Auth::guard('sanctum')->check()) {
-                $user = Auth::guard('sanctum')->user();
-                $userData = $user;
-
-                $nameParts = explode(' ', $user->Name);
-                $firstName = $nameParts[0];
-                $lastName = count($nameParts) > 1 ? end($nameParts) : '';
-            } else {
-                // Get the latest order for non-authenticated users
-                $latestOrder = $orders->last();
-                if ($latestOrder) {
-                    $userData = $latestOrder;
-
-                    $nameParts = explode(' ', $latestOrder->Name);
-                    $firstName = $nameParts[0];
-                    $lastName = count($nameParts) > 1 ? end($nameParts) : '';
-                }
-            }
-
-            // Prepare the data to be sent in the response
-            $data = [
-                'CartID' => $cartIdFromDb,
-                'firstName' => $firstName,
-                'lastName' => $lastName,
-                'total' => $total,
-                'Orders' => $this->transformImagePaths($orders),
-                'User' => $userData,
-            ];
-
-            return $this->data($data, 'Checkout data retrieved successfully');
-        } else {
-            return $this->data([], 'Failed to update CartID in orders');
+        if (Auth::guard('sanctum')->check())
+        {
+            $user = Auth::guard('sanctum')->user()->load(['address', 'phones']);;
         }
+
+        $data = [
+            'total' => $total,
+            'orders' => $orders,
+            'user' => $user,
+        ];
+
+        return $this->data($data, 'Checkout data retrieved successfully');
     }
 
     public function saveUserInfo(SaveUserInfoCheckout $request)
     {
-        $identifier = $this->getIdentifier($request);
+        $user = Auth::guard('sanctum')->user();
 
-         // Prepare data for the orders table
-        $orderData = $request->except('_token', '_method', 'Address');
+        $data = [
+            'name'       => $request->input('name'),
+            'email'      => $request->input('email'),
+            'phones'     => $request->input('phone'),
+            'city'       => $request->input('city'),
+            'country'    => $request->input('country'),
+            'street_address' => $request->input('street_address'),
+            'floor'      => $request->input('floor'),
+            'apartment'  => $request->input('apartment'),
+            'building'   => $request->input('building'),
+        ];    
 
-        $orderData['Name'] = $request->Name;
-        $orderData['Email'] = $request->email;
-        $orderData['Phone'] = $request->Phone;
-        $orderData['Address'] = $request->UserShippingAddress; // Shipping address for the order
-        $orderData['Building'] = $request->Building;
-        $orderData['Floor'] = $request->Floor;
-        $orderData['Apartment'] = $request->Apartment;
-        unset($orderData['UserShippingAddress']);
+        if ($user) {
 
-        ShopOrders::where($identifier)
-                    ->where('CartID', $request->CartID)
-                    ->update($orderData);
-
-        $userData = $request->except('_token', '_method','UserShippingAddress');
-
-        $userData = [
-            'Name' => $request->Name,
-            'Email' => $request->email,
-            'Phone' => $request->Phone,
-            'Address' => $request->Address,
-        ];
-
-        // Update user table
-        User::where('id', $request->UserID)->update($userData);
+            foreach ($data['phones'] as $phone) {
+                UserPhone::updateOrCreate(
+                    ['user_id' => $user->id, 'phone' => $phone],
+                    ['phone'   => $phone]
+                );
+            }
+    
+            UserAddress::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'city'         => $data['city'],
+                    'country'      => $data['country'],
+                    'street_address'=> $data['street_address'],
+                    'floor'         => $data['floor'],
+                    'apartment'     => $data['apartment'],
+                    'building'      => $data['building']
+                ]
+            );
+    
+            $user->update([
+                'name' => $data['name'],
+                'email' => $data['email']
+            ]);
+        }
 
         return $this->success('User data updated successfully' , 200);
     }
@@ -145,20 +106,20 @@ class CheckoutController extends Controller
     public function checkPromoCode(Request $request)
     {
         $request->validate([
-            'promoCode' => 'required|string',
-            'totalPrice' => 'required|numeric',
+            'promotion'    => 'required|string',
+            'total_amount' => 'required|numeric',
         ]);
 
-        $promoCode = $request->promoCode;
-        $totalPrice = $request->totalPrice;
+        $promotion = $request->promotion;
+        $totalPrice = $request->total_amount;
 
-        $promoCodeData = PromoCode::where('Promocode', $promoCode)
-                        ->where('Status', 1)
-                        ->where('EndsIn', '>', Carbon::now())
+        $promotionData = Promotion::where('code', $promotion)
+                        ->where('status', 'active')
+                        ->where('valid_until', '>', Carbon::now())
                         ->first();
 
-        if ($promoCodeData) {
-                $discount = $totalPrice * ($promoCodeData->Save / 100);
+        if ($promotionData) {
+                $discount = $totalPrice * ($promotionData->discount_amount / 100);
                 $total = $totalPrice - $discount ;
                 return $this->data(['discount' => $discount , 'total' => $total] , 'Disscount Applied Successfully' , 200);
         } else {
@@ -174,12 +135,13 @@ class CheckoutController extends Controller
 
         $city = $request->city;
 
-        $cityData = Delivery::where('City', $city)->where('Status' , 1)->first();
+        $cityData = Shipping::where('city_id', $city)->first();
 
         if ($cityData) {
-            return response()->json(['deliveryCost' => $cityData->Fees]);
+            return response()->json(['deliveryCost' => $cityData->shipping_fee]);
         } else {
             return response()->json(['deliveryCost' => 0], 400);
         }
     }
+
 }

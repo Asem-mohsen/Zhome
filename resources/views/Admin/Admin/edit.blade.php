@@ -14,10 +14,10 @@
                 <div class="col-auto my-auto">
                     <div class="h-100">
                     <h5 class="mb-1">
-                        {{$admin->Name}}
+                        {{$user->name}}
                     </h5>
                     <p class="mb-0 font-weight-bold text-sm">
-                        {{$admin->Role}}
+                        {{$user->role->role}}
                     </p>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="container-fluid py-4">
-        <form action="{{ route('Admins.update',$admin->id) }}" method="post">
+        <form action="{{ route('Admins.update',$user->id) }}" method="post">
             @csrf
             @method('PUT')
             <div class="row">
@@ -33,39 +33,39 @@
                     <div class="card">
                         <div class="card-header pb-2">
                             <div class="d-flex align-items-center">
-                                <p class="mb-0">Edit {{$admin->Name}}</p>
+                                <p class="mb-0">Edit {{$user->name}}</p>
                                 <button class="btn btn-primary btn-sm ms-auto m-2">Edit</button>
                             </div>
                         </div>
                         <div class="card-body">
-                            <p class="text-uppercase text-sm">{{$admin->Name}} Information</p>
+                            <p class="text-uppercase text-sm">{{$user->name}} Information</p>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Name</label>
-                                        <input class="form-control" type="text"  name="Name" value="{{$admin->Name}}" required>
+                                        <input class="form-control" type="text"  name="name" value="{{$user->name}}" required>
                                     </div>
-                                    @error('Name')
+                                    @error('name')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Email address</label>
-                                        <input class="form-control" type="email" name="Email" value="{{$admin->email}}" required>
+                                        <input class="form-control" type="email" name="email" value="{{$user->email}}" required>
                                     </div>
-                                    @error('Email')
+                                    @error('email')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-12">
                                     <label for="example-text-input" class="form-control-label">Role</label>
-                                    <select class="form-control" name="RoleID" id="choices-button">
-                                        @foreach ($Roles as $Role)
-                                            <option @selected($Role->ID == $admin->roles->ID) value="{{ $Role->ID }}">{{ $Role->Role }}</option>
+                                    <select class="form-control" name="role_id" id="choices-button">
+                                        @foreach ($roles as $role)
+                                            <option @selected($role->id == $user->role_id) value="{{ $role->id }}">{{ $role->role }}</option>
                                         @endforeach
                                     </select>
-                                    @error('Role')
+                                    @error('role_id')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -76,27 +76,74 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Address</label>
-                                        <input class="form-control" type="text" name="Address" value="{{$admin->Address}}"  required>
+                                        <textarea class="form-control" name="street_address">{{$user->address->street_address}}</textarea>
+                                        @error('street_address')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    @error('Address')
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">Country</label>
+                                        <input class="form-control" type="text" name="country" value="{{$user->address->country}}">
+                                    </div>
+                                    @error('country')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">Phone</label>
-                                        <input class="form-control" type="number" name="Phone" value="{{$admin->Phone}}" required>
+                                        <label for="example-text-input" class="form-control-label">City</label>
+                                        <input class="form-control" name="city" type="text" value="{{$user->address->city}}">
                                     </div>
-                                    @error('Phone')
+                                    @error('city')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">Date Of Birth</label>
-                                        <input class="form-control" type="date" name="DOB"  value="{{$admin->DOB}}" required>
+                                        <label for="example-text-input" class="form-control-label">ZIP-Code</label>
+                                        <input class="form-control" type="text" name="zip_code" value="{{$user->zip_code}}">
                                     </div>
-                                    @error('DOB')
+                                    @error('zip_code')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                @foreach ($user->phones as $phone)
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Phone</label>
+                                            <input class="form-control" type="text" name="phone" value="{{$phone->phone}}">
+                                        </div>
+                                        @error('phone')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                @endforeach
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">Building</label>
+                                        <input class="form-control" type="text" name="building" value="{{$user->address->building}}">
+                                    </div>
+                                    @error('building')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">Floor</label>
+                                        <input class="form-control" type="text" name="floor" value="{{$user->address->floor}}">
+                                    </div>
+                                    @error('floor')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">Apartment</label>
+                                        <input class="form-control" type="text" name="apartment" value="{{$user->address->apartment}}">
+                                    </div>
+                                    @error('apartment')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>

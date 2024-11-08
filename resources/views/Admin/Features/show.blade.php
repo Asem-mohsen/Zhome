@@ -1,5 +1,5 @@
 @extends('Admin.Layout.Master')
-@section('Title' , $feature->Feature)
+@section('Title' , $feature->name)
 
 @section('Content')
 
@@ -14,9 +14,9 @@
                 <div class="card">
                     <div class="d-flex justify-content-center m-2 gap-1">
 
-                        <a href="{{route('Features.edit' , $feature->ID)}}" class="btn btn-success">Edit</a>
+                        <a href="{{route('Features.edit' , $feature->id)}}" class="btn btn-success">Edit</a>
 
-                        <form action="{{route('Features.delete' , $feature->ID)}}" method="post">
+                        <form action="{{route('Features.delete' , $feature->id)}}" method="post">
                             @csrf
                             @method('DELETE')
 
@@ -25,22 +25,23 @@
 
                     </div>
                     <div class="ml-2">
-                        <img src="{{asset("Admin/dist/img/web/Features/{$feature->Image}")}}" height="250px" class="w-100 object-contain mt-5" alt="{{$feature->Feature}}">
+                        <img src="{{ $feature->getFirstImageUrl()}}" height="250px" class="w-100 object-contain mt-5" alt="{{$feature->name}}">
                         <div class="information-collection mt-5">
-                            <h1 class="text-center">{{$feature->Feature . " Feature"}}</span></h1>
-                            <p class="text-center">{{$feature->Description}}</span>
+                            <h1 class="text-center">{{$feature->name . " Feature"}}</span></h1>
+                            <p class="text-center">{{$feature->description}}</span>
                         </div>
                         <h3 class="mt-5">Products having this feature</h3>
                         <div class="mt-4 ml-2">
                             <div id="owl-demo" class="related-product__carousel owl-carousel owl-theme">
                                 
-                                @if ($countProducts > 0)
-                                    @foreach ($products as $product)
+                                    @forelse($feature->products as $product)
+
                                         <x-admin.product-card-admin :variable="$product" :productID="$product->ProductID" />
-                                    @endforeach
-                                @else
-                                    No Prooducts associated to this Feature yet
-                                @endif
+
+                                    @empty
+                                        No Prooducts associated to this Feature yet
+                                        
+                                    @endforelse
                             </div>
                         </div>
                     </div>

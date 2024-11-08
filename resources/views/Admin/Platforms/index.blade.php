@@ -3,46 +3,77 @@
 
 @section('Content')
 
-@include('Admin.Components.Msg')
+    @include('Admin.Components.Msg')
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            {{-- Buttons --}}
-            <div class="btn-group w-fit pb-0 pl-3 pt-3">
-                <a href="{{ route('Platform.create') }}" class="btn btn-primary p-2"><i class="fa-solid fa-plus"></i>Add New Platform</a>
-                <a href="" class="btn btn-secondary p-2"><i class="fa-solid fa-box-archive"></i>Archive</a>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    @foreach ($Platforms as $Platform)
-                        <div class="col-md-4">
-                            <div class="Platform-box d-flex mb-3">
-                                <img src="{{ asset("Admin/dist/img/web/Platforms/{$Platform->Logo}") }}" alt="{{$Platform->Platform}}" class="platform-image">
-                                <div class="position-relative w-100">
-                                    <p class="d-flex align-items-center justify-content-center m-0 platform-title h-100">{{ $Platform->Platform }}</p>
-                                    <div class="overlay position-absolute w-100 h-100">
-                                        <form action="{{ route('Platform.delete' , $Platform->ID )}}" method="post">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    {{-- Buttons --}}
+                    <div class="btn-group w-fit pb-2">
+                        <a href="{{ route('Platform.create') }}" class="btn btn-dark p-2"><i class="fa-solid fa-plus mr-1"></i>Add New Platform</a>
+                    </div>
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Platform</th>
+                                <th>Number of Products</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                $i = 1;
+                            @endphp
+                            @foreach ($platforms as $platform)
+                                <tr>
+                                    <td>
+                                        {{ $i++ }}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div>
+                                                <img src="{{ $platform->getFirstMediaUrl('platform-image')}}" alt="{{$platform->name}}" class="avatar avatar-sm me-3">
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm">{{$platform->name}}</h6>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{$platform->products_count}}</td>
+
+                                    <td class="d-flex justify-content-around gap-1 align-items-baseline">
+                                        <a href="{{ route('Platform.edit' , $platform->id ) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit Brand">
+                                            Check
+                                        </a>
+                                        <form action="{{ route('Platform.delete' , $platform->id )}}" method="post">
                                             @csrf
                                             @method('DELETE')
-                                            <ul class="d-flex list-unstyled p-0 m-0 justify-content-around align-items-baseline platform-list">
-                                                <li>
-                                                    <a href="{{ route('Platform.edit' , $Platform->ID ) }}" class="text-white font-weight-bold">Edit</a>
-                                                </li>
-                                                <li>
-                                                    <button class="border-0 bg-transparent p-0 text-white font-weight-bold">Delete</button>
-                                                </li>
-                                            </ul>
+
+                                            <button class="text-secondary bg-transparent border-0 text-danger font-weight-bold text-xs">Delete</button>
+
                                         </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 @endsection
+
+@section('Js')
+    <!-- Page specific script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+@stop

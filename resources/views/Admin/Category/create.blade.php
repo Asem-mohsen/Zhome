@@ -22,18 +22,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Category-name" class="form-control-label">Category Name -EN-</label>
-                                    <input class="form-control" type="text" id="Category-name" name="Category" required>
+                                    <input class="form-control" type="text" id="Category-name" name="name" value="{{ old('name') }}" required>
                                 </div>
-                                @error('Category')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="ArabicName" class="form-control-label">Category Name -AR-</label>
-                                    <input class="form-control" type="text" id="ArabicName" name="ArabicName" required>
+                                    <input class="form-control" type="text" id="ArabicName" name="ar_name" value="{{ old('ar_name') }}" required>
                                 </div>
-                                @error('ArabicName')
+                                @error('ar_name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -60,41 +60,41 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Description">Description</label>
-                                    <textarea class="form-control" rows="3" name="Description" id="Description" placeholder="Enter ..." ></textarea>
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" rows="3" name="description" id="description" placeholder="Enter ..." >{{ old('description') }}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
-                                @error('Description')
+                                <p class="generate-link" onclick="generateLoremIpsum(400, 'description')">Generate Lorem Ipsum Words</p>
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Main-Description-AR">Description -AR-</label>
-                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ..."></textarea>
+                                    <label for="ar_description">Description -AR-</label>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="ar_description" placeholder="Enter ...">{{ old('ar_description') }}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'Main-Description-AR')">Generate Lorem Ipsum Words</p>
-                                @error('ArabicDescription')
+                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ar_description')">Generate Lorem Ipsum Words</p>
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="OtherDescription">Other Description</label>
-                                    <textarea class="form-control" rows="3" name="OtherDescription" id="OtherDescription" placeholder="Enter ..." ></textarea>
+                                    <label for="additional_description">Other Description</label>
+                                    <textarea class="form-control" rows="3" name="additional_description" id="additional_description" placeholder="Enter ..." >{{ old('additional_description') }}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
-                                @error('OtherDescription')
+                                <p class="generate-link" onclick="generateLoremIpsum(400, 'additional_description')">Generate Lorem Ipsum Words</p>
+                                @error('additional_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="OtherArabicDescription">Other Description -AR-</label>
-                                    <textarea class="form-control" rows="3" name="OtherArabicDescription" id="OtherArabicDescription" placeholder="Enter ..."></textarea>
+                                    <label for="ar_additional_description">Other Description -AR-</label>
+                                    <textarea class="form-control" rows="3" name="ar_additional_description" id="ar_additional_description" placeholder="Enter ...">{{ old('ar_additional_description') }}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'OtherArabicDescription')">Generate Lorem Ipsum Words</p>
-                                @error('OtherArabicDescription')
+                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ar_additional_description')">Generate Lorem Ipsum Words</p>
+                                @error('ar_additional_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>

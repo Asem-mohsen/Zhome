@@ -22,9 +22,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="brand-name" class="form-control-label">Brand Name</label>
-                                    <input class="form-control" type="text" id="brand-name" name="Brand" required>
+                                    <input class="form-control" type="text" id="brand-name" name="name" value="{{ old('name') }}" required>
                                 </div>
-                                @error('Brand')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -52,36 +52,36 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description">Main Description</label>
-                                    <textarea class="form-control" rows="3" name="MainDescription" id="Main-Description" placeholder="Enter ..."></textarea>
+                                    <textarea class="form-control" rows="3" name="description" id="Main-Description" placeholder="Enter ...">{{ old('description') }}</textarea>
                                 </div>
-                                @error('MainDescription')
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Other-Description">Other Description</label>
-                                    <textarea class="form-control" rows="3" name="OtherDescription" id="Other-Description" placeholder="Enter ..."></textarea>
+                                    <textarea class="form-control" rows="3" name="additional_description" id="Other-Description" placeholder="Enter ...">{{ old('additionl_description') }}</textarea>
                                 </div>
-                                @error('OtherDescription')
+                                @error('additional_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description-AR">Main Description -ar-</label>
-                                    <textarea class="form-control" rows="3" name="MainArabic" id="Main-Description-AR" placeholder="Enter ..."></textarea>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="Main-Description-AR" placeholder="Enter ...">{{ old('ar_description') }}</textarea>
                                 </div>
-                                @error('MainArabic')
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Other-Description-AR">Other Description -ar-</label>
-                                    <textarea class="form-control" rows="3" name="OtherArabicDescription" id="Other-Description-AR" placeholder="Enter ..."></textarea>
+                                    <textarea class="form-control" rows="3" name="ar_additional_description" id="Other-Description-AR" placeholder="Enter ...">{{ old('ar_additionl_description') }}</textarea>
                                 </div>
-                                @error('OtherArabicDescription')
+                                @error('ar_additional_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>

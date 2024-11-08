@@ -8,7 +8,7 @@
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
-                <form action="{{ route('Contact.update', $contact->ID) }}" method="POST">
+                <form action="{{ route('Contact.update', $site->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     <div class="card mb-4" style="overflow: hidden; height: auto;">
@@ -33,17 +33,45 @@
                                                 
                                                     <td>Owner</td>
                                                     <td>
-                                                        <input class="form-control" type="text" name="Owner" value="{{$contact->Owner}}" required>
-                                                        @error('Owner')
+                                                        <select name="user_id" class="form-control" required>
+                                                            @foreach($users as $id => $name)
+                                                                <option value="{{ $id }}" {{ $id == $site->owner_id ? 'selected' : '' }}>{{ $name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Site name</td>
+                                                    <td>
+                                                        <input class="form-control" type="number" name="title" value="{{$site->title}}">
+                                                        @error('title')
                                                             <div class="alert alert-danger">{{$message}}</div>
                                                         @enderror
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Number Of Employees</td>
+                                                    <td>tagline</td>
                                                     <td>
-                                                        <input class="form-control" type="number" name="NumberofEmp" value="{{$contact->NumberofEmp}}">
-                                                        @error('NumberofEmp')
+                                                        <input class="form-control" type="number" name="tagline" value="{{$site->tagline}}">
+                                                        @error('tagline')
+                                                            <div class="alert alert-danger">{{$message}}</div>
+                                                        @enderror
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Meta Title</td>
+                                                    <td>
+                                                        <input class="form-control" type="number" name="meta_title" value="{{$site->meta_title}}">
+                                                        @error('meta_title')
+                                                            <div class="alert alert-danger">{{$message}}</div>
+                                                        @enderror
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Meta description</td>
+                                                    <td>
+                                                        <textarea class="form-control" name="meta_description">{{$site->meta_description}}</textarea>
+                                                        @error('meta_description')
                                                             <div class="alert alert-danger">{{$message}}</div>
                                                         @enderror
                                                     </td>
@@ -53,92 +81,52 @@
                                                         Market 
                                                     </td>
                                                     <td>
-                                                        <input class="form-control" type="text" name="Market" value="{{$contact->Market}}" required>
-                                                        @error('Market')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        Second Market 
-                                                    </td>
-                                                    <td>
-                                                        <input class="form-control" type="text" name="Market2" value="{{$contact->Market2}}">
-                                                        @error('Market2')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
+                                                        <div id="market-container">
+                                                            @foreach($site->markets as $index => $market)
+                                                                <div class="market-item">
+                                                                    <input class="form-control" type="text" name="markets[{{ $index }}][market]" value="{{ $market->market }}" required>
+                                                                    <textarea class="form-control" name="markets[{{ $index }}][address]" placeholder="Address">{{ $market->address ?? '' }}</textarea>
+                                                                    @if($index > 0)
+                                                                        <button type="button" class="btn btn-danger remove-market" onclick="removeMarket(this)">Remove</button>
+                                                                    @endif
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary" onclick="addMarket()">Add Market</button>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Phone</td>
                                                     <td>
-                                                        <input class="form-control" type="number" name="Phone" value="{{$contact->Phone}}" required>
-                                                        @error('Phone')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Second Phone</td>
-                                                    <td>
-                                                        <input class="form-control" type="text" name="Phone2" value="{{$contact->Phone2}}">
-                                                        @error('Phone2')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Location</td>
-                                                    <td>
-                                                        <input class="form-control" type="text" name="Location" value="{{$contact->Location}}" required>
-                                                        @error('Location')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Second Location</td>
-                                                    <td>
-                                                        <input class="form-control" type="text" name="Location2" value="{{$contact->Location2}}">
-                                                        @error('Location2')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Address</td>
-                                                    <td>
-                                                        <input class="form-control" type="text" name="Address" value="{{$contact->Address}}" required>
-                                                        @error('Address')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Website Link</td>
-                                                    <td>
-                                                        <input class="form-control" type="url" name="WebsiteLink" value="{{$contact->WebsiteLink}}" required>
-                                                        @error('WebsiteLink')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Other Links</td>
-                                                    <td>
-                                                        <input class="form-control" type="url" name="OtherLinks" value="{{$contact->OtherLinks}}">
-                                                        @error('OtherLinks')
-                                                            <div class="alert alert-danger">{{$message}}</div>
-                                                        @enderror
+                                                        <div id="phone-container">
+                                                            @foreach($site->phones as $index => $phone)
+                                                                <div class="phone-item">
+                                                                    <input class="form-control" type="number" name="phones[{{ $index }}][phone]" value="{{ $phone->phone }}" required>
+                                                                    @if($index > 0)
+                                                                        <button type="button" class="btn btn-danger remove-phone" onclick="removePhone(this)">Remove</button>
+                                                                    @endif
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                        <button type="button" class="btn btn-primary" onclick="addPhone()">Add Phone</button>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Redirecting</td>
                                                     <td>
-                                                        <input type="hidden" name="Redirecting" value="0">
-                                                        <input type="checkbox" name="Redirecting" value="{{$contact->Redirecting}}" @checked($contact->Redirecting == 1) data-bootstrap-switch data-off-color="danger" data-on-color="success">
-                                                        @error('Redirecting')
+                                                        <input type="hidden" name="enable_redirecting" value="0">
+                                                        <input type="checkbox" name="enable_redirecting" value="{{$site->enable_redirecting}}" @checked($site->enable_redirecting == 1) data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                                        @error('enable_redirecting')
+                                                            <div class="alert alert-danger">{{$message}}</div>
+                                                        @enderror
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tracking</td>
+                                                    <td>
+                                                        <input type="hidden" name="enable_tracking" value="0">
+                                                        <input type="checkbox" name="enable_tracking" value="{{$site->enable_tracking}}" @checked($site->enable_tracking == 1) data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                                        @error('enable_tracking')
                                                             <div class="alert alert-danger">{{$message}}</div>
                                                         @enderror
                                                     </td>
@@ -160,8 +148,7 @@
 
     <!-- Bootstap Switch -->
     <script src="{{asset('Admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js')}}"></script>
-
-
+    
     <script>
         $(document).ready(function () {
             $("input[data-bootstrap-switch]").each(function(){
@@ -178,5 +165,66 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        let marketIndex = {{ $site->markets->count() }};
+        let phoneIndex = {{ $site->phones->count() }};
+
+        function addMarket() {
+            const container = document.getElementById('market-container');
+            const marketItem = document.createElement('div');
+            marketItem.className = 'market-item';
+            marketItem.innerHTML = `
+                <input class="form-control" type="text" name="markets[${marketIndex}][market]" required>
+                <textarea class="form-control" name="markets[${marketIndex}][address]" placeholder="Address"></textarea>
+                <button type="button" class="btn btn-danger remove-market" onclick="removeMarket(this)">Remove</button>
+            `;
+            container.appendChild(marketItem);
+            marketIndex++;
+            toggleRemoveButtons();
+        }
+
+        function addPhone() {
+            const container = document.getElementById('phone-container');
+            const phoneItem = document.createElement('div');
+            phoneItem.className = 'phone-item';
+            phoneItem.innerHTML = `
+                <input class="form-control" type="number" name="phones[${phoneIndex}][phone]" required>
+                <button type="button" class="btn btn-danger remove-phone" onclick="removePhone(this)">Remove</button>
+            `;
+            container.appendChild(phoneItem);
+            phoneIndex++;
+            toggleRemoveButtons();
+        }
+
+        function removeMarket(button) {
+            button.parentElement.remove();
+            toggleRemoveButtons();
+        }
+
+        function removePhone(button) {
+            button.parentElement.remove();
+            toggleRemoveButtons();
+        }
+
+        function toggleRemoveButtons() {
+            const marketItems = document.querySelectorAll('.market-item');
+            const phoneItems = document.querySelectorAll('.phone-item');
+
+            // Show or hide the remove button based on the number of items
+            marketItems.forEach((item, index) => {
+                const removeButton = item.querySelector('.remove-market');
+                if (removeButton) removeButton.style.display = marketItems.length > 1 ? 'inline-block' : 'none';
+            });
+
+            phoneItems.forEach((item, index) => {
+                const removeButton = item.querySelector('.remove-phone');
+                if (removeButton) removeButton.style.display = phoneItems.length > 1 ? 'inline-block' : 'none';
+            });
+        }
+
+        // Initial call to set remove button visibility on page load
+        toggleRemoveButtons();
     </script>
 @stop

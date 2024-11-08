@@ -5,7 +5,7 @@
 
 @include('Admin.Components.Msg')
 
-    <form action="{{ route('Category.Subcategory.store' , $category->ID) }}" enctype="multipart/form-data" method="post">
+    <form action="{{ route('Category.Subcategory.store' , $category->id) }}" enctype="multipart/form-data" method="post">
         @csrf
         <div class="row">
             <div class="col-md-12">
@@ -22,18 +22,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Subcategory-name" class="form-control-label">Subcategory Name -EN-</label>
-                                    <input class="form-control" type="text" id="Subcategory-name" name="SubName" required>
+                                    <input class="form-control" type="text" id="Subcategory-name" name="name" value="{{ old('name') }}" required>
                                 </div>
-                                @error('SubName')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="ArabicName" class="form-control-label">Subcategory Name -AR-</label>
-                                    <input class="form-control" type="text" id="ArabicName" name="SubArabicName" required>
+                                    <input class="form-control" type="text" id="ArabicName" name="ar_name" value="{{ old('ar_name') }}" required>
                                 </div>
-                                @error('SubArabicName')
+                                @error('ar_name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -60,21 +60,21 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Description">Description</label>
-                                    <textarea class="form-control" rows="3" name="SubDescription" id="Description" placeholder="Enter ..." ></textarea>
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" rows="3" name="description" id="description" placeholder="Enter ..." >{{ old('description') }}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
-                                @error('SubDescription')
+                                <p class="generate-link" onclick="generateLoremIpsum(40, 'description')">Generate Lorem Ipsum Words</p>
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Main-Description-AR">Description -AR-</label>
-                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ..."></textarea>
+                                    <label for="ar_description">Description -AR-</label>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="ar_description" placeholder="Enter ...">{{ old('ar_description') }}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'Main-Description-AR')">Generate Lorem Ipsum Words</p>
-                                @error('ArabicDescription')
+                                <p class="generate-link" onclick="generateArabicLoremIpsum(40, 'ar_description')">Generate Lorem Ipsum Words</p>
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -89,7 +89,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <a href="{{ route('Category.show', $category->ID ) }}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                    <a href="{{ route('Category.show', $category->id ) }}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
                                 </div>
                             </div>
                         </div>

@@ -1,4 +1,5 @@
 @extends('Admin.Layout.Master')
+
 @section('Title', 'Add New Feature')
 
 @section('Content')
@@ -21,7 +22,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="Feature" class="form-control-label">Feature Name</label>
-                                        <input class="form-control" id="Feature" type="text" name="Feature" required>
+                                        <input class="form-control" id="Feature" type="text" name="name" value="{{old('name')}}" required>
                                     </div>
                                     @error('Feature')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -39,20 +40,20 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="Description"
+                                        <label for="description"
                                             class="form-control-label w-100 text-center">Description</label>
-                                        <textarea class="form-control" id="Description" name="Description" required></textarea>
-                                        @error('Description')
+                                        <textarea class="form-control" id="description" name="description" required>{{old('description')}}</textarea>
+                                        @error('description')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="Description_ar" class="form-control-label w-100 text-center">Arabic
+                                        <label for="ar_description" class="form-control-label w-100 text-center">Arabic
                                             Description</label>
-                                        <textarea class="form-control" id="Description_ar" name="Description_ar" required></textarea>
-                                        @error('Description_ar')
+                                        <textarea class="form-control" id="ar_description" name="ar_description" required>{{old('ar_description')}}</textarea>
+                                        @error('ar_description')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

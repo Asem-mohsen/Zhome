@@ -4,36 +4,47 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ShopOrders;
-use App\Models\Product;
+use App\Models\{Order , Product};
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class InventoryController extends Controller
 {
     public function index(){
         
-        $products      = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
-        $totalProducts = Product::all()->count();
-        $soldOut       = Product::where('Quantity', 0)->count();
-        $aboutToEnd    = Product::where('Quantity', '<=' , 3)->count();
-        $newest        = Product::where('created_at', '>=' , Carbon::now())->count();
+        $products = Product::with(['brand', 'platforms', 'translations'])
+        ->withCount([
+            'users as ordered_by_users_count' => function (Builder $query) {
+                $query->distinct('user_id');
+            },
+        ])
+        ->get();
+
+        $inventoryStats = Product::selectRaw('
+                            COUNT(*) as total_products,
+                            COUNT(CASE WHEN quantity = 0 THEN 1 END) as sold_out,
+                            COUNT(CASE WHEN quantity <= 3 THEN 1 END) as about_to_end,
+                            COUNT(CASE WHEN created_at >= ? THEN 1 END) as newest
+                        ', [Carbon::now()])
+                        ->first();
         
-        // Calculate the number of users who ordered each product
-        $products->each(function ($product) {
-            $product->orderedByUsersCount = $product->orderedByUsers()->distinct('UserID')->count();
-        });
-        return view('Admin.Inventory.index' , compact('products' , 'totalProducts' , 'soldOut' , 'aboutToEnd' , 'newest'));
+        $totalProducts = $inventoryStats->total_products;
+        $soldOut = $inventoryStats->sold_out;
+        $aboutToEnd = $inventoryStats->about_to_end;
+        $newest = $inventoryStats->newest;
+
+        return view('Admin.Inventory.index' , get_defined_vars());
     }
 
     public function update(Request $request)
     {
         $request->validate([
-            'quantityId' => 'required|integer|exists:product,ID',
+            'quantityId' => 'required|integer|exists:products,id',
             'updatedQuantity' => 'required|integer|min:0',
         ]);
 
         $product = Product::findOrFail($request->quantityId);
-        $product->Quantity = $request->updatedQuantity;
+        $product->quantity = $request->updatedQuantity;
         $product->save();
 
         if ($product->save()) {

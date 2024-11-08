@@ -28,22 +28,22 @@
                         @php
                             $i = 1;
                         @endphp
-                        @foreach ($Categories as $Category)
+                        @foreach ($categories as $category)
 
                             <tr>
                                 <td>{{ $i++ }}</td>
-                                <td>{{$Category->Category}}</td>
-                                <td>{{$Category->ArabicName}}</td>
-                                <td>{{$subCounts[$Category->ID] }}</td>
-                                <td class="d-flex justify-content-around align-items-baseline">
-                                    <a href="{{ route('Category.show',$Category->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Check">
+                                <td>{{$category->name}}</td>
+                                <td>{{$category->ar_name}}</td>
+                                <td>{{$category->subcategories_count}}</td>
+                                <td class="d-flex justify-content-around gap-1 align-items-baseline">
+                                    <a href="{{ route('Category.show',$category->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Check">
                                         Check
                                     </a>
-                                    <a href="{{ route('Category.edit',$Category->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                    <a href="{{ route('Category.edit',$category->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
                                         Edit
                                     </a>
-                                    @if($subCounts[$Category->ID] <= 0)
-                                        <form action="{{ route('Category.delete' ,$Category->ID )}}" method="post">
+                                    @if($category->subcategories_count <= 0)
+                                        <form action="{{ route('Category.delete' ,$category->id )}}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <button  class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete">
@@ -51,9 +51,9 @@
                                             </button>
                                         </form>
                                     @else
-                                            <button class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs disabled" data-toggle="tooltip" data-original-title="Delete">
-                                                Delete
-                                            </button>
+                                        <button class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs disabled" data-toggle="tooltip" data-original-title="Delete">
+                                            Delete
+                                        </button>
                                     @endif
                                 </td>
                             </tr>

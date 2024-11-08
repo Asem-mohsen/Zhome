@@ -13,11 +13,11 @@
                     <div class="col-auto my-auto">
                         <div class="h-100">
                             <h5 class="mb-1">
-                                {{ $user->Name }}
+                                {{ $user->name }}
                             </h5>
                             <div class="d-flex align-items-baseline" style="gap:20px;">
                                 <p class="mb-0 font-weight-bold text-sm">
-                                    @if($user->Status == 1)
+                                    @if($user->status == 'active')
                                         <span class="badge badge-success p-2">Active</span>
                                     @else
                                         <span class="badge badge-danger p-2">Disactivated</span>
@@ -72,7 +72,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Name</label>
-                                            <input class="form-control" type="text"  name="Name" value="{{ $user->Name }}" disabled>
+                                            <input class="form-control" type="text"  name="name" value="{{ $user->name }}" disabled>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -83,16 +83,61 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="example-text-input" class="form-control-label">Phone</label>
-                                            <input class="form-control" type="text" name="Phone" value="{{ $user->Phone }}" disabled>
+                                            <label for="example-text-input" class="form-control-label">Country</label>
+                                            <input class="form-control" type="text" value="{{$user->address->country}}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">City</label>
+                                            <input class="form-control" name="city" type="text" value="{{$user->address->city}}">
+                                        </div>
+                                        @error('city')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Address</label>
-                                            <input class="form-control" type="text" name="Address" value="{{ $user->Address }}" disabled>
+                                            <textarea class="form-control" name="address">{{$user->address->street_address}}</textarea>
                                         </div>
                                     </div>
+                                    @foreach ($user->phones as $phone)
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="example-text-input" class="form-control-label">Phone</label>
+                                                <input class="form-control" type="text" name="Phone" value="{{$phone->phone}}">
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Building</label>
+                                            <input class="form-control" type="text" name="building" value="{{$user->address->building}}">
+                                        </div>
+                                        @error('building')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Floor</label>
+                                            <input class="form-control" type="text" name="floor" value="{{$user->address->floor}}">
+                                        </div>
+                                        @error('floor')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="example-text-input" class="form-control-label">Apartment</label>
+                                            <input class="form-control" type="text" name="apartment" value="{{$user->address->apartment}}">
+                                        </div>
+                                        @error('apartment')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
                                 </div>
                                 <hr class="horizontal dark">
                                 <p class="text-uppercase text-sm">Orders</p>
@@ -105,7 +150,7 @@
                                                         <div class="numbers">
                                                             <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Orders</p>
                                                             <h5 class="font-weight-bolder">
-                                                                {{ $orderCount }}
+                                                                {{-- {{ $orderCount }} --}}
                                                             </h5>
                                                             <p class="mb-0">
                                                             <span class="text-success text-sm font-weight-bolder">+55%</span>
@@ -130,7 +175,7 @@
                                                         <div class="numbers">
                                                             <p class="text-sm mb-0 text-uppercase font-weight-bold">User Paid</p>
                                                             <h5 class="font-weight-bolder">
-                                                                ${{ $totalPayments }}
+                                                                {{-- ${{ $totalPayments }} --}}
                                                             </h5>
                                                             <p class="mb-0">
                                                             <span class="text-success text-sm font-weight-bolder">+55%</span>
@@ -154,7 +199,7 @@
                                     <div class="justify-content-center row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                @if($user->Status == 1)
+                                                @if($user->status == 'active')
                                                     <button type="submit" name="Deactivate" class="btn btn-md bg-danger w-100 mt-4 mb-0">Deactivate Account</button>
                                                 @else
                                                     <button type="submit" name="Activate" class="btn btn-md bg-success w-100 mt-4 mb-0">Activate</button>
@@ -186,7 +231,7 @@
                             </div>
                             <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
                                 <div class="d-flex justify-content-center">
-                                    @if($user->Status == 1)
+                                    @if($user->status == 'active')
                                         <span class="badge badge-success p-2">Active</span>
                                     @else
                                         <span class="badge badge-danger p-2">Disactivated</span>
@@ -198,12 +243,12 @@
                                 <div class="col">
                                     <div class="d-flex justify-content-center">
                                         <div class="d-grid text-center">
-                                            <span class="text-lg font-weight-bolder">{{ $orderCount }}</span>
+                                            {{-- <span class="text-lg font-weight-bolder">{{ $orderCount }}</span> --}}
                                             <span class="text-sm opacity-8">Total Orders</span>
                                         </div>
                                         <div class="d-grid text-center mx-4">
                                             <span class="text-lg font-weight-bolder">
-                                                ${{ $totalPayments }}
+                                                {{-- ${{ $totalPayments }} --}}
                                             </span>
                                             <span class="text-sm opacity-8">Total Payments</span>
                                         </div>
@@ -212,13 +257,18 @@
                             </div>
                             <div class="text-center mt-4">
                                 <h5>
-                                {{ $user->Name }}<span class="font-weight-light"></span>
+                                {{ $user->name }}<span class="font-weight-light"></span>
                                 </h5>
                                 <div class="h6 font-weight-300">
-                                <i class="ni location_pin mr-2"></i> {{ $user->Address }}
+                                <i class="ni location_pin mr-2"></i> {{ $user->address->street_address }}
                                 </div>
                                 <div class="h6 mt-4">
-                                <i class="ni business_briefcase-24 mr-2"></i>{{ $user->Phone }}
+                                <i class="ni business_briefcase-24 mr-2"></i>
+                                    @forelse ($user->phones as $index => $phone)
+                                        {{ $phone->phone }}{{ $index < $user->phones->count() - 1 ? ' - ' : '' }}
+                                    @empty
+                                        No data
+                                    @endforelse
                                 </div>
                                 <div>
                                 <i class="ni education_hat mr-2"></i>{{ $user->email }}

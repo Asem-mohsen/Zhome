@@ -11,7 +11,7 @@ class PreventAuthUser
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('web')->check() || Auth::guard('admin')->check()) {
+        if (Auth::guard('web')->check()) {
             return redirect('/');
         }
         return $next($request);

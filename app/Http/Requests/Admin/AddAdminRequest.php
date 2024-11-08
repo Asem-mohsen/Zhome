@@ -14,14 +14,19 @@ class AddAdminRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Name' => ['required', 'max:255'],
-            'email' => ['required', 'max:255', 'unique:admin', 'email:rfc,dns'],
+            'name'     => ['required', 'max:255'],
+            'email'    => ['required', 'max:255', 'unique:users', 'email:rfc,dns'],
             'password' => ['required', 'min:9', 'max:255'],
-            'RoleID' => ['required', 'exists:adminrole,ID'],
-            'Address' => ['required', 'max:255'],
-            'Country' => ['required', 'max:255'],
-            'Phone' => ['required', 'max:11'],
-            'DOB' => ['required', 'date', 'before_or_equal:2018-12-31', 'after_or_equal:1920-01-01'],
+            'role_id'  => ['required', 'exists:roles,id'],
+            'street_address'=> ['required', 'max:255'],
+            'zip_code' => ['nullable', 'max:100'],
+            'country'  => ['required', 'max:255'],
+            'city'     => ['required', 'max:255'],
+            'phone'    => ['required', 'max:15' , 'unique:user_phones'],
+            'phone-2'  => ['nullable', 'max:15', 'unique:user_phones'],
+            'floor'    => ['nullable', 'max:15'],
+            'building' => ['nullable', 'max:15'],
+            'apartment'=> ['nullable', 'max:15'],
         ];
     }
 }

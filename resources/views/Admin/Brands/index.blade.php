@@ -5,42 +5,75 @@
 
 @include('Admin.Components.Msg')
 
-
 <div class="row">
     <div class="col-12">
         <div class="card">
-            {{-- Buttons --}}
-            <div class="btn-group w-fit pb-0 pl-3 pt-3">
-                <a href="{{ route('Brands.create') }}" class="btn btn-primary p-2"><i class="fa-solid fa-plus"></i>Add New Brand</a>
-                <a href="" class="btn btn-secondary p-2"><i class="fa-solid fa-box-archive"></i>Archive</a>
-            </div>
             <div class="card-body">
-                <div class="row">
-                    @foreach ($Brands as $Brand)
-                        <div class="col-md-2">
-                            <div class="Brand-Box position-relative mb-3">
-                                <img src="{{ asset("Admin/dist/img/web/Brands/{$Brand->Logo}") }}" alt="{{$Brand->Brand}}" class="img h-100 w-100">
-                                <div class="overlay position-absolute w-100 h-100">
-                                    <form action="{{ route('Brands.delete' , $Brand->ID )}}" method="post">
+                {{-- Buttons --}}
+                <div class="btn-group w-fit pb-2">
+                    <a href="{{ route('Brands.create') }}" class="btn btn-dark p-2"><i class="fa-solid fa-plus mr-1"></i>Add New Brand</a>
+                </div>
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Brand</th>
+                            <th>Number of Products</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $i = 1;
+                        @endphp
+                        @foreach ($brands as $brand)
+                            <tr>
+                                <td>
+                                    {{ $i++ }}
+                                </td>
+                                <td>
+                                    <div class="d-flex px-2 py-1">
+                                        <div>
+                                            <img src="{{ $brand->getFirstMediaUrl('brand-image')}}" alt="{{$brand->name}}" class="avatar avatar-sm me-3">
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="mb-0 text-sm">{{$brand->name}}</h6>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>{{$brand->products_count}}</td>
+
+                                <td class="d-flex justify-content-around gap-1 align-items-baseline">
+                                    <a href="{{ route('Brands.edit' , $brand->id ) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit Brand">
+                                        Check
+                                    </a>
+                                    <form action="{{ route('Brands.delete' , $brand->id )}}" method="post">
                                         @csrf
                                         @method('DELETE')
-                                        <ul class="d-flex list-unstyled p-0 m-0 justify-content-around align-items-baseline brand-list">
-                                            <li>
-                                                <a href="{{ route('Brands.edit' , $Brand->ID ) }}" class="text-white font-weight-bold">Edit</a>
-                                            </li>
-                                            <li>
-                                                <button class="border-0 bg-transparent p-0 text-white font-weight-bold">Delete</button>
-                                            </li>
-                                        </ul>
+
+                                        <button class="text-secondary bg-transparent border-0 text-danger font-weight-bold text-xs">Delete</button>
+
                                     </form>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
 
 @endsection
+
+@section('Js')
+    <!-- Page specific script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+@stop

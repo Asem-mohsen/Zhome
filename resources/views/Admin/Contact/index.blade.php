@@ -14,7 +14,7 @@
                             <div class="d-flex justify-content-between align-items-center card-header pb-0">
                                 <h6>About Zhome</h6>
                                 <div class="mb-1">
-                                    <a class="btn btn-success" href="{{route('Contact.edit' , $contact->ID)}}"><i class="fas fa-pen"></i>&nbsp;&nbsp;Edit Information</a>
+                                    <a class="btn btn-success" href="{{route('Contact.edit' , $siteSetting->id)}}"><i class="fas fa-pen"></i>&nbsp;&nbsp;Edit Information</a>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -24,57 +24,60 @@
                                             <th scope="col" width="10%">#</th>
                                             <th scope="col" width="20%">Information</th>
                                         </thead>
-                                            <tr>
-                                                <td>Owner</td>
-                                                <td>{{"Mr." . $contact->Owner}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Number Of Employees</td>
-                                                <td>{{$contact->NumberofEmp}}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Markets</td>
-                                                <td>
-                                                    {{$contact->Market}} {{$contact->Market2 ? '- ' . $contact->Market2 : ''  }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Phones</td>
-                                                <td>
-                                                    {{$contact->Phone}} {{$contact->Phone2 ? '- ' . $contact->Phone2 : ''  }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Location</td>
-                                                <td>
-                                                    {{$contact->Location }} {{$contact->Location2 ? '- ' . $contact->Location2 : ''  }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Address</td>
-                                                <td>
-                                                    {{$contact->Address}}
-                                                </td>
-                                            </tr>
+                                        <tr>
+                                            <td>site name</td>
+                                            <td>{{$siteSetting->title}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>tagline</td>
+                                            <td>{{$siteSetting->tagline}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Owner</td>
+                                            <td>{{"Mr." . $siteSetting->user->name}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>meta_title</td>
+                                            <td>{{$siteSetting->meta_title}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Markets</td>
+                                            <td>
+                                                {{ implode(' - ', $siteSetting->markets->pluck('market')->toArray()) }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Phones</td>
+                                            <td>
+                                                {{ implode(' - ', $siteSetting->phones->pluck('phone')->toArray()) }}
+                                            </td>
+                                        </tr>
                                             <tr>
                                                 <td>Website Link</td>
                                                 <td>
-                                                    {{$contact->WebsiteLink}}
+                                                    {{config('app.url')}}
                                                 </td>
                                             </tr>
-                                            @if($contact->OtherLinks)
-                                                <tr>
-                                                    <td>Other Links</td>
-                                                    <td>
-                                                        {{$contact->OtherLinks}}
-                                                    </td>
-                                                </tr>
-                                            @endif
-                                            
+                                            <tr>
+                                                <td>Admin Link</td>
+                                                <td>
+                                                    {{config('app.url')}}
+                                                </td>
+                                            </tr>
                                             <tr>
                                                 <td>Redirecting</td>
                                                 <td>
-                                                    @if($contact->Redirecting == 1)
+                                                    @if($siteSetting->enable_redirecting == 1)
+                                                        <span class='badge bg-warning'>Enabled</span>
+                                                    @else
+                                                        <span class='badge bg-primary'>Disabled</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tracking</td>
+                                                <td>
+                                                    @if($siteSetting->enable_tracking == 1)
                                                         <span class='badge bg-warning'>Enabled</span>
                                                     @else
                                                         <span class='badge bg-primary'>Disabled</span>

@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Traits\ApiResponse;
 use App\Models\User;
-use App\Models\Admin;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,13 +28,10 @@ class AuthenticatedSessionController extends Controller
     {
 
         $request->authenticate();
+        
         $request->session()->regenerate();
 
         if (Auth::guard('web')->check()) {
-            return redirect()->intended(route('index'));
-        }
-
-        if (Auth::guard('admin')->check()) {
             return redirect()->intended(route('Dashboard.index'));
         }
 
@@ -44,9 +40,8 @@ class AuthenticatedSessionController extends Controller
 
     public function destroy(Request $request): RedirectResponse
     {
-        $guard = Auth::guard('admin')->check() ? 'admin' : 'web';
 
-        Auth::guard($guard)->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
@@ -64,22 +59,21 @@ class AuthenticatedSessionController extends Controller
             'password'   => 'required',
             'device_name'=> 'required',
         ]);
-        // $user  = User::where('email' , $request->email)->first();
-        // $admin = Admin::where('email' , $request->email)->first();
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::guard('sanctum')->user();
-            $accessToken = $user->createToken($request->device_name)->plainTextToken;
-            return response(['user' => $user, 'token' => $accessToken]);
-        }
+        $userData  = User::where('email' , $request->email)->first();
 
-        // If user authentication fails, try admin authentication
-        $admin = Admin::where('email', $request->email)->first();
-        if ($admin && Hash::check($request->password, $admin->password)) {
-            // Manually authenticate the admin
-            Auth::guard('admin')->login($admin);
-            $accessToken = $admin->createToken($request->device_name)->plainTextToken;
-            return response(['admin' => $admin, 'token' => $accessToken]);
+        if($userData->is_admin != 1 && $userData->role->role == 'user'){
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+                $user = Auth::guard('sanctum')->user();
+                $accessToken = $user->createToken($request->device_name)->plainTextToken;
+                return response(['user' => $user, 'token' => $accessToken]);
+            }
+        }elseif($userData->is_admin == 1 && $userData->role->role != 'user'){
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+                $user = Auth::guard('sanctum')->user();
+                $accessToken = $user->createToken($request->device_name)->plainTextToken;
+                return response(['admin' => $user, 'token' => $accessToken]);
+            }
         }
 
         // If both checks fail, return an error response

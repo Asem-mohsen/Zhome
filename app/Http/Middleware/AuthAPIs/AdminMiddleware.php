@@ -6,23 +6,21 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Admin;
+use App\Models\User;
 use App\Traits\ApiResponse;
 
 class AdminMiddleware
 {
     use ApiResponse;
-    
+
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::guard('sanctum')->user();
-        
-        // Check if the user is an admin
-        if ($user && Admin::where('email', $user->email)->exists()) {
+
+        if ($user && $user->is_admin == 1 && $user->role->role !== 'user') {
             return $next($request);
         }
-        
-        // If not an admin, return an unauthorized response
+
         return $this->error(['message' => 'Unauthorized'], 403);
     }
 }

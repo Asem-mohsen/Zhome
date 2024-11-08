@@ -6,7 +6,7 @@
 @include('Admin.Components.Msg')
 
 
-    <form action="{{ route('Brands.update', $brand->ID) }}" enctype="multipart/form-data" method="post">
+    <form action="{{ route('Brands.update', $brand->id) }}" enctype="multipart/form-data" method="post">
         @method('PUT')
         @csrf
         <div class="row">
@@ -14,7 +14,8 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <p class="mb-0">Edit {{$brand->Brand}}</p>
+                            <img src="{{ $brand->getFirstMediaUrl('brand-image') }}" class="avatar mr-2" alt="{{ $brand->name }}">
+                            <p class="mb-0">Edit {{$brand->name}}</p>
                             <button class="btn btn-primary btn-sm ms-auto m-2">Edit</button>
                         </div>
                     </div>
@@ -24,9 +25,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="brand-name" class="form-control-label">Brand Name</label>
-                                    <input class="form-control" type="text" id="brand-name" name="Brand" required value="{{$brand->Brand}}">
+                                    <input class="form-control" type="text" id="brand-name" name="name" required value="{{$brand->name}}">
                                 </div>
-                                @error('Brand')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -54,36 +55,36 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description">Main Description</label>
-                                    <textarea class="form-control" rows="3" name="MainDescription" id="Main-Description" placeholder="Enter ..."> {{$brand->MainDescription}}</textarea>
+                                    <textarea class="form-control" rows="3" name="description" id="Main-Description" placeholder="Enter ..."> {{$brand->description}}</textarea>
                                 </div>
-                                @error('MainDescription')
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Other-Description">Other Description</label>
-                                    <textarea class="form-control" rows="3" name="OtherDescription" id="Other-Description" placeholder="Enter ...">{{$brand->OtherDescription}}</textarea>
+                                    <textarea class="form-control" rows="3" name="additional_description" id="Other-Description" placeholder="Enter ...">{{$brand->additional_description}}</textarea>
                                 </div>
-                                @error('OtherDescription')
+                                @error('additionl_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description-AR">Main Description -ar-</label>
-                                    <textarea class="form-control" rows="3" name="MainArabic" id="Main-Description-AR" placeholder="Enter ...">{{$brand->MainArabic}}</textarea>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="Main-Description-AR" placeholder="Enter ...">{{$brand->ar_description}}</textarea>
                                 </div>
-                                @error('MainArabic')
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Other-Description-AR">Other Description -ar-</label>
-                                    <textarea class="form-control" rows="3" name="OtherArabicDescription" id="Other-Description-AR" placeholder="Enter ...">{{$brand->OtherArabicDescription}}</textarea>
+                                    <textarea class="form-control" rows="3" name="ar_additional_description" id="Other-Description-AR" placeholder="Enter ...">{{$brand->ar_additional_description}}</textarea>
                                 </div>
-                                @error('OtherArabicDescription')
+                                @error('ar_additional_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>

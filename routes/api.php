@@ -25,7 +25,7 @@ use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\CheckoutController;
 use App\Http\Controllers\API\ShopController;
-use App\Http\Controllers\API\StripeController;
+use App\Http\Controllers\API\PaymobController;
 use App\Http\Controllers\API\StripeWebhook;
 
 // Authentication
@@ -44,12 +44,13 @@ use Illuminate\Support\Facades\Route;
 // Authentication
 
 
+Route::controller(VerifyEmailController::class)->group(function(){
+    Route::get('/email/verify/{user}' , 'verifyEmailLink')->name('verification.verify');
+    Route::post('/verify-code','verify');
+});
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::controller(VerifyEmailController::class)->group(function(){
-        Route::post('/send-email' ,'send'  );
-        Route::post('/verify-code','verify');
-    });
     Route::prefix('logout')->group(function(){
         Route::controller(LogoutController::class)->group(function(){
             Route::post('/current', 'current');
@@ -77,20 +78,19 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
     Route::prefix('admins')->group(function(){
         Route::controller(AdminController::class)->group(function(){
             Route::get('/', 'index');
-            Route::get('/{admin}/edit', 'edit');
-            Route::get('/{admin}/profile', 'profile');
+            Route::get('/{user}/edit', 'edit');
+            Route::get('/{user}/profile', 'profile');
             Route::get('/create', 'create');
             Route::post('/store', 'store');
-            Route::put('/{admin}/update', 'update');
-            Route::delete('/{admin}/delete', 'destroy');
+            Route::put('/{user}/update', 'update');
+            Route::delete('/{user}/delete', 'destroy');
         });
     });
 
     Route::prefix('products')->group(function(){
         Route::controller(ProductsController::class)->group(function(){
-            Route::get('/create', 'create');
             Route::get('/{product}/edit', 'edit');
-            Route::get('/{product}/show', 'show');
+            Route::get('/create', 'create');
             Route::post('/store', 'store');
             Route::put('/{product}/update', 'update');
             Route::delete('/{product}/delete', 'destroy');
@@ -169,8 +169,8 @@ Route::middleware(['auth:sanctum' , 'admin'])->group(function () {
 
     Route::prefix('contact')->group(function(){ //Zhome Contact
         Route::controller(ContactController::class)->group(function(){
-            Route::get('/{contact}/edit', 'edit');
-            Route::put('/{contact}/update', 'update');
+            Route::get('/{site}/edit', 'edit');
+            Route::put('/{site}/update', 'update');
         });
     });
 
@@ -256,6 +256,7 @@ Route::controller(HomeController::class)->group(function(){
 Route::prefix('contact')->group(function(){
     Route::controller(ContactController::class)->group(function(){
         Route::get('/', 'index');
+        Route::post('/contact-us', 'sendContactUsEmail');
     });
 });
 
@@ -265,11 +266,8 @@ Route::prefix('contact')->group(function(){
 Route::prefix('shop')->group(function(){
     Route::controller(ShopController::class)->group(function(){
         Route::get('/', 'index');
+        Route::get('/nav-data', 'navData');
         Route::get('/shop', 'filterIndex');
-        Route::get('/shop/category/{id}', 'categoryFilter');
-        Route::get('/shop/subcategory/{id}', 'subcategoryFilter');
-        Route::get('/shop/brand/{id}', 'brandFilter');
-        Route::get('/shop/platform/{id}', 'platformFilter');
     });
 });
 
@@ -286,7 +284,8 @@ Route::prefix('tools')->group(function(){
 Route::prefix('products')->group(function(){
     Route::controller(ProductsController::class)->group(function(){
         Route::get('/products', 'index');
-        Route::get('/{product}/userView', 'userShow');
+        Route::get('/{product}/show', 'show');
+        Route::get('/product-card', 'productCards');
     });
 });
 
@@ -296,9 +295,9 @@ Route::prefix('cart')->group(function(){
         Route::get('/', 'index');
         Route::post('/add', 'addToCart');
         Route::get('/count', 'getCartCount');
-        Route::post('/update', 'updateCart');  //checkout update
+        // Route::post('/update', 'updateCart');  //checkout update
         Route::post('/updateQuantity', 'updateCartQuantity');  //update cart quantity
-        Route::post('/update-Installtion', 'toggleInstallation');  //update cart installtion price
+        Route::post('/update-Installtion', 'updateCartQuantity');  //update cart installtion price
         Route::delete('/remove/{productId}','removeFromCart');
         Route::delete('/clearCart','clearCart');
     });
@@ -315,8 +314,8 @@ Route::prefix('services')->group(function(){
 // Categories Page
 Route::prefix('category')->group(function(){
     Route::controller(CategoriesController::class)->group(function(){
-        Route::get('/user/categories', 'userIndex');
         Route::get('/{category}/show', 'show');
+        Route::get('/categories', 'index');
     });
 });
 
@@ -324,8 +323,6 @@ Route::prefix('category')->group(function(){
 Route::prefix('brands')->group(function(){
     Route::controller(BrandsController::class)->group(function(){
         Route::get('/', 'index');
-        Route::get('/userShow', 'userIndex');
-        Route::get('/{brand}/brand', 'show');
     });
 });
 
@@ -333,8 +330,6 @@ Route::prefix('brands')->group(function(){
 Route::prefix('platforms')->group(function(){
     Route::controller(PlatformsController::class)->group(function(){
         Route::get('/', 'index');
-        Route::get('/userShow', 'userIndex');
-        Route::get('/{platform}/platform', 'show');
     });
 });
 
@@ -342,7 +337,6 @@ Route::prefix('platforms')->group(function(){
 Route::prefix('checkout')->group(function(){
     Route::controller(CheckoutController::class)->group(function(){
         Route::get('/', 'index');
-
         Route::post('/get-delivery-cost', 'getDeliveryCost');
     });
 });
@@ -375,7 +369,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('payment')->group(function(){
-        Route::controller(StripeController::class)->group(function(){
+        Route::controller(PaymobController::class)->group(function(){
             Route::post('/create-payment','createCheckoutSession');
             Route::post('/cash-payment','cashPayment');
             Route::get('/success','success');

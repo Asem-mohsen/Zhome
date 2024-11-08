@@ -10,7 +10,7 @@
                 <div class="col-auto my-auto">
                     <div class="h-100">
                         <h5 class="mb-1">
-                            {{ $Role->Role }}
+                            {{ $role->role }}
                         </h5>
                         <p class="mb-0 font-weight-bold text-sm">
                             @if ($adminCount > 0)
@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="container-fluid py-4">
-        <form action="{{ route('Roles.update', $Role->ID) }}" method="post">
+        <form action="{{ route('Roles.update', $role->id) }}" method="post">
             @csrf
             @method('PUT')
             <div class="row">
@@ -42,11 +42,11 @@
                                 <div class="col-md-12">
                                     <label for="example-text-input" class="form-control-label">Role Name</label>
                                     <input class="form-control" type="text" name="Name" required
-                                        value="{{ $Role->Role }}">
+                                        value="{{ $role->role }}">
                                 </div>
                             </div>
 
-                            <p class="text-uppercase text-sm mt-5 "> {{ $Role->Role }} Department Users</p>
+                            <p class="text-uppercase text-sm mt-5 "> {{ $role->role }} Department Users</p>
                             <div class="row">
                                 <div class="col-md-12">
                                     <ul
@@ -56,15 +56,14 @@
                                                 <a href="{{ route('Admins.profile', $admin->id) }}" target="_blank"
                                                     data-original-title="Visit Profile"
                                                     style="display: block;width: fit-content;">
-                                                    <li
-                                                        style="padding: 10px;width: max-content;border: 1px solid #eee;border-radius: 18px;margin-bottom: 20px;min-width: 239px;">
+                                                    <li class="p-3 mb-4" style="width: max-content;border: 1px solid #eee;border-radius: 18px;min-width: 239px;">
                                                         <div class="d-flex px-2 py-1">
                                                             <div>
                                                                 <img src="{{ asset('Admin/dist/img/user2-160x160.jpg') }}"
                                                                     class="avatar avatar-sm me-3" alt="user1">
                                                             </div>
                                                             <div class="d-flex flex-column justify-content-center">
-                                                                <h6 class="mb-0 text-sm">{{ $admin->Name }}</h6>
+                                                                <h6 class="mb-0 text-sm">{{ $admin->name }}</h6>
                                                                 <p class="text-xs text-secondary mb-0">{{ $admin->email }}
                                                                 </p>
                                                             </div>

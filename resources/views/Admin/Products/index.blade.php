@@ -11,8 +11,8 @@
             <div class="card-body">
                 {{-- Buttons --}}
                 <div class="btn-group w-fit pb-2">
-                    <a href="{{ route('Products.create') }}" class="btn btn-primary p-2"><i class="fa-solid fa-plus"></i>Add Product</a>
-                    <a href="" class="btn btn-secondary p-2"><i class="fa-solid fa-box-archive"></i>Archive All Products</a>
+                    <a href="{{ route('Products.create') }}" class="btn btn-primary p-2"><i class="fa-solid fa-plus mr-1"></i>Add Product</a>
+                    <a href="" class="btn btn-secondary p-2"><i class="fa-solid fa-box-archive mr-1"></i>Archive All Products</a>
                 </div>
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
@@ -41,22 +41,22 @@
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
-                                            <img src="{{ asset("Admin/dist/img/web/Products/MainImage/{$product->MainImage}") }}" class="avatar avatar-sm me-3" alt="{{$product->Name}}">
+                                            <img src="{{ $product->getFirstMediaUrl('product-image') }}" class="avatar avatar-sm me-3" alt="{{$product->translations->name}}">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
-                                            <h5 class="mb-0 text-sm">{{$product->Name}}</h5>
-                                            <h6 class="mb-0 text-sm">{{$product->ArabicName ?$product->ArabicName : "بعيب" }}</h6>
+                                            <h5 class="mb-0 text-sm">{{$product->translations->name}}</h5>
+                                            <h6 class="mb-0 text-sm">{{$product->translations->ar_name ? $product->translations->ar_name : "غير معرف" }}</h6>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{ $product->brand->Brand }}</td>
+                                <td>{{ $product->brand->name }}</td>
                                 <td>
                                     <div class="Platform-index">
                                         @foreach($product->platforms as $platform)
-                                            <a href="{{route('Platform.edit' , $platform->ID )}}">
+                                            <a href="{{route('Platform.edit' , $platform->id )}}">
                                                 <div class="platform">
-                                                    <img src="{{ asset("Admin/dist/img/web/Platforms/{$platform->Logo}") }}" alt="{{$platform->Platform}}">
-                                                    <p>{{$platform->Platform}}</p>
+                                                    <img src="{{ $platform->getFirstMediaUrl('platform-image') }}" alt="{{$platform->name}}">
+                                                    <p>{{$platform->name}}</p>
                                                 </div>
                                             </a>
                                         @endforeach
@@ -64,33 +64,33 @@
                                 </td>
                                 <td>
                                     <div class="d-flex flex-column justify-content-center text-center px-2 py-1">
-                                        <h6>{{$product->subcategory->category->Category}}</h6>
-                                        <p class="text-sm">{{$product->subcategory->SubName}}</p>
+                                        <h6>{{$product->subcategory->category->name}}</h6>
+                                        <p class="text-sm">{{$product->subcategory->name}}</p>
                                     </div>
                                     
                                 </td>
                                 <td>
-                                    @if($product->Quantity > 0)
-                                        {{$product->Quantity}}
+                                    @if($product->quantity > 0)
+                                        {{$product->quantity}}
                                     @else
                                         <span class="badge badge-danger">Sold Out</span>
                                     @endif
                                 </td>
                                 
                                 <td>
-                                    {{$product->Price}}
+                                    {{$product->price . " EGP"}}
                                 </td>
-                                <td class="d-flex justify-content-around align-items-baseline">
-                                    <a href="{{ route('Products.show',$product->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
+                                <td class="d-flex justify-content-around gap-1 align-items-baseline">
+                                    <a href="{{ route('Products.show',$product->id) }}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
                                         Check
                                     </a>
-                                    <a href="{{ route('Products.edit',$product->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                    <a href="{{ route('Products.edit',$product->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
                                         Edit
                                     </a>
-                                    <form action="{{ route('Products.delete' ,$product->ID )}}" method="post">
+                                    <form action="{{ route('Products.delete' ,$product->id )}}" method="post">
                                         @csrf
                                         @method('DELETE')
-                                        <button  class="border-0 bg-transparent p-0 text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete">
+                                        <button  class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete">
                                             Delete
                                         </button>
                                     </form>

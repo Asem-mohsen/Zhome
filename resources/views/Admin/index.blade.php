@@ -1,7 +1,6 @@
 @extends('Admin.Layout.Master')
+
 @section('Title' , 'Dashboard')
-
-
 
 @section('Content')
     <div class="row">

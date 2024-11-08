@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Subscribers;
-
+use App\Models\Subscription;
 
 class SubscribersController extends Controller
 {
-    public function index(){
+    public function index()
+    {
+        $subscribers = Subscription::all();
 
-        $subscribers = Subscribers::all();
         return view('Admin.Subscribers.index' , compact('subscribers'));
-
     }
 
     public function newSubscriber(Request $request)
@@ -25,7 +24,7 @@ class SubscribersController extends Controller
         $data = $request->only('email');
 
         try {
-            Subscribers::create($data);
+            Subscription::create($data);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false]);

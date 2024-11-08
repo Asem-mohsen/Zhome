@@ -43,9 +43,9 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Role Name</label>
-                                        <input class="form-control" type="text" name="Name" required>
+                                        <input class="form-control" type="text" name="role" required>
                                     </div>
-                                    @error('Name')
+                                    @error('role')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>

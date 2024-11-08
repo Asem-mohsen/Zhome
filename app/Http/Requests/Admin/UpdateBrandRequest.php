@@ -13,9 +13,9 @@ class UpdateBrandRequest extends FormRequest
 
     public function __construct(Request $request)
     {
-        $this->id = (integer) $request->route()->brand->ID;
+        $this->id = (integer) $request->route()->brand->id;
     }
-    
+
     public function authorize(): bool
     {
         return true;
@@ -24,12 +24,12 @@ class UpdateBrandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Brand' => ['required', 'max:255',  Rule::unique('brands', 'Brand')->ignore($this->id)],
-            'image' => ['nullable','max:2048'],
-            'MainDescription' => ['required', 'max:1000'],
-            'OtherDescription' => ['max:1000' ,'nullable'],
-            'MainArabic' => ['required', 'max:1000'],
-            'OtherArabicDescription' => ['max:1000' , 'nullable']
+            'name'                      => ['required', 'max:255',  Rule::unique('brands', 'name')->ignore($this->id)],
+            'description'               => ['required', 'max:1000'],
+            'additional_description'    => ['max:1000', 'nullable'],
+            'ar_description'            => ['required', 'max:2000'],
+            'ar_additional_description' => ['max:1000', 'nullable'],
+            // 'image'                     => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp' , 'max:2048'],
         ];
     }
 }

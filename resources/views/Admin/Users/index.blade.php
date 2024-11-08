@@ -23,7 +23,7 @@
                         @php
                             $i = 1;
                         @endphp
-                        @foreach ($Users as $User)
+                        @foreach ($users as $user)
                             <tr>
                                 <td>
                                     {{ $i++ }}
@@ -31,19 +31,27 @@
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
-                                            <img src="{{ asset('Admin/dist/img/avatar.png') }}" class="avatar avatar-sm me-3" alt="user1">
+                                            <img src="{{ asset('Admin/dist/img/avatar.png') }}" class="avatar avatar-sm me-3" alt="{{$user->name}}">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0 text-sm">{{$User->Name}}</h6>
+                                            <h6 class="mb-0 text-sm">{{$user->name}}</h6>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{$User->email}}</td>
-                                <td>{{$User->Phone}}</td>
-                                <td>{{$User->Address}}</td>
-                                <td>{{$User->created_at}}</td>
+                                <td>{{$user->email}}</td>
                                 <td>
-                                    <a href="{{ Route('Users.profile',$User->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
+                                    @forelse ($user->phones as $index => $phone)
+                                        {{ $phone->phone }}{{ $index < $user->phones->count() - 1 ? ' - ' : '' }}
+                                    @empty
+                                        No data
+                                    @endforelse
+                                </td>
+                                <td>
+                                    {{\Illuminate\Support\Str::limit($user->address->street_address, 25) }}
+                                </td>
+                                <td>{{ $user->created_at->format('d F Y') }}</td>
+                                <td>
+                                    <a href="{{ Route('Users.profile',$user->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
                                         Check
                                     </a>
                                 </td>

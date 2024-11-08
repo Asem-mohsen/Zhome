@@ -13,7 +13,7 @@ class UpdatePlatfromRequest extends FormRequest
 
     public function __construct(Request $request)
     {
-        $this->id = (integer) $request->route()->platform->ID;
+        $this->id = (integer) $request->route()->platform->id;
     }
 
     public function authorize(): bool
@@ -24,13 +24,11 @@ class UpdatePlatfromRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Name' => ['required', 'max:255', Rule::unique('platform', 'Platform')->ignore($this->id)],
-            'image'=> ['nullable','max:2048'],
-            'VideoURL'=>['nullable', 'url'],
-            'MainDescription' => ['required', 'max:1000'],
-            'ArabicDescription' => ['max:1000' ,'required'],
-            'Question' => ['max:2000' ,'nullable'],
-            'Answer' => ['max:2000' ,'nullable'],
+            'name'           => ['required', 'max:255'],
+            'image'          => ['required' ],
+            'video_url'      => ['required', 'url'],
+            'description'    => ['required', 'max:1000'],
+            'ar_description' => ['max:1000' ,'required'],
         ];
     }
 }

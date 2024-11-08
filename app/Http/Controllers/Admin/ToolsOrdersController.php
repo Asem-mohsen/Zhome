@@ -4,28 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\ToolsOrders;
-use App\Models\ToolsCategories;
+use App\Models\{User ,Tool, ToolOrder };
 
 
 class ToolsOrdersController extends Controller
 {
-    public function index(){
-        $orders = ToolsOrders::with(['user'])->get();
+    public function index()
+    {
+        $orders = ToolOrder::with(['user'])->get();
 
         return view('Admin.Orders.Tools.index' , compact('orders'));
     }
 
-    public function show(ToolsOrders $toolsorders){
-        $order = $toolsorders::with(['user' ,'toolsCategories'])->first();
+    public function show(ToolOrder $toolsorder)
+    {
+        $order = $toolsorders->load(['user' ,'toolsCategories']);
 
         return view('Admin.Orders.Tools.show' , compact('order'));
     }
 
-    public function destroy(ToolsOrders $toolsorders){
-        ToolsCategories::where('ToolOrderID' , $toolsorders->ID)->delete();
-        $toolsorders::where('ID' , $toolsorders->ID)->delete();
+    public function destroy(ToolsOrder $toolsorder)
+    {
+        $toolsorder->delete();
 
         return redirect()->route('Orders.ToolsOrders.index')->with('success', 'Tools Order Deleted Successfully');
     }

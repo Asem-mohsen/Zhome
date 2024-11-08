@@ -15,9 +15,10 @@ class AddPromocodeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Promocode'   =>['required','max:255','unique:promocode,Promocode,except,ID'],
-            'Save'        =>['numeric' , 'required'],
-            'AvailableFor'=>['integer' , 'required'],
+            'code'            => ['required', 'max:255' ,'unique:promotions,code'],
+            'discount_amount' => ['numeric' , 'required'],
+            'valid_from'      => ['date' , 'required'],
+            'valid_until'     => ['date' , 'required'],
         ];
     }
 }

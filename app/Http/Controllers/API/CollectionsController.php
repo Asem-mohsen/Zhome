@@ -20,17 +20,9 @@ class CollectionsController extends Controller
 
     public function index()
     {
-        $collections = Collections::all();
+        $collections = Collection::withCount('products')->get();
 
-        $collectionsWithNumberOfProducts = [];
-
-        foreach($collections as $collection){
-            $countUsed = ProductCollections::where('CollectionID',$collection->ID)->count();
-            $collection->countUsed = $countUsed;
-            $collectionsWithNumberOfProducts[] = $collection;
-        }
-
-        return $this->data($collectionsWithNumberOfProducts, 'Collection retrieved successfully');
+        return $this->data($collections->toArray(), 'Collection retrieved successfully');
     }
 
     public function create()
@@ -38,7 +30,6 @@ class CollectionsController extends Controller
         $products = Product::all();
 
         return $this->data($products->toArray(), 'Products retrieved successfully');
-
     }
 
     public function store(AddCollectionRequest $request)

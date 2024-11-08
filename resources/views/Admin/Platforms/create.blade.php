@@ -23,18 +23,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Platform-name" class="form-control-label">Platform Name</label>
-                                    <input class="form-control" type="text" id="Platform-name" name="Name" required>
+                                    <input class="form-control" type="text" id="Platform-name" name="name" value="{{ old('name') }}" required>
                                 </div>
-                                @error('Name')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="VideoURL" class="form-control-label">Video URL</label>
-                                    <input class="form-control" type="text" id="VideoURL" name="VideoURL" required>
+                                    <input class="form-control" type="text" id="VideoURL" name="video_url" value="{{ old('video_url') }}" required>
                                 </div>
-                                @error('VideoURL')
+                                @error('video_url')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -63,18 +63,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description">Main Description</label>
-                                    <textarea class="form-control" rows="3" name="MainDescription" id="Main-Description" placeholder="Enter ..."></textarea>
+                                    <textarea class="form-control" rows="3" name="description" id="Main-Description" placeholder="Enter ...">{{ old('description') }}</textarea>
                                 </div>
-                                @error('MainDescription')
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description-AR">Main Description -ar-</label>
-                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ..."></textarea>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="Main-Description-AR" placeholder="Enter ...">{{ old('description') }}</textarea>
                                 </div>
-                                @error('ArabicDescription')
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -82,26 +82,25 @@
 
                         <p class="text-uppercase text-sm">Platform FAQ</p>
                         <hr class="horizontal dark">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="Question">Question</label>
-                                    <textarea class="form-control" rows="3" name="Question" id="Question" placeholder="Enter ..."></textarea>
+                        <div id="faq-section">
+                            <div class="faq-item">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="Question">Question</label>
+                                            <textarea class="form-control" rows="3" name="question[]" id="Question" placeholder="Enter ...">{{ old('question') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="Answer">Answer</label>
+                                            <textarea class="form-control" rows="3" name="answer[]" id="Answer" placeholder="Enter ...">{{ old('answer') }}</textarea>
+                                        </div>
+                                    </div>
                                 </div>
-                                @error('Question')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="Answer">Answer</label>
-                                    <textarea class="form-control" rows="3" name="Answer" id="Answer" placeholder="Enter ..."></textarea>
-                                </div>
-                                @error('Answer')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
+                        <button type="button" id="add-faq-btn" class="btn btn-primary">Add Another FAQ</button>
 
                         <p class="text-uppercase text-sm">Control</p>
                         <div class="justify-content-center row">
@@ -129,6 +128,28 @@
     <script>
         $(function() {
             bsCustomFileInput.init();
+        });
+    </script>
+
+    <script>
+        document.getElementById('add-faq-btn').addEventListener('click', function() {
+            const faqSection = document.getElementById('faq-section');
+            const newFaqItem = document.createElement('div');
+            newFaqItem.classList.add('faq-item');
+            newFaqItem.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Question</label>
+                        <textarea class="form-control" rows="3" name="question[]" placeholder="Enter question"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Answer</label>
+                        <textarea class="form-control" rows="3" name="answer[]" placeholder="Enter answer"></textarea>
+                    </div>
+                </div>
+                <hr>
+            `;
+            faqSection.appendChild(newFaqItem);
         });
     </script>
 @stop

@@ -23,10 +23,9 @@
                                         <th>#</th>
                                         <th>Code</th>
                                         <th>Save</th>
-                                        <th>Added In</thps-2>
-                                        <th>Available for</th>
+                                        <th>Valid From</th>
+                                        <th>Valid Until</th>
                                         <th>Status</th>
-                                        <th>Ends In</th>
                                         <th>Users Used It</th>
                                         <th>Action</th>
                                     </tr>
@@ -35,49 +34,41 @@
                                     @php
                                         $i = 1;
                                     @endphp
-                                    @foreach($promocodesWithUsage as $promocode)
-                                            {{-- // Change into Disabled  --}}
-                                            {{-- if($TodaysDate >= $Code['EndsIn']){
-                                                $CodeID = $Code['ID'];
-                                                $UpdateStatus = mysqli_query($con, "UPDATE promocode SET Status = 0 WHERE ID = $CodeID");
-                                            }
-                                        ?> --}}
-                                        <tr id="row-{{$promocode->ID}}">
+                                    @foreach($promotions as $promotion)
+
+                                        <tr id="row-{{$promotion->id}}">
                                             <td>
                                                 <p class="text-xs font-weight-bold mb-0">{{$i++}}</p>
                                             </td>
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{$promocode->Promocode}}</h6>
+                                                        <h6 class="mb-0 text-sm">{{$promotion->code}}</h6>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <p class="text-xs font-weight-bold mb-0">{{$promocode->Save . "%"}}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{$promotion->discount_amount . "%"}}</p>
                                             </td>
                                             <td>
-                                                <p class="text-xs font-weight-bold mb-0">{{ date('Md,Y' , strtotime($promocode->created_at)) }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ date('Md,Y' , strtotime($promotion->valid_from)) }}</p>
                                             </td>
                                             <td>
-                                                <span class="text-secondary text-xs font-weight-bold">{{ $promocode->AvailableFor . " Days"}}</span>
+                                                <span class="text-secondary text-xs font-weight-bold">{{ date('Md,Y' , strtotime($promotion->valid_until)) }}</span>
                                             </td>
                                             <td>
-                                                @if($promocode->Status == 1 )
+                                                @if($promotion->status == 'active' )
                                                     <span class="badge badge-sm bg-success">Working</span>
                                                 @else
                                                     <span class="badge badge-sm bg-danger">Disabled</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                <span class="text-secondary text-xs font-weight-bold">{{date('Md,Y' , strtotime($promocode->EndsIn))}}</span>
+                                                <span class="text-secondary text-xs font-weight-bold">{{$promotion->orders_count }}</span>
                                             </td>
-                                            <td>
-                                                <span class="text-secondary text-xs font-weight-bold">{{$promocode->countUsed }}</span>
-                                            </td>
-                                            <td class="d-flex justify-content-around align-items-baseline">
-                                                <a href="{{route('Sales.Promocode.edit' , $promocode->ID)}}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">Edit</a>
-                                                <form action="{{route('Sales.Promocode.delete' , $promocode->ID)}}" method="post">
+                                            <td class="d-flex justify-content-around gap-1 align-items-baseline">
+                                                <a href="{{route('Sales.Promocode.edit' , $promotion->id)}}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">Edit</a>
+                                                <form action="{{route('Sales.Promocode.delete' , $promotion->id)}}" method="post">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs">Remove</button>

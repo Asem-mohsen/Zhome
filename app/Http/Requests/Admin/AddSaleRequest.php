@@ -16,11 +16,10 @@ class AddSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ProductID'  => ['required','exists:product,ID'],
-            'EndDate'    => ['required','date','after:StartDate'],
-            'Amount'     => ['required','numeric'],
-            'PriceBefore'=> ['numeric'],
-            'PriceAfter' => ['numeric'],
+            'product_id' => ['required','exists:products,id'],
+            'end_date'   => ['required','date','after:start_date'],
+            'start_date' =>  ['required','date'],
+            'sale_price' => ['required','numeric'],
         ];
     }
 }

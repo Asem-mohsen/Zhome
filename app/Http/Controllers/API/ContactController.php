@@ -4,10 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Contact;
+use App\Models\SiteSetting;
 use App\Http\Requests\Admin\UpdateContactRequest;
 use App\Http\Requests\User\AddNewContactRequest;
 use App\Traits\ApiResponse;
+use App\Events\ContactUsEvent;
 
 class ContactController extends Controller
 {
@@ -15,39 +16,53 @@ class ContactController extends Controller
 
     public function index()
     {
-        
-        $contact = Contact::all()->first();
-        
-        return $this->data($contact->toArray(), 'contact retrieved successfully');
+        $site = SiteSetting::with(['phones' , 'markets'])->first();
 
+        return $this->data(compact('site'), 'Site data retrieved successfully');
     }
 
-    public function edit(Contact $contact)
+    public function edit(SiteSetting $site)
     {
-        
-        $contact = Contact::all()->first();
-        
-        return $this->data($contact->toArray(), 'contact retrieved successfully');
-
+        return $this->data($site->toArray(), 'Site data retrieved successfully');
     }
 
-    public function update(UpdateContactRequest $request ,Contact $contact)
+    public function update(UpdateContactRequest $request ,SiteSetting $site)
     {
 
         $data = $request->except('_method', '_token');
 
-        $contact::where('ID', $contact->ID)->update($data);
-        
-        return $this->success('Contact Updated successfully');
+        $site->update($data);
+
+        return $this->success('Site Settings data Updated successfully');
 
     }
 
     public function contact()
     {
-        $contact = Contact::all()->first();
+        $site = SiteSetting::first();
 
-        return $this->data($contact->toArray(), 'contact retrieved successfully');
+        return $this->data($site->toArray(), 'Site retrieved successfully');
 
     }
 
+    public function sendContactUsEmail(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        // Extract validated data
+        $userName = $validatedData['name'];
+        $userEmail = $validatedData['email'];
+        $subject = $validatedData['subject'];
+        $messageContent = $validatedData['message'];
+
+        // Dispatch the event
+        event(new ContactUsEvent($userName, $userEmail, $subject, $messageContent));
+
+        return response()->json(['message' => 'Your message has been sent successfully.']);
+    }
 }

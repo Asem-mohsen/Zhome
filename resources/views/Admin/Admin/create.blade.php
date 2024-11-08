@@ -11,16 +11,9 @@
                         <img src="{{ asset('Admin/dist/img/user2-160x160.jpg') }}" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
                     </div>
                 </div>
-                <div class="col-auto my-auto">
-                    <div class="h-100">
-                    <h5 class="mb-1">
-                        {{ 'Current Admin Name' }}
-                    </h5>
-                    <p class="mb-0 font-weight-bold text-sm">
-                        {{ 'Current Admin Role' }}
-                    </p>
-                    </div>
-                </div>
+
+                <x-authenticated-user-info />
+
                 <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3">
                     <div class="nav-wrapper position-relative end-0">
                     <ul class="nav nav-pills nav-fill p-1" role="tablist">
@@ -31,13 +24,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center " href="./Admin.php" data-bs-toggle="tab"  role="tab" aria-selected="false">
+                            <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center " href="{{route('Admins.index')}}" data-bs-toggle="tab"  role="tab" aria-selected="false">
                                 <i class="ni ni-app"></i>
                                 <span class="ms-2">All Admins</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center " href="./Profile.php" data-bs-toggle="tab"  role="tab" aria-selected="false">
+                            <a class="nav-link mb-0 px-0 py-1 d-flex align-items-center justify-content-center " href="{{route('Admins.profile' , auth()->user()->id)}}" data-bs-toggle="tab"  role="tab" aria-selected="false">
                                 <i class="ni ni-single-02"></i>
                                 <span class="ms-2">Profile</span>
                             </a>
@@ -49,7 +42,7 @@
         </div>
     </div>
     <div class="container-fluid py-4">
-        <form action="{{ Route('Admins.store') }}" method="post">
+        <form action="{{ route('Admins.store') }}" method="post">
             @csrf
             <div class="row">
                 <div class="col-md-12">
@@ -66,9 +59,9 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Name</label>
-                                        <input class="form-control" type="text"  name="Name" required>
+                                        <input class="form-control" type="text"  name="name" required>
                                     </div>
-                                    @error('Name')
+                                    @error('name')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -92,12 +85,12 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="example-text-input" class="form-control-label">Role</label>
-                                    <select class="form-control" name="RoleID" id="choices-button">
-                                        @foreach ($Roles as  $Role)
-                                            <option value="{{ $Role->ID }}">{{ $Role->Role }}</option>
+                                    <select class="form-control" name="role_id" id="choices-button">
+                                        @foreach ($roles as  $role)
+                                            <option value="{{ $role->id }}">{{ $role->role }}</option>
                                         @endforeach
                                     </select>
-                                    @error('Role')
+                                    @error('role_id')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -108,36 +101,81 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Address</label>
-                                        <input class="form-control" type="text" name="Address" required>
+                                        <textarea class="form-control" name="street_address" required></textarea>
                                     </div>
-                                    @error('Address')
+                                    @error('street_address')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Country</label>
-                                        <input class="form-control" name="Country" type="text" value="Egypt" required>
+                                        <input class="form-control" name="country" type="text" value="Egypt" required>
                                     </div>
-                                    @error('Country')
+                                    @error('country')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">City</label>
+                                        <input class="form-control" name="city" type="text" required>
+                                    </div>
+                                    @error('city')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">ZIP-Code</label>
+                                        <input class="form-control" type="text" name="zip-code">
+                                    </div>
+                                    @error('zip-code')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Phone</label>
-                                        <input class="form-control" type="number" name="Phone" required>
+                                        <input class="form-control" type="text" name="phone" required>
                                     </div>
-                                    @error('Phone')
+                                    @error('phone')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">Additional Phone</label>
+                                        <input class="form-control" type="text" name="phone-2">
+                                    </div>
+                                    @error('phone-2')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label">Date Of Birth</label>
-                                        <input class="form-control" type="date" name="DOB" required>
+                                        <label for="example-text-input" class="form-control-label">Building</label>
+                                        <input class="form-control" type="text" name="building">
                                     </div>
-                                    @error('DOB')
+                                    @error('building')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">Floor</label>
+                                        <input class="form-control" type="text" name="floor">
+                                    </div>
+                                    @error('floor')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label">apartment</label>
+                                        <input class="form-control" type="text" name="apartment">
+                                    </div>
+                                    @error('apartment')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -154,7 +192,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <a href="{{ Route('Admins.index')}}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                        <a href="{{ route('Admins.index')}}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
                                     </div>
                                 </div>
                             </div>

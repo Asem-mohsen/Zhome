@@ -74,41 +74,41 @@
                             <td>
                                 <div class="d-flex px-2 py-1">
                                     <div>
-                                        <img src="{{asset('Admin/dist/img/web/Products/MainImage/'.$product->MainImage.'')}}" class="avatar avatar-sm me-3" alt="{{$product->Name}}">
+                                        <img src="{{$product->getFirstMediaUrl('product-featured')}}" class="avatar avatar-sm me-3" alt="{{$product->translations->name}}">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0">{{$product->Name}}</h6>
-                                        <span class="text-sm">Price : {{$product->Price . " EGP"}}</span>
+                                        <h6 class="mb-0">{{$product->translations->name}}</h6>
+                                        <span class="text-sm">Price : {{$product->getCurrentPrice() . " EGP"}}</span>
                                     </div>
                                 </div>
                             </td>
                             <td class="align-middle text-sm">
-                                {{$product->brand->Brand}}
+                                {{$product->brand->name}}
                             </td>
                             <td>
                                 <p class="text-s font-weight-bold mb-0">
-                                    @if ($product->Quantity >= 20)
-                                        <span id="quantity-{{$product->ID}}" class="badge badge-sm bg-success">{{$product->Quantity}}</span>
-                                    @elseif ($product->Quantity  == 0)
-                                        <span id="quantity-{{$product->ID}}" class="badge badge-sm bg-danger">{{$product->Quantity}}</span>
-                                    @elseif ($product->Quantity >= 10 && $product->Quantity < 20)
-                                        <span id="quantity-{{$product->ID}}" class="badge badge-sm bg-info">{{$product->Quantity}}</span>
-                                    @elseif ($product->Quantity  < 10)
-                                        <span id="quantity-{{$product->ID}}" class="badge badge-sm bg-secondary">{{$product->Quantity}}</span>
+                                    @if ($product->quantity >= 20)
+                                        <span id="quantity-{{$product->id}}" class="badge badge-sm bg-success">{{$product->quantity}}</span>
+                                    @elseif ($product->quantity  == 0)
+                                        <span id="quantity-{{$product->id}}" class="badge badge-sm bg-danger">{{$product->quantity}}</span>
+                                    @elseif ($product->quantity >= 10 && $product->quantity < 20)
+                                        <span id="quantity-{{$product->id}}" class="badge badge-sm bg-info">{{$product->quantity}}</span>
+                                    @elseif ($product->quantity  < 10)
+                                        <span id="quantity-{{$product->id}}" class="badge badge-sm bg-secondary">{{$product->quantity}}</span>
                                     @endif
                                 </p>
                             </td>
                             <td class="align-middle text-center text-sm">
-                                {{ $product->orderedByUsersCount }} users
+                                {{ $product->ordered_by_users_count }} users
                             </td>
                             <td class="align-middle">
-                                <a href="{{route('Products.show' , $product->ID)}}" class="btn bg-info" data-toggle="tooltip">
+                                <a href="{{route('Products.show' , $product->id)}}" class="btn bg-info" data-toggle="tooltip">
                                     Check
                                 </a>
-                                <button data-quantity-id="{{$product->ID}}" class="btn bg-success edit-button" data-toggle="tooltip">
+                                <button data-quantity-id="{{$product->id}}" class="btn bg-success edit-button" data-toggle="tooltip">
                                     Edit
                                 </button>
-                                <button data-quantity-id="{{$product->ID}}"  class="btn bg-success update-button d-none" data-toggle="tooltip">
+                                <button data-quantity-id="{{$product->id}}"  class="btn bg-success update-button d-none" data-toggle="tooltip">
                                     Update
                                 </button>
                             </td>

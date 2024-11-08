@@ -8,69 +8,83 @@ use App\Models\Platform;
 use App\Models\PlatformFAQ;
 use App\Http\Requests\Admin\AddPlatformRequest;
 use App\Http\Requests\Admin\UpdatePlatfromRequest;
-use App\Http\Services\Media;
 
 class PlatformController extends Controller
 {
-    public function index(){
-        $Platforms = Platform::all();
-        return view('Admin.Platforms.index' , compact('Platforms'));
+    public function index()
+    {
+        $platforms = Platform::with('media')->withCount('products')->get();
+
+        return view('Admin.Platforms.index' , compact('platforms'));
     }
 
-    public function userIndex(){
-        $platformsIds = Platform::distinct()->pluck('ID');
-        $platforms    = Platform::with('products' , 'Faqs')
-                    ->whereIn('ID', $platformsIds)
-                    ->get();
-        return view('User.Platforms.index' , compact('platforms'));
-    }
-
-    public function create(){
+    public function create()
+    {
         return view('Admin.Platforms.create');
     }
 
     public function store(AddPlatformRequest $request){
 
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Platforms');
+        $data = $request->except('image','_token','_method','question','answer');
 
-        $platformData = $request->except('image','_token','_method','Question','Answer');
-        $platformData['Logo'] = $newImageName;
+        $platform = Platform::create($data);
 
-        $platform = Platform::create($platformData);
-        $FAQdata = $request->only('Question','Answer');
+        if ($request->hasFile('image')) 
+        {
+            $platform->addMediaFromRequest('image')->toMediaCollection('platform-image');
+        }
+        
+        $faqData = $request->only('question','answer');
 
-
-        $FAQdata['PlatformID']= $platform->id;
-
-        PlatformFAQ::create($FAQdata);
+        if ($request->filled('question')) {
+            foreach ($request->question as $index => $question) {
+                if (!empty($question) && !empty($request->answer[$index])) {
+                    PlatformFAQ::create([
+                        'platform_id' => $platform->id,
+                        'question' => $question,
+                        'answer' => $request->answer[$index],
+                    ]);
+                }
+            }
+        }
 
         return redirect()->route('Platform.index')->with('success', 'Platform Added Successfully');
     }
 
-    public function edit(Platform $platform, PlatformFAQ $FAQ){
-        $FAQData = PlatformFAQ::where('PlatformID' , $platform->ID)->first();
-        return view('Admin.Platforms.edit' ,compact('platform' , 'FAQData'));
+    public function edit(Platform $platform){
+
+        $platform->load('faqs');
+
+        return view('Admin.Platforms.edit' ,compact('platform'));
     }
 
-    public function update(UpdatePlatfromRequest $request , Platform $platform){
-        $data = $request->except('image', '_token','_method','Question','Answer');
-        if($request->hasFile('image')){
-            $newImageName = Media::upload($request->file('image') , 'Admin\dist\img\web\Platforms');
-            $data['Logo'] = $newImageName; // hashed name
-            Media::delete(public_path("Admin\dist\img\web\Platforms\\{$platform->Logo}"));
+    public function update(UpdatePlatfromRequest $request , Platform $platform)
+    {
+        $data = $request->except('image', '_token','_method','question','answer');
+
+        $platform->update($data);
+
+        if ($request->hasFile('image')) {
+
+            $platform->clearMediaCollection('platform-image');
+
+            $platform->addMediaFromRequest('image')->toMediaCollection('platform-image');
         }
-        $editedPlatform = Platform::where('ID' , $platform->ID)->update($data);
-        $FAQdata = $request->only('Question','Answer');
 
-        PlatformFAQ::where('PlatformID' , $platform->ID)->update($FAQdata);
-        return redirect()->route('Platform.edit', $platform->ID)->with('success' , 'Platform Updated Successfully');
+        $faqData = $request->only('question','answer');
+
+        $platform->faqs()->update($faqData);
+
+        return redirect()->route('Platform.edit', $platform->id)->with('success' , 'Platform Updated Successfully');
 
     }
 
-    public function destroy(Platform $platform , PlatformFAQ $FAQ){
-        $FAQ::where('PlatformID', $platform->ID)->delete();
-        Media::delete(public_path("Admin\dist\img\web\Platforms\\{$platform->Logo}"));
-        $platform::where('ID', $platform->ID)->delete();
+    public function destroy(Platform $platform){
+
+        $platform->clearMediaCollection('platform-image');
+
+        $platform->delete();
+
         return redirect()->route('Platform.index')->with('success', 'Platform Deleted Successfully');
 
     }

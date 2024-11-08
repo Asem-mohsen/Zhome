@@ -1,11 +1,11 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Edit ' . $subcategory->SubName)
+@section('Title' , 'Edit ' . $subcategory->name)
 
 @section('Content')
 
     @include('Admin.Components.Msg')
 
-    <form action="{{ route('Category.Subcategory.update' , $subcategory->ID) }}" enctype="multipart/form-data" method="post">
+    <form action="{{ route('Category.Subcategory.update' , $subcategory->id) }}" enctype="multipart/form-data" method="post">
         @csrf
         @method('PUT')
         <div class="row">
@@ -13,7 +13,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <p class="mb-0">Edit {{$subcategory->SubName}} </p>
+                            <p class="mb-0">Edit {{$subcategory->name}} </p>
                             <button class="btn btn-primary btn-sm ms-auto m-2">Edit</button>
                         </div>
                     </div>
@@ -23,18 +23,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Subcategory-name" class="form-control-label">Subcategory Name -EN-</label>
-                                    <input class="form-control" type="text" id="Subcategory-name" name="SubName" value="{{$subcategory->SubName}}" required>
+                                    <input class="form-control" type="text" id="Subcategory-name" name="name" value="{{$subcategory->name}}" required>
                                 </div>
-                                @error('SubName')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="ArabicName" class="form-control-label">Subcategory Name -AR-</label>
-                                    <input class="form-control" type="text" id="ArabicName" name="SubArabicName" value="{{$subcategory->SubArabicName}}" required>
+                                    <label for="ar_name" class="form-control-label">Subcategory Name -AR-</label>
+                                    <input class="form-control" type="text" id="ar_name" name="ar_name" value="{{$subcategory->ar_name}}" required>
                                 </div>
-                                @error('SubArabicName')
+                                @error('ar_name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -61,21 +61,21 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Description">Description</label>
-                                    <textarea class="form-control" rows="3" name="SubDescription" id="Description" placeholder="Enter ..." >{{$subcategory->SubDescription}}</textarea>
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" rows="3" name="description" id="description" placeholder="Enter ..." >{{$subcategory->description}}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateLoremIpsum(400, 'Description')">Generate Lorem Ipsum Words</p>
-                                @error('SubDescription')
+                                <p class="generate-link" onclick="generateLoremIpsum(40, 'description')">Generate Lorem Ipsum Words</p>
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Main-Description-AR">Description -AR-</label>
-                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ...">{{$subcategory->ArabicDescription}}</textarea>
+                                    <label for="ar_description">Description -AR-</label>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="ar_description" placeholder="Enter ...">{{$subcategory->ar_description}}</textarea>
                                 </div>
-                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'Main-Description-AR')">Generate Lorem Ipsum Words</p>
-                                @error('ArabicDescription')
+                                <p class="generate-link" onclick="generateArabicLoremIpsum(100, 'ar_description')">Generate Lorem Ipsum Words</p>
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -90,7 +90,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <a href="{{ route('Category.show', $subcategory->MainCategoryID ) }}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
+                                    <a href="{{ route('Category.show', $subcategory->category_id ) }}" class="btn btn-md btn-danger w-100 mt-4 mb-0">Cancel</a>
                                 </div>
                             </div>
                         </div>

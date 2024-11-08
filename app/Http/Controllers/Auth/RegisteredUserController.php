@@ -14,6 +14,8 @@ use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use App\Traits\ApiResponse;
+use App\Events\UserRegisteredEvent;
+use App\Http\Requests\Auth\RegisterUserRequest;
 
 class RegisteredUserController extends Controller
 {
@@ -39,7 +41,7 @@ class RegisteredUserController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        event(new Registered($user));
+        event(new UserRegistered($user));
 
         Auth::guard('web')->login($user);
 
@@ -47,36 +49,37 @@ class RegisteredUserController extends Controller
     }
 
 
-    public function apiStore(Request $request)
+    public function apiStore(RegisterUserRequest $request)
     {
-
-        $request->validate([
-            'name' =>     ['required', 'string', 'max:255'],
-            'email' =>    ['required', 'email' , 'max:255', 'unique:user,email,except,id'],
-            'password' => ['required'],
-            'device_name' => ['required'],
-            'operating_system' => ['required'],
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
-            'Name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role_id' => 1,
         ]);
 
         // Generate a token for the user
-        $user->token = $user->createToken($request->device_name)->plainTextToken;
+        $token = $user->createToken($validated['device_name'])->plainTextToken;
+
+        $verificationEmailStatus = 'not sent';
+        if (config('auth.verification.enabled', true)) {
+            event(new UserRegisteredEvent($user));
+            $verificationEmailStatus = 'sent';
+        }
+
         // Return a JSON response with the user and token information
         $data = [
             'user' => $user,
             'token_type' => 'Bearer',
-            'device_name' => $request->device_name,
-            'operating_system' => $request->operating_system,
+            'token' => $token,
+            'device_name' => $validated['device_name'],
+            'operating_system' => $validated['operating_system'],
+            'verification_email' => $verificationEmailStatus,
         ];
 
         return $this->data($data, 'User registered successfully');
-
-
 
     }
 }

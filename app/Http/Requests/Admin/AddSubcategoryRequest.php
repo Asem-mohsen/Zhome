@@ -15,11 +15,11 @@ class AddSubcategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'SubName'           => ['required' , 'max:255' , 'unique:subcategory,SubName'],
-            'SubArabicName'     => ['required' , 'max:255' , 'unique:subcategory,SubArabicName'],
-            'image'             => ['required' , 'max:2048'],
-            'SubDescription'    => ['required' , 'max:1000'],
-            'ArabicDescription' => ['required' , 'max:1000'],
+            'name'           => ['required' , 'max:255' , 'unique:subcategories,name'],
+            'ar_name'        => ['required' , 'max:255' , 'unique:subcategories,ar_name'],
+            'image'          => ['required' , 'image', 'mimes:jpeg,png,jpg,gif' , 'max:2048'],
+            'description'    => ['required'],
+            'ar_description' => ['required'],
         ];
     }
 }

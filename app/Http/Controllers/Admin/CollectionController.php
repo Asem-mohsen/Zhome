@@ -4,43 +4,39 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Models\Collections;
-use App\Models\ProductCollections;
+use App\Models\Collection;
 use App\Http\Requests\Admin\AddCollectionRequest;
 use App\Http\Requests\Admin\UpdateCollectionRequest;
 use Illuminate\Http\Request;
 use App\Http\Services\Media;
-use App\Models\CollectionFeatures;
+use App\Models\CollectionFeature;
 use App\Http\Services\SyncChoices;
 
 class CollectionController extends Controller
 {
     public function index()
     {
-        $collections = Collections::all();
-        $collectionsWithNumberOfProducts = [];
-        foreach($collections as $collection){
-            $countUsed = ProductCollections::where('CollectionID',$collection->ID)->count();
-            $collection->countUsed = $countUsed;
-            $collectionsWithNumberOfProducts[] = $collection;
-        }
-        return view('Admin.Collections.index' , compact('collectionsWithNumberOfProducts'));
+        $collections = Collection::withCount('products')->get();
+
+        return view('Admin.Collections.index' , compact('collections'));
     }
 
     public function create()
     {
         $products = Product::all();
+
         return view('Admin.Collections.create' , compact('products'));
     }
 
     public function store(AddCollectionRequest $request)
     {
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Collections');
-
         $data = $request->except('_token', '_method', 'image', 'ProductID', 'features');
-        $data['Image'] = $newImageName;
-        $collection = Collections::create($data);
 
+        $collection = Collection::create($data);
+
+        if($request->hasFile()){
+
+        }
         // Create Collection products
         $productCollectionData = $request->only('ProductID');
         $productCollectionData['CollectionID'] = $collection->id;
@@ -64,26 +60,20 @@ class CollectionController extends Controller
         return redirect()->route('Collections.index')->with('success','Collection Added Successfully');
     }
 
-    public function edit(Collections $collection)
+    public function edit(Collection $collection)
     {
-        $collection = $collection::with('products' , 'features')->where('ID' , $collection->ID )->first();
+        $collection->load('products' , 'features');
+
         $products = Product::all();
+
         return view('Admin.Collections.edit' , compact('collection' , 'products'));
     }
 
-    public function update(UpdateCollectionRequest $request , Collections $collection)
+    public function update(UpdateCollectionRequest $request , Collection $collection)
     {
-        $data = $request->except('_token','_method','image', 'ProductID', 'features');
+        $data = $request->except('_token','_method','image', 'product_id', 'features');
 
-        if($request->hasFile('image')){
-            $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Collections');
-            $data['Image'] = $newImageName;
-            $oldImagePath = public_path("Admin/dist/img/web/Collections/{$collection->Image}");
-            if (is_file($oldImagePath)) {
-                Media::delete($oldImagePath);
-            }
-        }
-        Collections::where('ID' , $collection->ID)->update($data);
+        $collection->update($data);
 
         // update Collection products
         SyncChoices::Sync(ProductCollections::class , $collection->ID , $request->ProductID , 'ProductID' ,'CollectionID');
@@ -143,7 +133,8 @@ class CollectionController extends Controller
     }
 
 
-    public function destroy(Collections $collection){
+    public function destroy(Collection $collection)
+    {
         if($collection->products()->exists()){
             return redirect()->route('Collections.index')->with('error', 'Cannot delete a Collection that is associated to a product');
 
@@ -153,8 +144,9 @@ class CollectionController extends Controller
                 Media::delete(public_path("Admin/dist/img/web/Collections/Features/{$feature->Image}"));
                 $feature->delete();
             }
-            $collection::where('ID' , $collection->ID)->delete();
-            Media::delete(public_path("Admin\dist\img\web\Collections\\{$collection->Image}"));
+
+            $collection->delete();
+
             return redirect()->route('Collections.index')->with('success','Collection Deleted Successfully');
         }
     }

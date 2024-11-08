@@ -26,37 +26,47 @@
                         <div class="card-body">
                             <p class="text-uppercase text-sm">Information</p>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Select Products</label>
-                                        <select class="select2bs4 w-100" name="ProductID[]" multiple="multiple" id="product-select" data-placeholder="Select Products">
+                                        <select class="select2bs4 w-100" name="product_id[]" multiple="multiple" id="product-select" data-placeholder="Select Products">
                                             @foreach ( $products as $product )
-                                                <option value='{{$product->ID}}'>{{$product->Name}}</option>
+                                                <option value='{{$product->id}}'>{{$product->translations->name}}</option>
                                             @endforeach
                                         </select>
                                     </div>
-                                    @error('ProductID')
+                                    @error('product_id')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label w-100 text-center">End Date</label>
-                                        <input class="form-control" type="date" name="EndDate" required>
+                                        <label for="example-text-input" class="form-control-label text-center w-100">New Price</label>
+                                        <input class="form-control" type="number" name="sale_price" id="percentage-input" min="0" step="any" required>
                                     </div>
-                                    @error('EndDate')
+                                    @error('sale_price')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label text-center w-100">Sale Amount (%)</label>
-                                        <input class="form-control" type="number" name="Amount" id="percentage-input" min="0" step="any" required>
+                                        <label for="example-text-input" class="form-control-label w-100 text-center">Start date</label>
+                                        <input class="form-control" type="date" name="start_date" required>
                                     </div>
-                                    @error('Amount')
+                                    @error('start_date')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="example-text-input" class="form-control-label w-100 text-center">End date</label>
+                                        <input class="form-control" type="date" name="end_date" required>
+                                    </div>
+                                    @error('end_date')
+                                        <div class="alert alert-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                
                             </div>
                             
                             <hr class="horizontal dark">

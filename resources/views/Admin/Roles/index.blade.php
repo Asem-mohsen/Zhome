@@ -25,20 +25,20 @@
                         @php
                             $i = 1;
                         @endphp
-                        @foreach ($Roles as $Role)                            
+                        @foreach ($roles as $role)
                             <tr>
                                 <td>
                                     {{ $i++ }}
                                 </td>
                                 <td>
-                                    <h6 class="mb-0 text-sm">{{$Role->Role}}</h6>
+                                    <h6 class="mb-0 text-sm">{{$role->role}}</h6>
                                 </td>
-                                <td>{{ $adminCounts[$Role->ID] }}</td>
+                                <td>{{ $role->users_count }}</td>
                                 <td class="d-flex justify-content-around align-items-baseline">
-                                    <a href="{{ Route('Roles.edit',$Role->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View Role">
+                                    <a href="{{ Route('Roles.edit',$role->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View Role">
                                         Check
                                     </a>
-                                    <form action="{{ route('Roles.delete' ,$Role->ID )}}" method="post">
+                                    <form action="{{ route('Roles.delete' ,$role->id )}}" method="post">
                                         @csrf
                                         @method('DELETE')
                                         <button  class="border-0 bg-transparent p-0 text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete">

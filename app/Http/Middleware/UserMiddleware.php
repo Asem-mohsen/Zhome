@@ -10,10 +10,10 @@ use App\Traits\ApiResponse;
 
 class UserMiddleware
 {
-    use ApiResponse ;
+    use ApiResponse;
+
     public function handle(Request $request, Closure $next): Response
     {
-
         if (Auth::guard('sanctum')->check()) {
             return $next($request);
         }

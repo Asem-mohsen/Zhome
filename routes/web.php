@@ -19,37 +19,14 @@ use App\Http\Controllers\Admin\PromocodeController;
 use App\Http\Controllers\Admin\ShopOrdersController;
 use App\Http\Controllers\Admin\ToolsOrdersController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
 
 // Authentication
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\GoogleLoginController;
 
-// User
-use App\Http\Controllers\User\UserController;
-use App\Http\Controllers\User\ProfileController;
-use App\Http\Controllers\User\ToolsController;
-use App\Http\Controllers\User\AboutController;
-use App\Http\Controllers\User\CartContoller;
-use App\Http\Controllers\User\ShopController;
-use App\Http\Controllers\User\CheckoutContoller;
-use App\Http\Controllers\User\HomeController;
-use App\Http\Controllers\User\ServicesController;
-
-// Language
-use App\Http\Controllers\LanguageController;
-
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpKernel\Profiler\Profile;
-
-
-// Language
-Route::get('language/{locale}', function ($locale) {
-    if (array_key_exists($locale, config('app.languages'))) {
-        Session::put('locale', $locale);
-    }
-    return redirect()->back();
-})->name('language');
 
 
 Route::middleware('guest')->group(function () {
@@ -62,13 +39,10 @@ Route::middleware('guest')->group(function () {
 Route::get('/google-login',  [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::post('/google-login', [GoogleLoginController::class, 'handleGoogleLogin'])->name('auth.google.callback');
 
-Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout')
-    ->middleware('auth:web,admin');
-    // ->middleware(['auth' , 'auth.admin']);
-
 // Admin Routes
 Route::middleware('auth.admin')->group(function () {
+
+    Route::get('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::controller(DashboardController::class)->group(function(){
         Route::get('/Dashboard', 'index')->name('Dashboard.index');
@@ -82,12 +56,12 @@ Route::middleware('auth.admin')->group(function () {
     Route::prefix('Admins')->name('Admins.')->group(function(){
         Route::controller(AdminController::class)->group(function(){
             Route::get('/', 'index')->name('index');
-            Route::get('/{admin}/edit', 'edit')->name('edit');
-            Route::get('/{admin}/profile', 'profile')->name('profile');
+            Route::get('/{user}/edit', 'edit')->name('edit');
+            Route::get('/{user}/profile', 'profile')->name('profile');
             Route::get('/create', 'create')->name('create');
             Route::post('/store', 'store')->name('store');
-            Route::put('/{admin}/update', 'update')->name('update');
-            Route::delete('/{admin}/delete', 'destroy')->name('delete');
+            Route::put('/{user}/update', 'update')->name('update');
+            Route::delete('/{user}/delete', 'destroy')->name('delete');
         });
     });
 
@@ -173,8 +147,8 @@ Route::middleware('auth.admin')->group(function () {
     Route::prefix('Contact')->name('Contact.')->group(function(){
         Route::controller(ContactController::class)->group(function(){
             Route::get('/', 'index')->name('index');
-            Route::get('/{contact}/edit', 'edit')->name('edit');
-            Route::put('/{contact}/update', 'update')->name('update');
+            Route::get('/{site}/edit', 'edit')->name('edit');
+            Route::put('/{site}/update', 'update')->name('update');
         });
     });
 
@@ -212,22 +186,22 @@ Route::middleware('auth.admin')->group(function () {
     Route::prefix('Sales')->name('Sales.')->group(function(){
         Route::controller(SalesController::class)->group(function(){
             Route::get('/', 'index')->name('index');
-            Route::get('/{sales}/edit', 'edit')->name('edit');
+            Route::get('/{sale}/edit', 'edit')->name('edit');
             Route::get('/create', 'create')->name('create');
             Route::get('/getProductPrice/{productId}', 'getProductPrice')->name('getProductPrice');
             Route::get('/createGroup', 'createGroup')->name('createGroup');
             Route::post('/store', 'store')->name('store');
-            Route::put('/{sales}/update', 'update')->name('update');
-            Route::delete('/{sales}/delete', 'destroy')->name('delete');
+            Route::put('/{sale}/update', 'update')->name('update');
+            Route::delete('/{sale}/delete', 'destroy')->name('delete');
         });
         Route::prefix('Promocode')->name('Promocode.')->group(function(){
             Route::controller(PromocodeController::class)->group(function(){
                 Route::get('/', 'index')->name('index');
-                Route::get('/{promocode}/edit', 'edit')->name('edit');
+                Route::get('/{promotion}/edit', 'edit')->name('edit');
                 Route::get('/create', 'create')->name('create');
                 Route::post('/store', 'store')->name('store');
-                Route::put('/{promocode}/update', 'update')->name('update');
-                Route::delete('/{promocode}/delete', 'destroy')->name('delete');
+                Route::put('/{promotion}/update', 'update')->name('update');
+                Route::delete('/{promotion}/delete', 'destroy')->name('delete');
             });
         });
     });
@@ -236,8 +210,8 @@ Route::middleware('auth.admin')->group(function () {
         Route::prefix('ShopOrders')->name('ShopOrders.')->group(function(){
             Route::controller(ShopOrdersController::class)->group(function(){
                 Route::get('/', 'index')->name('index');
-                Route::get('/{shoporder}/show', 'show')->name('show');
-                Route::delete('/{shoporder}/delete', 'destroy')->name('delete');
+                Route::get('/{order}/show', 'show')->name('show');
+                Route::delete('/{order}/delete', 'destroy')->name('delete');
             });
         });
         Route::prefix('ToolsOrders')->name('ToolsOrders.')->group(function(){
@@ -251,113 +225,6 @@ Route::middleware('auth.admin')->group(function () {
 
 });
 
-// Public Routes
-Route::controller(HomeController::class)->group(function(){
-    Route::get('/', 'index')->name('index');
-});
 
-Route::prefix('Shop')->name('Shop.')->group(function(){
-    Route::controller(ShopController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
-        Route::get('/shop', 'filterIndex')->name('FilterIndex');
-        Route::get('/shop/category/{id}', 'categoryFilter')->name('Filter.category');
-        Route::get('/shop/subcategory/{id}', 'subcategoryFilter')->name('Filter.subcategory');
-        Route::get('/shop/brand/{id}', 'brandFilter')->name('Filter.brand');
-        Route::get('/shop/platform/{id}', 'platformFilter')->name('Filter.platform');
-    });
-});
-
-Route::prefix('Contact')->name('Contact.')->group(function(){
-    Route::controller(ContactController::class)->group(function(){
-        Route::get('/ContactUs', 'contact')->name('contact');
-    });
-});
-
-Route::prefix('About')->name('About.')->group(function(){
-    Route::controller(AboutController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
-    });
-});
-
-Route::prefix('Tools')->name('Tools.')->group(function(){
-    Route::controller(ToolsController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
-        Route::post('/store', 'store')->name('store');
-        Route::get('/interior', 'interior')->name('interior');
-    });
-});
-
-Route::prefix('Product')->name('Product.')->group(function(){
-    Route::controller(ProductController::class)->group(function(){
-        Route::get('/{product}/Product', 'userShow')->name('show');
-    });
-});
-
-Route::prefix('Cart')->name('Cart.')->group(function(){
-    Route::controller(CartContoller::class)->group(function(){
-        Route::get('/', 'index')->name('index');
-        Route::post('/add', 'addToCart')->name('add');
-        Route::get('/count', 'getCartCount');
-        Route::post('/update', 'updateCart');  //checkout update
-        Route::delete('/remove/{productId}','removeFromCart')->name('delete');
-    });
-});
-
-Route::prefix('Services')->name('Services.')->group(function(){
-    Route::controller(ServicesController::class)->group(function(){
-        Route::get('/', 'index')->name('index');
-    });
-});
-
-Route::prefix('Payment')->name('Payment.')->group(function(){
-    Route::controller(PaymentController::class)->group(function(){
-        Route::get('/Payment', 'userPayment')->name('index');
-    });
-});
-
-Route::prefix('Categories')->name('Categories.')->group(function(){
-    Route::controller(CategoryController::class)->group(function(){
-        Route::get('/', 'userIndex')->name('index');
-        Route::get('/{category}/category', 'show')->name('show');
-    });
-});
-
-Route::prefix('Brands')->name('Brand.')->group(function(){
-    Route::controller(BrandController::class)->group(function(){
-        Route::get('/Brands', 'userIndex')->name('index');
-        Route::get('/{brand}/brand', 'show')->name('show');
-    });
-});
-
-Route::prefix('Platforms')->name('Platforms.')->group(function(){
-    Route::controller(PlatformController::class)->group(function(){
-        Route::get('/', 'userIndex')->name('user.index');
-        Route::get('/{platform}/platform', 'show')->name('show');
-    });
-});
-
-Route::prefix('Checkout')->name('Checkout.')->group(function(){
-    Route::controller(CheckoutContoller::class)->group(function(){
-        Route::get('/', 'index')->name('index');
-        Route::post('/check-promo-code','checkPromoCode');
-        Route::post('/get-delivery-cost', 'getDeliveryCost');
-    });
-});
-
-Route::controller(SubscribersController::class)->group(function(){
-    Route::post('/newSubscriber', 'newSubscriber')->name('new.subscriber');
-});
-
-// User Routes
-Route::middleware('auth:web')->group(function () {
-
-    Route::controller(UserController::class)->prefix('Profile')->name('Profile.')->group(function(){
-        Route::get('/{user}/profile', 'userProfile')->name('profile');
-        Route::get('/{user}/edit', 'userProfile')->name('edit');
-        Route::put('/{user}/update', 'update')->name('update');
-        Route::delete('/{user}/delete', 'destroy')->name('delete');
-    });
-
-});
 
 // require __DIR__.'/auth.php';

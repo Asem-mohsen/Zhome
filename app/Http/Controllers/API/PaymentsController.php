@@ -4,19 +4,25 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Payments;
-use App\Models\ShopOrders;
+use App\Models\{ Order , Payment };
+use App\Services\PaymobService;
 use Carbon\Carbon;
 use App\Traits\ApiResponse;
 
 class PaymentsController extends Controller
 {
-
     use ApiResponse;
+
+    protected $paymobService;
+
+    public function __construct(PaymobService $paymobService)
+    {
+        $this->paymobService = $paymobService;
+    }
 
     public function index(){
 
-        $orders  = ShopOrders::with(['transaction', 'user'])->get();
+        $orders  = Order::with(['transaction', 'user'])->get();
 
         $sumOrders = 0;
 
@@ -27,7 +33,7 @@ class PaymentsController extends Controller
         }
 
         // Amount In Cart
-        $ordersInCart= ShopOrders::whereNull('TransactionID')->where('Status' , '2')->get();
+        $ordersInCart= Order::whereNull('TransactionID')->where('Status' , '2')->get();
 
         $sumCart = 0;
 
@@ -37,19 +43,19 @@ class PaymentsController extends Controller
 
         }
 
-        $totalCash = ShopOrders::whereHas('transaction', function($query) {
+        $totalCash = Order::whereHas('transaction', function($query) {
                                             $query->where('source_data_type', 'Cash On Delivery');
                                     })->count();
-        $totalCards = ShopOrders::whereHas('transaction', function($query) {
+        $totalCards = Order::whereHas('transaction', function($query) {
                                             $query->where('source_data_type', 'card');
                                     })->count();
-        $newest = ShopOrders::with(['transaction', 'user', 'product'])
+        $newest = Order::with(['transaction', 'user', 'product'])
                             ->whereIn('Status', [1, 0])
                             ->whereBetween('created_at', [now()->subDays(4), now()])
                             ->orderBy('created_at', 'DESC')
                             ->get();
 
-        $past = ShopOrders::with(['transaction', 'user', 'product'])
+        $past = Order::with(['transaction', 'user', 'product'])
                             ->where('Status', 1)
                             ->where('created_at', '>=', Carbon::now()->subDays(7))
                             ->orderBy('created_at', 'DESC')
@@ -70,4 +76,28 @@ class PaymentsController extends Controller
 
     }
 
+    public function createPayment(Request $request)
+    {
+        $order = Order::create([
+            'user_id' => $request->user()->id,
+            'amount' => $request->amount,
+            'status' => 'pending'
+        ]);
+
+        $authToken = $this->paymobService->authenticate();
+        $orderData = $this->paymobService->createOrder($authToken, $order->amount);
+        
+        $paymentToken = $this->paymobService->getPaymentToken($orderData['id'], $order->amount, $authToken);
+
+        $payment = Payment::create([
+            'order_id' => $order->id,
+            'payment_token' => $paymentToken,
+            'amount' => $order->amount,
+            'status' => 'pending'
+        ]);
+
+        return response()->json([
+            'iframe_url' => "https://accept.paymobsolutions.com/api/acceptance/iframes/{$this->paymobService->iframeId}?payment_token=$paymentToken"
+        ]);
+    }
 }

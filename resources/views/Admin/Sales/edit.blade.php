@@ -4,7 +4,7 @@
 @section('Content')
 
     <div class="container-fluid py-4">
-        <form action="{{route('Sales.update' , $sale->ID)}}" method="post">
+        <form action="{{route('Sales.update' , $sale->id)}}" method="post">
             @csrf
             @method('PUT')
             <div class="row">
@@ -21,43 +21,37 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <label for="example-text-input" class="form-control-label">Product</label>
-                                    <select class="form-control" name="ProductID">
-                                        <option value='{{$sale->products->ID}}'>{{$sale->products->Name}}</option>
+                                    <select class="form-control" name="product_id">
+                                        <option value='{{$sale->product_id}}'>{{$sale->product->translations->name}}</option>
                                     </select>
-                                    @error('ProductID')
+                                    @error('product_id')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="example-text-input" class="form-control-label w-100 text-center">End Date</label>
-                                        <input class="form-control" type="date" name="EndDate" required value="{{$sale->EndDate}}">
+                                        <label for="sale_price" class="form-control-label text-center w-100">New Price</label>
+                                        <input class="form-control" type="text" id="sale_price" name="sale_price" value="{{$sale->sale_price}}" required>
                                     </div>
-                                    @error('EndDate')
+                                    @error('sale_price')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="percentage-input" class="form-control-label text-center w-100">Sale Amount (%)</label>
-                                        <input class="form-control" oninput="calculatePrice()" id="percentage-input" type="text" name="Amount" value="{{$sale->Amount}}" required>
+                                        <label for="example-text-input" class="form-control-label w-100 text-center">Start date</label>
+                                        <input class="form-control" type="date" name="start_date" required value="{{$sale->start_date}}">
                                     </div>
-                                    @error('Amount')
+                                    @error('start_date')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="price-before" class="form-control-label">Price Before</label>
-                                        <input class="form-control" type="number" id="price-before"  value="{{$sale->products->Price}}">
+                                        <label for="example-text-input" class="form-control-label w-100 text-center">End date</label>
+                                        <input class="form-control" type="date" name="end_date" required value="{{$sale->end_date}}">
                                     </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="price-after" class="form-control-label w-100 text-center">Price After Sale</label>
-                                        <input class="form-control" type="number" id="price-after" name="PriceAfter" disabled value="{{$sale->PriceAfter}}">
-                                    </div>
-                                    @error('PriceAfter')
+                                    @error('end_date')
                                         <div class="alert alert-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -83,10 +77,10 @@
                 <!-- Side Card -->
                 <div class="col-md-4">
                     <div class="card card-profile" style="height: 485px;">
-                    <h5 class='text-center' style="padding-top: 20px;"> Sale on<br> {{$sale->products->Name}}</h5>
+                    <h5 class='text-center' style="padding-top: 20px;"> Sale on <br> {{$sale->product->translations->name}}</h5>
                         <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
                             <div class="d-flex justify-content-center">
-                                @if( date("Y-m-d", strtotime($sale->EndDate)) > date("Y-m-d") )
+                                @if( date("Y-m-d", strtotime($sale->end_date)) > date("Y-m-d") )
                                     <a href="" class="btn btn-sm btn-success mb-0 d-none d-lg-block">On Sale</a>
                                     <a href="" class="btn btn-sm btn-success mb-0 d-block d-lg-none"><i class="ni ni-collection"></i></a>
                                 @else
@@ -103,24 +97,20 @@
                                         <th scope="col" width="20%"></th>
                                     </thead>
                                         <tr>
-                                            <td>Amount</td>
-                                            <td>{{$sale->Amount . "%"}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Price</td>
-                                            <td style="text-decoration: line-through;">{{$sale->products->Price . " EGP"}}</td>
+                                            <td>Price before sale</td>
+                                            <td style="text-decoration: line-through;">{{$sale->product->price . " EGP"}}</td>
                                         </tr>
                                         <tr>
                                             <td>New Price</td>
-                                            <td>{{$sale->PriceAfter . " EGP"}}</td>
+                                            <td>{{$sale->sale_price . " EGP"}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Started at </td>
-                                            <td>{{ date("d-M-Y", strtotime($sale->StartDate)) }}</td>
+                                            <td>Start date</td>
+                                            <td>{{ date("d-M-Y", strtotime($sale->start_date)) }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Ends at</td>
-                                            <td>{{ date("d-M-Y", strtotime($sale->EndDate)) }}</td>
+                                            <td>End date</td>
+                                            <td>{{ date("d-M-Y", strtotime($sale->end_date)) }}</td>
                                         </tr>
                                 </table>
                             </div>

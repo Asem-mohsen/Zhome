@@ -9,11 +9,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponse;
 use App\Http\Requests\VerificationCodeRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class VerifyEmailController extends Controller
 {
     use ApiResponse ;
-    
+
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
@@ -28,11 +30,11 @@ class VerifyEmailController extends Controller
     }
 
     public function send(Request $request){
-        
+
         $user = $request->user('sanctum');
         $token = $request->header('Authorization');
         $verificationCode = rand(10000 , 99999);
-        
+
         $user->verification_code = $verificationCode;
         $user->save();
 
@@ -40,6 +42,18 @@ class VerifyEmailController extends Controller
         $user->token = $token;
         return $this->data(compact('user'));
 
+    }
+
+    public function verifyEmailLink(Request $request, $userId)
+    {
+        if (!$request->hasValidSignature()) {
+            abort(403, 'Invalid or expired verification link.');
+        }
+
+        $user = User::findOrFail($userId);
+        $user->update(['email_verified_at' => now()]);
+
+        return $this->success('Your email has been verified successfully');
     }
 
     public function verify(VerificationCodeRequest $request){

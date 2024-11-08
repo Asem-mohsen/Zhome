@@ -23,7 +23,6 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Product</th>
-                                        <th>Amount of Sale</th>
                                         <th>New Price</th>
                                         <th>Ends In</th>
                                         <th>Actions</th>
@@ -42,25 +41,22 @@
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <a href="{{ route('Products.show' , $sale->products->ID) }}">
-                                                            <h6 class="mb-0 text-sm">{{$sale->products->Name}}</h6>
+                                                        <a href="{{ route('Products.show' , $sale->product_id) }}">
+                                                            <h6 class="mb-0 text-sm">{{$sale->product->translations->name}}</h6>
                                                         </a>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td>
-                                                <p class="text-xs font-weight-bold mb-0">{{$sale->Amount . "%"}}</p>
-                                            </td>
-                                            <td>
-                                                <span class="text-secondary text-xs font-weight-bold" style="text-decoration: line-through;">{{$sale->products->Price . " EGP"}}</span>
+                                                <span class="text-secondary text-xs font-weight-bold" style="text-decoration: line-through;">{{$sale->product->price . " EGP"}}</span>
                                                 <br>
-                                                <span class="text-secondary text-xs">{{$sale->PriceAfter ." EGP"}}</span>
+                                                <span class="text-secondary text-xs">{{$sale->sale_price ." EGP"}}</span>
                                             </td>
                                             <td>
-                                                <p class="text-xs font-weight-bold mb-0">{{ date('d-M-Y' , strtotime($sale->EndDate)) }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ date('d-M-Y' , strtotime($sale->end_date)) }}</p>
                                             </td>
                                             <td>
-                                                <a href="{{ route('Sales.edit' , $sale->ID) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                                <a href="{{ route('Sales.edit' , $sale->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
                                                     Edit
                                                 </a>
                                             </td>

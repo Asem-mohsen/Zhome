@@ -9,17 +9,10 @@ class Sale extends Model
 {
     use HasFactory;
 
-    protected $table = 'sale';
-
-    protected $fillable = [
-        'ProductID','Amount' ,'EndDate','PriceAfter','StartDate'
-    ];
-
-    protected $dates = ['EndDate'];
+    protected $guarded = ['id'];
     
-    public function products(){
-
-        return $this->belongsTo(Product::class, 'ProductID', 'ID');
-
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
     }
 }

@@ -34,39 +34,41 @@
                                         @if($order->user)
                                             <div class="d-flex px-2 py-1">
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <span class="text-sm">Order ID: {{$order->ID}}</span>
-                                                    <h6 class="mb-0 text-sm">{{$order->user->Name}}</h6>
-                                                    <span>{{$order->user->Email}}</span>
+                                                    <span class="text-sm">Order ID: {{$order->id}}</span>
+                                                    <h6 class="mb-0 text-sm">{{$order->user->name}}</h6>
+                                                    <span>{{$order->user->email}}</span>
                                                 </div>
                                             </div>
                                         @else
                                             <div class="d-flex px-2 py-1">
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <span class="text-sm">Order ID: {{$order->ID}}</span>
-                                                    <h6 class="mb-0 text-sm">{{$order->Name}}</h6>
-                                                    <span>{{$order->Email}}</span>
+                                                    <span class="text-sm">Order ID: {{$order->id}}</span>
+                                                    <h6 class="mb-0 text-sm">{{$order->name}}</h6>
+                                                    <span>{{$order->email}}</span>
                                                 </div>
                                             </div>
                                         @endif
 
                                     </td>
-                                    <td>{{$order->Installed}}</td>
-                                    <td>{{$order->BuildingProject}}</td>
-                                    <td>{{$order->Rooms}}</td>
-                                    <td>{{$order->SystemType}}</td>
-                                    <td>{{$order->Package}}</td>
+                                    <td>{{$order->options->installed}}</td>
+                                    <td>{{$order->options->building_type}}</td>
+                                    <td>{{$order->options->rooms}}</td>
+                                    <td>{{$order->options->system_type}}</td>
+                                    <td>{{$order->options->package}}</td>
                                     <td>
-                                        @if ($order->Status == 1)
-                                            <span class="badge badge-success">Confirmed</span>
-                                        @elseif($order->Status != 1)
+                                        @if ($order->status === \App\Enums\OrderStatusEnum::COMPLETED->value)
+                                            <span class="badge badge-success">Paid</span>
+                                        @elseif ($order->status === \App\Enums\OrderStatusEnum::PENDING->value)
                                             <span class="badge badge-warning">Pending</span>
+                                        @elseif ($order->status === \App\Enums\OrderStatusEnum::CANCELLED->value)
+                                            <span class="badge badge-danger">Cancelled</span>
                                         @endif
                                     </td>
-                                    <td class="d-flex justify-content-around align-items-baseline">
-                                        <a href="{{route('Orders.ToolsOrders.show' , $order->ID )}}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View">
+                                    <td class="d-flex justify-content-around gap-1 align-items-baseline">
+                                        <a href="{{route('Orders.ToolsOrders.show' , $order->id )}}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="View">
                                             View
                                         </a>
-                                        <form action="{{ route('Orders.ToolsOrders.delete' ,$order->ID )}}" method="post">
+                                        <form action="{{ route('Orders.ToolsOrders.delete' ,$order->id )}}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <button  class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Remove">

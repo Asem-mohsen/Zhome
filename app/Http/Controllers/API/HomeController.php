@@ -7,30 +7,28 @@ use Illuminate\Http\Request;
 use App\Models\Brand;
 use App\Models\Platform;
 use App\Models\Product;
-use App\Traits\NavigationTrait;
 use App\Traits\ApiResponse;
+use App\Http\Resources\BrandResource;
+use App\Http\Resources\ProductCardResource;
+use App\Http\Resources\PlatformResource;
 
 class HomeController extends Controller
 {
-    use NavigationTrait , ApiResponse;
-
+    use ApiResponse;
 
     public function index()
     {
-        $navData = $this->getNavigationData();
-        $brands = Brand::all();
-        $products = Product::with('brand', 'sale', 'platforms')->get();
-        $platforms = Platform::take(4)->get();
+        $brands    = Brand::all();
+        $products  = Product::with(['brand', 'platforms'])->get();
+        $platforms = Platform::all();
 
         $data = [
-            "Brands"   => $brands,
-            "products" => $products,
-            "platforms"=> $platforms,
-            "navData" => $navData,
+            "brands"   => BrandResource::collection($brands),
+            "products" => ProductCardResource::collection($products),
+            "platforms"=> PlatformResource::collection($platforms),
         ];
 
         return $this->data($data , 'Home data retrived successfully');
-
     }
 
 }

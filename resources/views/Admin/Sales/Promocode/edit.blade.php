@@ -4,7 +4,7 @@
 @section('Content')
 
     <div class="container-fluid py-4">
-        <form action="{{route('Sales.Promocode.update' , $promocode->ID )}}" method="post">
+        <form action="{{route('Sales.Promocode.update' , $promocode->id )}}" method="post">
             @csrf
             @method('PUT')
 
@@ -23,55 +23,46 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="Promocode" class="form-control-label text-center w-100">Code</label>
-                                        <input class="form-control" id="Promocode" type="text" name="Promocode" value="{{$promocode->Promocode}}" required>
+                                        <input class="form-control" id="Promocode" type="text" name="code" value="{{$promotion->code}}" required>
                                     </div>
-                                    @error('Promocode')
+                                    @error('code')
                                         <div class="alert alert-danger">{{$message}}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="Save" class="form-control-label">Amount to Save -%-</label>
-                                        <input class="form-control" id="Save" type="number" name="Save" value="{{$promocode->Save}}" required>
+                                        <label for="discount_amount" class="form-control-label">Amount to Save -%-</label>
+                                        <input class="form-control" id="discount_amount" type="number" name="discount_amount" value="{{$promotion->discount_amount}}" required>
                                     </div>
-                                    @error('Save')
+                                    @error('discount_amount')
                                         <div class="alert alert-danger">{{$message}}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="AvailableFor" class="form-control-label w-100 text-center">Available For -In Days-</label>
-                                        <input class="form-control" id="AvailableFor" type="number" name="AvailableFor" value="{{$promocode->AvailableFor}}" required>
+                                        <label for="valid_from" class="form-control-label w-100 text-center">Valid From</label>
+                                        <input class="form-control" id="valid_from" type="date" name="valid_from" value="{{$promotion->valid_from}}" required>
                                     </div>
-                                    @error('AvailableFor')
+                                    @error('valid_from')
                                         <div class="alert alert-danger">{{$message}}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group d-grid justify-content-center text-center">
-                                        <label for="Status" class="form-control-label">Status</label>
-                                        <input type="hidden" name="Status" value="0">
-                                        <input type="checkbox" name="Status" value="{{$promocode->Status}}" @checked($promocode->Status == 1) data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                        <label for="status" class="form-control-label">Status</label>
+                                        <input type="hidden" name="status" value="0">
+                                        <input type="checkbox" name="status" value="{{$promotion->status}}" @checked($promotion->status == 'activr') data-bootstrap-switch data-off-color="danger" data-on-color="success">
                                     </div>
-                                    @error('Status')
+                                    @error('status')
                                         <div class="alert alert-danger">{{$message}}</div>
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="AddedAt" class="form-control-label w-100 text-center">Added At</label>
-                                        <input class="form-control" type="date" name="AddedAt" value="{{$promocode->created_at}}" disabled>
+                                        <label for="valid_until" class="form-control-label w-100 text-center">Valid Until</label>
+                                        <input class="form-control" id="valid_until" type="text" name="valid_until" value="{{$promotion->valid_until}}" disabled>
                                     </div>
-                                    @error('AddedAt')
-                                        <div class="alert alert-danger">{{$message}}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="EndsIn" class="form-control-label w-100 text-center">Ends In</label>
-                                        <input class="form-control" id="EndsIn" type="text" name="EndsIn" value="{{$promocode->EndsIn}}" disabled>
-                                    </div>
-                                    @error('EndsIn')
+                                    @error('valid_until')
                                         <div class="alert alert-danger">{{$message}}</div>
                                     @enderror
                                 </div>
@@ -98,11 +89,11 @@
                 <!-- Side Card -->
                 <div class="col-md-4">
                     <div class="card card-profile" style="height: 450px;">
-                    <h5 class='text-center' style="padding-top: 20px;"> Code - {{$promocode->Promocode}}</h5>
+                    <h5 class='text-center' style="padding-top: 20px;"> Code - {{$promotion->code}}</h5>
                         <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
                             <div class="d-flex justify-content-center">
                                 <a href="" class="btn btn-sm btn-info mb-0 d-none d-lg-block">
-                                    @if($promocode->Status == 1)
+                                    @if($promotion->status == 'activr')
                                         Working
                                     @else
                                         Disabled
@@ -120,19 +111,15 @@
                                     </thead>
                                         <tr>
                                             <td>Amount to Save</td>
-                                            <td>{{$promocode->Save . "%"}}</td>
+                                            <td>{{$promotion->discount_amount . "%"}}</td>
                                         </tr>
                                         <tr>
-                                            <td>Available For</td>
-                                            <td>{{$promocode->AvailableFor . " Days"}}</td>
+                                            <td>Valid From</td>
+                                            <td>{{ date('Md,Y' , strtotime($promotion->valid_from)) }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Added At</td>
-                                            <td>{{ date('M d,Y', strtotime($promocode->created_at))}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Ends In</td>
-                                            <td>{{ date('M d,Y', strtotime($promocode->EndsIn))}}</td>
+                                            <td>Valid Until</td>
+                                            <td>{{ date('Md,Y' , strtotime($promotion->valid_until)) }}</td>
                                         </tr>
 
                                 </table>
@@ -161,10 +148,10 @@
             // Handle form submission
             $('form').on('submit', function () {
                 // Manually update the hidden input value based on the checkbox state
-                if ($('input[name="Status"]').bootstrapSwitch('state')) {
-                    $('input[name="Status"]').val(1);
+                if ($('input[name="status"]').bootstrapSwitch('state')) {
+                    $('input[name="status"]').val(1);
                 } else {
-                    $('input[name="Status"]').val(0);
+                    $('input[name="status"]').val(0);
                 }
             });
         });

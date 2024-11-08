@@ -5,15 +5,15 @@
 
 @include('Admin.Components.Msg')
 
-    <form action="{{ route('Platform.update' , $platform->ID) }}" enctype="multipart/form-data" method="post">
+    <form action="{{ route('Platform.update' , $platform->id) }}" enctype="multipart/form-data" method="post">
         @csrf
         @method('PUT')
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="d-flex align-items-center">
-                            <p class="mb-0">Edit {{ $platform->Platform }}</p>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <p class="mb-0">Edit {{ $platform->name }}</p>
                             <button class="btn btn-primary btn-sm ms-auto m-2">Edit</button>
                         </div>
                     </div>
@@ -23,18 +23,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Platform-name" class="form-control-label">Platform Name</label>
-                                    <input class="form-control" type="text" id="Platform-name" name="Name" value="{{ $platform->Platform }}" required>
+                                    <input class="form-control" type="text" id="Platform-name" name="name" value="{{ $platform->name }}" required>
                                 </div>
-                                @error('Name')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="VideoURL" class="form-control-label">Video URL</label>
-                                    <input class="form-control" type="text" id="VideoURL" name="VideoURL" value="{{ $platform->VideoURL }}" required>
+                                    <input class="form-control" type="text" id="VideoURL" name="video_url" value="{{ $platform->video_url }}" required>
                                 </div>
-                                @error('VideoURL')
+                                @error('video_url')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -62,18 +62,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description">Main Description</label>
-                                    <textarea class="form-control" rows="3" name="MainDescription" id="Main-Description" placeholder="Enter ..." >{{ $platform->MainDescription }}</textarea>
+                                    <textarea class="form-control" rows="3" name="description" id="Main-Description" placeholder="Enter ..." >{{ $platform->description }}</textarea>
                                 </div>
-                                @error('MainDescription')
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="Main-Description-AR">Main Description -ar-</label>
-                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ...">{{ $platform->ArabicDescription }}</textarea>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="Main-Description-AR" placeholder="Enter ...">{{ $platform->ar_description }}</textarea>
                                 </div>
-                                @error('ArabicDescription')
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -81,24 +81,26 @@
 
                         <p class="text-uppercase text-sm">Platform FAQ</p>
                         <hr class="horizontal dark">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="Question">Question</label>
-                                    <textarea class="form-control" rows="3" name="Question" id="Question" placeholder="Enter ...">{{ $FAQData->Question }}</textarea>
+                        <div id="faq-section">
+                            <div class="faq-item">
+                                <div class="row">
+                                    @forelse($platform->faqs as $faq)
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="Question">Question</label>
+                                                <textarea class="form-control" rows="3" name="question[]" id="Question" placeholder="Enter ...">{{ $faq->question }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="Answer">Answer</label>
+                                                <textarea class="form-control" rows="3" name="answer[]" id="Answer" placeholder="Enter ...">{{ $faq->answer }}</textarea>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <button type="button" id="add-faq-btn" class="btn btn-primary">Add Another FAQ</button>
+                                    @endforelse
                                 </div>
-                                @error('Question')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="Answer">Answer</label>
-                                    <textarea class="form-control" rows="3" name="Answer" id="Answer" placeholder="Enter ...">{{ $FAQData->Answer }}</textarea>
-                                </div>
-                                @error('Answer')
-                                    <div class="alert alert-danger">{{ $message }}</div>
-                                @enderror
                             </div>
                         </div>
 
@@ -127,6 +129,28 @@
     <script>
         $(function () {
             bsCustomFileInput.init();
+        });
+
+    </script>
+    <script>
+        document.getElementById('add-faq-btn').addEventListener('click', function() {
+            const faqSection = document.getElementById('faq-section');
+            const newFaqItem = document.createElement('div');
+            newFaqItem.classList.add('faq-item');
+            newFaqItem.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Question</label>
+                        <textarea class="form-control" rows="3" name="question[]" placeholder="Enter question"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Answer</label>
+                        <textarea class="form-control" rows="3" name="answer[]" placeholder="Enter answer"></textarea>
+                    </div>
+                </div>
+                <hr>
+            `;
+            faqSection.appendChild(newFaqItem);
         });
     </script>
 @stop

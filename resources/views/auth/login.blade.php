@@ -1,6 +1,6 @@
 @extends('auth.layouts.master')
-@section('Title' , 'Sign In')
 
+@section('Title' , 'Sign In')
 
 @section('Content')
     <section class="auth h-100">
@@ -15,10 +15,6 @@
                             <div class="content">
                                 <a href="{{route('index')}}" class="ZhomeName">Zhome</a>
                                 <h3 class="login-form__title">{{ __('messages.LoginToYourAccount') }}</h3>
-                                <p>
-                                    {{ __('messages.NewMember') }}
-                                    <a href="{{route('register')}}" class="fw-bold">{{ __('messages.CreateYourAccountNow') }}</a>
-                                </p>
                             </div>
 
                             <form method='POST' action="{{ route('login') }}">
@@ -51,7 +47,7 @@
 
                                     <p class="text-center mt-2 mb-3" style="color: #acacac;">{{ __('messages.LogSocial') }}</p>
 
-                                    <a href="{{route('auth.google')}}">
+                                    {{-- <a href="{{route('auth.google')}}">
                                         login with google
                                     </a>
                                     <div id="g_id_onload"
@@ -78,7 +74,7 @@
                                             <i class="fa-brands fa-facebook-f"></i>
                                             <span>{{ __('messages.LogWithFacebook') }}</span>
                                         </a>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
                             </form>
@@ -86,9 +82,9 @@
                     </div>
                     <div class="col-md-1 small-sidenav">
                         <ul class="small-sidenav-ul">
-                            <li><a href="{{route('index')}}" title="{{ __('messages.Home') }}"><i class="fa-solid fa-house"></i></a></li>
-                            <li><a href="{{route('Shop.index')}}" title="{{ __('messages.Shop') }}"><i class="fa-solid fa-store"></i></a></li>
-                            <li><a href="{{route('About.index')}}" title="{{ __('messages.About') }}"><i class="fa-solid fa-circle-info"></i></a></li>
+                            <li><a href="" title="Website"><i class="fa-solid fa-house"></i></a></li>
+                            <li><a href="" title="Shop"><i class="fa-solid fa-store"></i></a></li>
+                            <li><a href="" title="Zhome"><i class="fa-solid fa-circle-info"></i></a></li>
                         </ul>
                     </div>
                 </div>
