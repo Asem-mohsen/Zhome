@@ -1,4 +1,5 @@
 <?php
+
 return [
     'Brand' => [
         'Logo' => ['path' => 'Admin/dist/img/web/Brands/'],
@@ -18,10 +19,10 @@ return [
     'features' => [
         'Image' => ['path' => 'Admin/dist/img/web/Features/'],
     ],
-    'images' =>[
+    'images' => [
         'Image' => ['path' => 'Admin/dist/img/web/Products/OtherImages/'],
     ],
-    'product_details'=> [
-        'CoverImage'=> ['path'=> 'Admin/dist/img/web/Products/CoverImage/']
-    ]
+    'product_details' => [
+        'CoverImage' => ['path' => 'Admin/dist/img/web/Products/CoverImage/'],
+    ],
 ];

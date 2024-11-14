@@ -3,37 +3,47 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\ShopOrders;
 use App\Models\Product;
-use Carbon\Carbon;
 use App\Traits\ApiResponse;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
     use ApiResponse;
 
-    public function index(){
+    public function index()
+    {
 
-        $products      = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
-        $totalProducts = Product::all()->count();
-        $soldOut       = Product::where('Quantity', 0)->count();
-        $aboutToEnd    = Product::where('Quantity', '<=' , 3)->count();
-        $newest        = Product::where('created_at', '>=' , Carbon::now())->count();
+        $products = Product::with(['brand', 'platforms', 'translations'])
+            ->withCount([
+                'users as ordered_by_users_count' => function (Builder $query) {
+                    $query->distinct('user_id');
+                },
+            ])
+            ->get();
 
-        // Calculate the number of users who ordered each product
-        $products->each(function ($product) {
+        $inventoryStats = Product::selectRaw('
+                            COUNT(*) as total_products,
+                            COUNT(CASE WHEN quantity = 0 THEN 1 END) as sold_out,
+                            COUNT(CASE WHEN quantity <= 3 THEN 1 END) as about_to_end,
+                            COUNT(CASE WHEN created_at >= ? THEN 1 END) as newest
+                        ', [Carbon::now()])
+            ->first();
 
-            $product->orderedByUsersCount = $product->orderedByUsers()->distinct('UserID')->count();
+        $totalProducts = $inventoryStats->total_products;
+        $soldOut = $inventoryStats->sold_out;
+        $aboutToEnd = $inventoryStats->about_to_end;
+        $newest = $inventoryStats->newest;
 
-        });
 
         $data = [
             'products' => $products,
             'totalProducts' => $totalProducts,
             'aboutToEnd' => $aboutToEnd,
             'newest' => $newest,
-            'soldOut' => $soldOut
+            'soldOut' => $soldOut,
         ];
 
         return $this->data($data, 'data retrieved successfully');
@@ -44,24 +54,33 @@ class InventoryController extends Controller
     {
         $request->validate([
 
-            'quantityId'     => 'required|integer|exists:product,ID',
+            'quantityId' => 'required|integer|exists:product,ID',
 
-            'updatedQuantity'=> 'required|integer|min:0',
+            'updatedQuantity' => 'required|integer|min:0',
 
         ]);
 
-        $product = Product::where('ID',$request->quantityId);
+        $request->validate([
+            'quantityId' => 'required|integer|exists:products,id',
+            'updatedQuantity' => 'required|integer|min:0',
+        ]);
 
-        $product->Quantity = $request->updatedQuantity;
+        $product = Product::findOrFail($request->quantityId);
+        $product->quantity = $request->updatedQuantity;
+        $product->save();
 
-        if ($product->update(['Quantity'=>$product->Quantity])) {
+        $product = Product::findOrFail($request->quantityId);
+
+        $product->quantity = $request->updatedQuantity;
+
+        $product->save();
+
+        if ($product->save()) {
 
             return $this->success('Inventory Updated Successfully');
 
         } else {
-
-            return $this->error('Failed to update quantity');
-
+            return $this->error(["error" => 'Failed to update quantity'] , 'Failed to update quantity');
         }
     }
 }

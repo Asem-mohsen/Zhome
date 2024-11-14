@@ -1,9 +1,9 @@
 <?php
 
+use App\Enums\StatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Enums\StatusEnum;
 
 return new class extends Migration
 {
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('description');
             $table->string('ar_name')->unique();
             $table->text('ar_description')->nullable();
-            $table->enum('status',StatusEnum::values())->default(StatusEnum::ACTIVE->value);
+            $table->enum('status', StatusEnum::values())->default(StatusEnum::ACTIVE->value);
             $table->timestamps();
         });
     }

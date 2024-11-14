@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Traits\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\ApiResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserMiddleware
 {
@@ -17,6 +17,7 @@ class UserMiddleware
         if (Auth::guard('sanctum')->check()) {
             return $next($request);
         }
-        return $this->error(['message' => "Plase login first"],'LogIn first' , 401);
+
+        return $this->error(['message' => 'Plase login first'], 'LogIn first', 401);
     }
 }

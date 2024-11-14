@@ -9,13 +9,14 @@ class PlatformFAQ extends Model
 {
     use HasFactory;
 
-    protected $table ='platforms_faq';
+    protected $table = 'platforms_faq';
 
     protected $guarded = ['id'];
 
-    public function platfroms(){
+    public function platfroms()
+    {
 
         return $this->belongsTo(Platform::class);
-        
+
     }
 }

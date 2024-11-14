@@ -18,5 +18,4 @@ enum OrderStatusEnum: string
             self::REFUNDED->value,
         ];
     }
-
 }

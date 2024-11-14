@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Subcategory;
 use App\Models\Category;
+use App\Models\Subcategory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SubcategoryFactory extends Factory
 {

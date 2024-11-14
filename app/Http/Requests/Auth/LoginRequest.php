@@ -2,22 +2,16 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use App\Models\User;
-use App\Models\Order;
-
 
 class LoginRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -26,7 +20,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => ['required', 'string', 'email'],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,7 +35,7 @@ class LoginRequest extends FormRequest
 
         if ($user && $user->is_admin && $user->role->role !== 'user') {
 
-            if (!Auth::guard('web')->attempt($credentials, $this->boolean('remember'))) {
+            if (! Auth::guard('web')->attempt($credentials, $this->boolean('remember'))) {
                 RateLimiter::hit($this->throttleKey());
                 throw ValidationException::withMessages([
                     'email' => trans('auth.failed'),
@@ -52,7 +46,6 @@ class LoginRequest extends FormRequest
 
         RateLimiter::clear($this->throttleKey());
     }
-
 
     public function ensureIsNotRateLimited(): void
     {

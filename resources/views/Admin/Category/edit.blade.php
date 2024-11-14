@@ -3,8 +3,6 @@
 
 @section('Content')
 
-@include('Admin.Components.Msg')
-
     <form action="{{ route('Category.update' , $category->id) }}" enctype="multipart/form-data" method="post">
         @csrf
         @method('PUT')

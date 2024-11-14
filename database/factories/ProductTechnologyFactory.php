@@ -2,12 +2,11 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Technology;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductTechnologyFactory extends Factory
 {
-
     public function definition(): array
     {
         return [

@@ -4,9 +4,6 @@
 
 @section('Content')
 
-@include('Admin.Components.Msg')
-
-
 <div class="row">
     <div class="col-12">
         <div class="card">

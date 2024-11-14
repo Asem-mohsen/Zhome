@@ -8,9 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Shipping extends Model
 {
     use HasFactory;
-
     protected $guarded = ['id'];
-    
+
     public function country()
     {
         return $this->belongsTo(Country::class);

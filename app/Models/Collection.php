@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Collection extends Model implements HasMedia
 {
@@ -14,13 +14,13 @@ class Collection extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
-    public function products() : BelongsToMany
+    public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_collection', 'collection_id', 'product_id');
     }
 
-    public function features() : BelongsToMany
+    public function features(): BelongsToMany
     {
-        return $this->belongsToMany(Feature::class , 'collection_feature');
+        return $this->belongsToMany(Feature::class, 'collection_feature');
     }
 }

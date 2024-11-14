@@ -37,8 +37,8 @@ return [
         'redirect' => env('GOOGLE_REDIRCT'),
     ],
 
-    'supported-language'=>[
-        'ar','en'
+    'supported-language' => [
+        'ar', 'en',
     ],
 
     'stripe' => [
@@ -55,5 +55,5 @@ return [
         'iframe_id' => env('PAYMOB_IFRAME_ID'),
         'hmac_secret' => env('PAYMOB_HMAC_SECRET'),
     ],
-    
+
 ];

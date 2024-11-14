@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Google_Client;
-use App\Models\User;
 use App\Models\Admin;
+use App\Models\User;
+use Google_Client;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
@@ -102,7 +102,7 @@ class GoogleLoginController extends Controller
                 'Name' => $user->getName(),
                 'email' => $user->getEmail(),
                 'google_id' => $user->getId(),
-                'password' => encrypt('dummy-password')
+                'password' => encrypt('dummy-password'),
             ]);
 
             Auth::login($newUser);
@@ -112,5 +112,4 @@ class GoogleLoginController extends Controller
         return redirect()->intended(route('index'));
 
     }
-    
 }

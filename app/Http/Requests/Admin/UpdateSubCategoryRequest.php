@@ -3,17 +3,15 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class UpdateSubCategoryRequest extends FormRequest
 {
-
     protected $id;
 
     public function __construct(Request $request)
     {
-        $this->id = (integer) $request->route()->subcategory->id;
+        $this->id = (int) $request->route()->subcategory->id;
     }
 
     public function authorize(): bool
@@ -24,11 +22,11 @@ class UpdateSubCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'           => ['required' , 'max:255' , Rule::unique('subcategories', 'name')->ignore($this->id)],
-            'ar_name'        => ['required' , 'max:255' , Rule::unique('subcategories', 'ar_name')->ignore($this->id)],
-            'image'          => ['nullable' , 'image', 'mimes:jpeg,png,jpg,gif' , 'max:2048'],
-            'description'    => ['required'],
-            'ar_description' => ['required'],
+            'name' => ['required', 'max:255'],
+            'ar_name' => ['required', 'max:255'],
+            'image' => ['nullable'],
+            'description' => ['required'],
+            'ar_description' => ['nullable'],
         ];
     }
 }

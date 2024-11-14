@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Subcategory;
 use App\Http\Requests\Admin\AddCategoryReqeust;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -16,7 +13,7 @@ class CategoryController extends Controller
     {
         $categories = Category::withCount('subcategories')->get();
 
-        return view('Admin.Category.index' , compact('categories'));
+        return view('Admin.Category.index', compact('categories'));
     }
 
     public function create()
@@ -28,34 +25,35 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $data = $request->except('image','_token','_method');
-        
+        $data = $request->except('image', '_token', '_method');
+
         $category = Category::create($data);
 
-        if ($request->hasFile('image')) 
-        {
+        if ($request->hasFile('image')) {
             $category->addMediaFromRequest('image')->toMediaCollection('category-image');
         }
 
-        return redirect()->route('Category.index')->with('success', 'Category Added Successfully');
+        toastr()->success(message: 'Category created successfully!');
+
+        return redirect()->route('Category.index');
     }
 
     public function edit(Category $category)
     {
-        return view('Admin.Category.edit' , compact('category'));
+        return view('Admin.Category.edit', compact('category'));
     }
 
     public function show(Category $category)
     {
         $category->load('subcategories');
 
-        return view('Admin.Category.show' , compact('category'));
+        return view('Admin.Category.show', compact('category'));
     }
 
-    public function update(UpdateCategoryRequest $request ,Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $data = $request->except('image', '_token','_method');
-        
+        $data = $request->except('image', '_token', '_method');
+
         $category->update($data);
 
         if ($request->hasFile('image')) {
@@ -65,7 +63,9 @@ class CategoryController extends Controller
             $category->addMediaFromRequest('image')->toMediaCollection('category-image');
         }
 
-        return redirect()->route('Category.edit' , $category->ID)->with('success', 'Category Updated Successfully');
+        toastr()->success(message: 'Category updated successfully!');
+
+        return redirect()->route('Category.edit', $category->id);
     }
 
     public function destroy(Category $category)
@@ -74,6 +74,8 @@ class CategoryController extends Controller
 
         $category->delete();
 
-        return redirect()->route('Category.index')->with('success', 'Category Deleted Successfully');
+        toastr()->success(message: 'Category deleted successfully!');
+
+        return redirect()->route('Category.index');
     }
 }

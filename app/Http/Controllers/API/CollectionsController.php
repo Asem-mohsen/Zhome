@@ -3,16 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
-use App\Models\Collections;
-use App\Models\ProductCollections;
-use App\Http\Requests\Admin\AddCollectionRequest;
-use App\Http\Requests\Admin\UpdateCollectionRequest;
-use Illuminate\Http\Request;
-use App\Http\Services\Media;
-use App\Models\CollectionFeatures;
-use App\Http\Services\SyncChoices;
+use App\Http\Requests\Admin\{ AddCollectionRequest , UpdateCollectionRequest};
+use App\Models\{ Collection , Feature , Product };
 use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 
 class CollectionsController extends Controller
 {
@@ -28,151 +22,86 @@ class CollectionsController extends Controller
     public function create()
     {
         $products = Product::all();
+        $features = Feature::all();
 
         return $this->data($products->toArray(), 'Products retrieved successfully');
     }
 
     public function store(AddCollectionRequest $request)
     {
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Collections');
+        $data = $request->except('_token', '_method', 'image', 'feature_id', 'product_id');
 
-        $data = $request->except('_token', '_method', 'image', 'ProductID', 'Feature' ,'Feature-Image' , 'EndDate', 'Feature-Description');
-        $data['Image'] = $newImageName;
-        $collection = Collections::create($data);
+        $collection = Collection::create($data);
 
-        // Create Collection products
-        $productCollectionData = $request->only('ProductID');
-        $productCollectionData['CollectionID'] = $collection->id;
-        foreach ($request->ProductID as $productId) {
-            // Check if the ProductID exists in the product table
-            if (Product::where('ID', $productId)->exists()) {
-                $productCollectionData['ProductID'] = $productId;
-                ProductCollections::create($productCollectionData);
-            } else {
-                // Handle the case where the ProductID doesn't exist
-                return $this->error(["error"=>"Product with ID {$productId} does not exist."], 422);
-            }
+        if ($request->hasFile('image')) {
+            $collection->addMediaFromRequest('image')->toMediaCollection('collection-image');
         }
-        $features = $request->input('features', []);
-        foreach ($features as $feature) {
-            $featureImageName = Media::upload($feature->file('Feature-Image'), 'Admin\dist\img\web\Collections\Features');
-            CollectionFeatures::create([
-                'CollectionID' => $collection->id,
-                'Feature' => $feature['Feature'],
-                'Image' => $featureImageName,
-                'Description' => $feature['Feature-Description'],
-                'EndDate' => $feature['EndDate'],
-            ]);
+
+        if ($request->has('product_id')) {
+            $collection->products()->sync($request->input('product_id'));
+        }
+
+        if ($request->has('feature_id')) {
+            $collection->features()->sync($request->input('feature_id'));
         }
 
         return $this->success('Collection Added successfully');
     }
 
-    public function edit(Collections $collection)
+    public function edit(Collection $collection)
     {
-        $collection = $collection::with('products' , 'features')->where('ID' , $collection->ID )->first();
+        $collection->load('products', 'features');
+
         $products = Product::all();
+        $features = Feature::all();
 
         $data = [
             'collection' => $collection,
-            'All products' => $products,
+            'products' => $products,
+            'features' => $features,
         ];
 
         return $this->data($data, 'data retrieved successfully');
-
     }
 
-    public function update(UpdateCollectionRequest $request , Collections $collection)
+    public function update(UpdateCollectionRequest $request, Collection $collection)
     {
-        $data = $request->except('_token','_method','image', 'ProductID', 'features');
+        $data = $request->except('_token', '_method', 'image', 'product_id', 'feature_id');
 
-        if($request->hasFile('image')){
-            $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Collections');
-            $data['Image'] = $newImageName;
-            $oldImagePath = public_path("Admin/dist/img/web/Collections/{$collection->Image}");
-            if (is_file($oldImagePath)) {
-                Media::delete($oldImagePath);
-            }
-        }
-        Collections::where('ID' , $collection->ID)->update($data);
+        $collection->update($data);
 
-        // update Collection products
-        if($request->ProductID){
-            SyncChoices::Sync(ProductCollections::class , $collection->ID , $request->ProductID , 'ProductID' ,'CollectionID');
-        }
-        // update Features products
-        $features = $request->input('features', []);
-        $existingFeatures = $collection->features->keyBy('ID');
-        // Iterate through the features from the request
-        foreach ($features as $index => $feature) {
-            if (isset($feature['ID'])) {
-                // Update existing feature
-                $existingFeature = $existingFeatures->get($feature['ID']);
-                if ($existingFeature) {
-                    $featureImageName = $existingFeature->Image; // Keep the existing image name
-                    if ($request->hasFile("features.$index.Feature-Image")) {
-                        // If a new image is uploaded, delete the old one and upload the new one
-                        $old_path = public_path("Admin/dist/img/web/Collections/Features/{$existingFeature->Image}");
-                        if (is_file($old_path)) {
-                            Media::delete($old_path);
-                        }
-                        $featureImageName = Media::upload($request->file("features.$index.Feature-Image"), 'Admin/dist/img/web/Collections/Features');
-                    }
-                    $existingFeature->update([
-                        'Feature' => $feature['Feature'],
-                        'Image' => $featureImageName,
-                        'Description' => $feature['Feature-Description'],
-                        'EndDate' => $feature['EndDate'],
-                    ]);
-                    // Remove the updated feature from the existing features list
-                    $existingFeatures->forget($feature['ID']);
-                }
-            } else {
-                // Create new feature
-                $featureImageName = $request->hasFile("features.$index.Feature-Image")
-                    ? Media::upload($request->file("features.$index.Feature-Image"), 'Admin/dist/img/web/Collections/Features')
-                    : null;
+        if ($request->hasFile('image')) {
 
-                CollectionFeatures::create([
-                    'CollectionID' => $collection->ID,
-                    'Feature' => $feature['Feature'],
-                    'Image' => $featureImageName,
-                    'Description' => $feature['Feature-Description'],
-                    'EndDate' => $feature['EndDate'],
-                ]);
-            }
+            $collection->clearMediaCollection('collection-image');
+
+            $collection->addMediaFromRequest('image')->toMediaCollection('collection-image');
         }
 
-        // Delete features that are no longer present in the request
-        foreach ($existingFeatures as $existingFeature) {
-            $old_path = public_path("Admin/dist/img/web/Collections/Features/{$existingFeature->Image}");
-            if (is_file($old_path)) {
-                Media::delete($old_path);
-            }
-            $existingFeature::where('ID' ,  $existingFeature->ID)->delete();
+        if ($request->has('product_id')) {
+            $collection->products()->sync($request->input('product_id'));
+        } else {
+            $collection->products()->detach();
+        }
+
+        if ($request->has('feature_id')) {
+            $collection->features()->sync($request->input('feature_id'));
+        } else {
+            $collection->features()->detach();
         }
 
         return $this->success('Collection updated successfully');
     }
 
-
-    public function destroy(Collections $collection){
+    public function destroy(Collection $collection)
+    {
 
         try {
-
-            ProductCollections::where('CollectionID', $collection->ID)->delete();
-            $collectionFeatures = CollectionFeatures::where('CollectionID', $collection->ID)->get();
-            foreach ($collectionFeatures as $feature) {
-
-                Media::delete(public_path("Admin/dist/img/web/Collections/Features/{$feature->Image}"));
-
-                $feature->delete();
-
-            }
-            $collection::where('ID' , $collection->ID)->delete();
-
-
-            Media::delete(public_path("Admin\dist\img\web\Collections\\{$collection->Image}"));
+            $collection->products()->detach();
+            $collection->features()->detach();
+    
+            $collection->clearMediaCollection('collection-image');
+    
+            $collection->delete();
 
             return $this->success('Collection Deleted Successfully');
 

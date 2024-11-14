@@ -3,22 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\{ User , Product , Order};
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\User;
 
 class UserController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
-        $users = User::with(['address' , 'phones' , 'role'])
-                ->whereHas('role', function ($query) {
-                    $query->where('role', 'user');
-                })->get();
+        $users = User::with(['address', 'phones', 'role'])
+            ->whereHas('role', function ($query) {
+                $query->where('role', 'user');
+            })->get();
 
         return view('Admin.Users.index', compact('users'));
     }
 
-    public function profile(User $user){
+    public function profile(User $user)
+    {
 
         // $orderCount = Order::where('user_id', $user->id)->where('status' , 1)->count();
         // $totalPayments  = Order::where('user_id', $user->id)->where('status' , 1)->sum('TotalAfterSaving');
@@ -28,7 +31,7 @@ class UserController extends Controller
 
     public function getUserOrderStatistics($userId)
     {
-        $orderStatistics = Order::withCount('user')->where('user_id' , $userId)->groupBy('user_id')->first();
+        $orderStatistics = Order::withCount('user')->where('user_id', $userId)->groupBy('user_id')->first();
 
         return $orderStatistics;
     }
@@ -38,7 +41,8 @@ class UserController extends Controller
         $userProducts = $user->products;
         $products = Product::with(['brand', 'platforms', 'subcategory.category'])->get();
         $orderStatistics = $this->getUserOrderStatistics($user->id);
-        return view('User.Profile.index', compact('user' , 'products', 'userProducts' ,'orderStatistics'));
+
+        return view('User.Profile.index', compact('user', 'products', 'userProducts', 'orderStatistics'));
     }
 
     public function edit(User $user)
@@ -46,13 +50,7 @@ class UserController extends Controller
         return view('User.Profile.edit', compact('user'));
     }
 
-    public function update(User $user)
-    {
+    public function update(User $user) {}
 
-    }
-
-    public function destroy(User $user)
-    {
-
-    }
+    public function destroy(User $user) {}
 }

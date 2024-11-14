@@ -6,11 +6,10 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-
-
     public function run(): void
     {
         $this->call([
+            CountrySeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
             BrandSeeder::class,
@@ -25,7 +24,7 @@ class DatabaseSeeder extends Seeder
             PromotionSeeder::class,
             SubscriptionSeeder::class,
             CollectionFeatureSeeder::class,
-            ProductCollectionSeeder::Class,
+            ProductCollectionSeeder::class,
             SaleSeeder::class,
             CountrySeeder::class,
             SiteSettingSeeder::class,

@@ -3,9 +3,6 @@
 
 @section('Content')
 
-    @include('Admin.Components.Msg')
-
-
     <form action="{{ route('Platform.store') }}" enctype="multipart/form-data" method="post">
         @csrf
         <div class="row">

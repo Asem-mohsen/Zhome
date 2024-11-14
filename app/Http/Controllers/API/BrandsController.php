@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
-use Illuminate\Http\Request;
-use App\Http\Resources\BrandResource;
 use App\Http\Requests\Admin\AddBrandRequest;
 use App\Http\Requests\Admin\UpdateBrandRequest;
+use App\Http\Resources\BrandResource;
+use App\Models\Brand;
 use App\Traits\ApiResponse;
 
 class BrandsController extends Controller
 {
-    use ApiResponse ;
+    use ApiResponse;
 
     public function index()
     {
@@ -27,7 +26,7 @@ class BrandsController extends Controller
 
     public function store(AddBrandRequest $request)
     {
-        $data = $request->except('image', '_token','_method');
+        $data = $request->except('image', '_token', '_method');
 
         $brand = Brand::create($data);
 
@@ -38,7 +37,8 @@ class BrandsController extends Controller
         return $this->success('Brand Added Successfully');
     }
 
-    public function edit(Brand $brand){
+    public function edit(Brand $brand)
+    {
 
         $brand->load('media');
 
@@ -46,9 +46,9 @@ class BrandsController extends Controller
 
     }
 
-    public function update(UpdateBrandRequest $request , Brand $brand)
+    public function update(UpdateBrandRequest $request, Brand $brand)
     {
-        $data = $request->except('image', '_token','_method');
+        $data = $request->except('image', '_token', '_method');
 
         $brand->update($data);
 
@@ -62,7 +62,8 @@ class BrandsController extends Controller
         return $this->success('Brand Updated Successfully');
     }
 
-    public function destroy(Brand $brand){
+    public function destroy(Brand $brand)
+    {
 
         try {
 

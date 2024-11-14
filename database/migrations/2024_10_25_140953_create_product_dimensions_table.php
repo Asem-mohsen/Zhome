@@ -6,21 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
         Schema::create('product_dimensions', function (Blueprint $table) {
-
-            $table->foreignId('product_id')->unique()->constrained('products')->cascadeOnDelete();
-            $table->string('width')->nullable();
-            $table->string('height')->nullable();
-            $table->string('length')->nullable();
-            $table->string('capacity')->nullable();
-            $table->string('noise_level')->nullable();
-            $table->string('weight')->nullable();
-            $table->string('power_consumption')->nullable();
+            $table->id();
+            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->string('key');
+            $table->string('value');
             $table->timestamps();
-
         });
     }
 

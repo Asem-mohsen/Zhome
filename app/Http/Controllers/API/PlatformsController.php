@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Platform;
-use App\Models\PlatformFAQ;
 use App\Http\Requests\Admin\AddPlatformRequest;
 use App\Http\Requests\Admin\UpdatePlatfromRequest;
-use App\Traits\ApiResponse;
 use App\Http\Resources\PlatformResource;
+use App\Models\Platform;
+use App\Models\PlatformFAQ;
+use App\Traits\ApiResponse;
 
 class PlatformsController extends Controller
 {
@@ -28,20 +27,19 @@ class PlatformsController extends Controller
 
     public function store(AddPlatformRequest $request)
     {
-        $data = $request->except('image','_token','_method','question','answer');
+        $data = $request->except('image', '_token', '_method', 'question', 'answer');
 
         $platform = Platform::create($data);
 
-        if ($request->hasFile('image')) 
-        {
+        if ($request->hasFile('image')) {
             $platform->addMediaFromRequest('image')->toMediaCollection('platform-image');
         }
 
-        $faqData = $request->only('question','answer');
+        $faqData = $request->only('question', 'answer');
 
         if ($request->filled('question')) {
             foreach ($request->question as $index => $question) {
-                if (!empty($question) && !empty($request->answer[$index])) {
+                if (! empty($question) && ! empty($request->answer[$index])) {
                     PlatformFAQ::create([
                         'platform_id' => $platform->id,
                         'question' => $question,
@@ -61,9 +59,9 @@ class PlatformsController extends Controller
         return $this->data($platform->toArray(), 'platform data for editing retrieved successfully');
     }
 
-    public function update(UpdatePlatfromRequest $request , Platform $platform)
+    public function update(UpdatePlatfromRequest $request, Platform $platform)
     {
-        $data = $request->except('image', '_token','_method','question','answer');
+        $data = $request->except('image', '_token', '_method', 'question', 'answer');
 
         $platform->update($data);
 
@@ -74,14 +72,15 @@ class PlatformsController extends Controller
             $platform->addMediaFromRequest('image')->toMediaCollection('platform-image');
         }
 
-        $faqData = $request->only('question','answer');
+        $faqData = $request->only('question', 'answer');
 
         $platform->faqs()->update($faqData);
 
         return $this->success('Platform UpdatedSuccessfully');
     }
 
-    public function destroy(Platform $platform){
+    public function destroy(Platform $platform)
+    {
 
         try {
 

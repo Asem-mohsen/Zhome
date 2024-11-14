@@ -1,6 +1,6 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="{{ route('index') }}" class="brand-link">
+    <a href="{{ route('Dashboard.index') }}" class="brand-link">
         <img src="{{ asset('Admin/dist/img/web/Logo/Icon.png') }}" alt="Zhome Logo"
             class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">Zhome</span>
@@ -14,7 +14,7 @@
                     alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">
+                <a href="{{ route('Admins.profile' ,  Auth::guard('web')->user()->id)}}" class="d-block">
                     <p>{{ Auth::guard('web')->user()->name }}</p>
                 </a>
             </div>
@@ -49,7 +49,7 @@
                 </li>
                 {{-- Website --}}
                 <li class="nav-item">
-                    <a href="" class="nav-link ">
+                    <a href="{{ config('app.frontend_url') }}" target="_blank" class="nav-link ">
                         <i class="nav-icon fa-solid fa-desktop"></i>
                         <p>
                             Website
@@ -172,6 +172,32 @@
                         </p>
                     </a>
                 </li>
+                {{-- Shipping --}}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-truck"></i>
+                        <p>
+                            Shipping
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('Shipping.cost.index') }}"
+                                class="nav-link {{ request()->routeIs('Shipping.cost.index') ? 'active' : '' }}">
+                                <i class="fa-solid fa-money-bill-1"></i>
+                                <p>Shipping Cost</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('Shipping.estimations.index') }}"
+                                class="nav-link {{ request()->routeIs('Shipping.estimations.index') ? 'active' : '' }}">
+                                <i class="fa-solid fa-file-signature"></i>
+                                <p>Delivery Estimations</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 {{-- Orders --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
@@ -198,12 +224,12 @@
                         </li>
                     </ul>
                 </li>
-                {{-- Sales --}}
+                {{-- Discounts --}}
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-sack-dollar"></i>
                         <p>
-                            Sales
+                            Discounts
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
@@ -212,14 +238,14 @@
                             <a href="{{ route('Sales.index') }}"
                                 class="nav-link {{ request()->routeIs('Sales.index') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Sales</p>
+                                <p>Discount</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('Sales.Promocode.index') }}"
                                 class="nav-link {{ request()->routeIs('Sales.Promocode.index') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
-                                <p>Promocodes</p>
+                                <p>Promotions</p>
                             </a>
                         </li>
                     </ul>

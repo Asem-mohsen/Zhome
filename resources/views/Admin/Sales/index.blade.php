@@ -3,8 +3,6 @@
 
 @section('Content')
 
-    @include('Admin.Components.Msg')
-
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -41,7 +39,7 @@
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <a href="{{ route('Products.show' , $sale->product_id) }}">
+                                                        <a href="{{ config('app.frontend_url') }}/product/{{ $sale->product_id }}">
                                                             <h6 class="mb-0 text-sm">{{$sale->product->translations->name}}</h6>
                                                         </a>
                                                     </div>

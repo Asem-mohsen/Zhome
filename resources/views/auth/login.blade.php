@@ -8,7 +8,7 @@
         <div class="h-100">
             <div class="row noHegiht h-100">
                 <div class="wrapper h-100">
-                    <div class="col-md-6 box details" style="background-image:url({{ asset("UI/Imgs/Signin/RobotHand.jpg")}});">
+                    <div class="col-md-6 box details" style="background-image:url({{ asset("Admin/dist/img/web/SignIn/RobotHand.webp")}});">
                     </div>
                     <div class="col-md-5 box">
                         <div class="form">
@@ -47,44 +47,15 @@
 
                                     <p class="text-center mt-2 mb-3" style="color: #acacac;">{{ __('messages.LogSocial') }}</p>
 
-                                    {{-- <a href="{{route('auth.google')}}">
-                                        login with google
-                                    </a>
-                                    <div id="g_id_onload"
-                                        data-client_id="673202749345-8voabpo6qcntjihfmlq4acudh7pl8o88.apps.googleusercontent.com"
-                                        data-context="signin"
-                                        data-ux_mode="popup"
-                                        data-auto_prompt="false"
-                                        >
-                                    </div>
-
-                                    <div class="d-flex gap-3 align-items-center justify-content-center flex-wrap" style="gap:20px;">
-                                        <div class="g_id_signin"
-                                            data-type="icon"
-                                            data-shape="square"
-                                            data-theme="filled_blue"
-                                            data-text="signin_with"
-                                            data-size="large"
-                                            data-locale="en-GB"
-                                            >
-
-                                        </div>
-
-                                        <a href="../SignWithFacebook.php" class="facebook-login-btn">
-                                            <i class="fa-brands fa-facebook-f"></i>
-                                            <span>{{ __('messages.LogWithFacebook') }}</span>
-                                        </a>
-                                    </div> --}}
-
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="col-md-1 small-sidenav">
                         <ul class="small-sidenav-ul">
-                            <li><a href="" title="Website"><i class="fa-solid fa-house"></i></a></li>
-                            <li><a href="" title="Shop"><i class="fa-solid fa-store"></i></a></li>
-                            <li><a href="" title="Zhome"><i class="fa-solid fa-circle-info"></i></a></li>
+                            <li><a href="{{ config('app.frontend_url') }}" title="Website"><i class="fa-solid fa-house"></i></a></li>
+                            <li><a href="{{ config('app.frontend_url') . '/shop'}}" title="Shop"><i class="fa-solid fa-store"></i></a></li>
+                            <li><a href="{{ config('app.frontend_url') . '/about'}}" title="Zhome"><i class="fa-solid fa-circle-info"></i></a></li>
                         </ul>
                     </div>
                 </div>

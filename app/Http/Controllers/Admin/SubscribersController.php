@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Subscription;
+use Illuminate\Http\Request;
 
 class SubscribersController extends Controller
 {
@@ -12,7 +12,7 @@ class SubscribersController extends Controller
     {
         $subscribers = Subscription::all();
 
-        return view('Admin.Subscribers.index' , compact('subscribers'));
+        return view('Admin.Subscribers.index', compact('subscribers'));
     }
 
     public function newSubscriber(Request $request)
@@ -25,6 +25,7 @@ class SubscribersController extends Controller
 
         try {
             Subscription::create($data);
+
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             return response()->json(['success' => false]);

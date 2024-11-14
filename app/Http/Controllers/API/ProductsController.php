@@ -2,23 +2,30 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Models\{User, Category , Subcategory , Product ,Platform ,Brand ,Feature, ProductFaqTranslation, ProductReview , ProductDimension};
-use App\Http\Requests\Admin\AddProductRequest;
-use App\Http\Requests\Admin\UpdateProductRequest;
-use App\Traits\ApiResponse;
-use Illuminate\Support\Facades\DB;
 use App\Enums\CommentStatusEnum;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\{ AddProductRequest , UpdateProductRequest};
+use App\Models\{ Brand ,Category , Feature , Platform ,Product ,Subcategory ,Technology};
+use App\Services\ProductService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductsController extends Controller
 {
     use ApiResponse;
 
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index() // all products for admin
     {
-        $products = Product::with(['translations', 'brand', 'platforms', 'subcategory.category' , 'sale'])->get();
+        $products = Product::with(['translations', 'brand', 'platforms', 'subcategory.category', 'sale'])->get();
 
         return $this->data($data = ['products' => $products], 'All Products data retrieved successfully');
     }
@@ -33,11 +40,11 @@ class ProductsController extends Controller
     public function create()
     {
         $data = [
-            'brands'     => Brand::all(),
-            'platforms'  => Platform::all(),
-            'categories' => ategory::all(),
-            'features'   => Feature::all(),
-            'subs'       => Subcategory::all(),
+            'brands' => Brand::all(),
+            'platforms' => Platform::all(),
+            'categories' => Category::all(),
+            'features' => Feature::all(),
+            'subs' => Subcategory::all(),
         ];
 
         return $this->data($data, 'All Products data retrieved successfully');
@@ -54,18 +61,18 @@ class ProductsController extends Controller
     {
         DB::transaction(function () use ($request) {
             $product = Product::create([
-                'quantity'              => $request->input('quantity'),
-                'price'                 => $request->input('price'),
-                'installation_cost'     => $request->input('installation_cost'),
-                'is_bundle'             => $request->boolean('is_bundle'),
-                'subcategory_id'        => $request->input('subcategory_id'),
-                'brand_id'              => $request->input('brand_id'),
-                'video_url'             => $request->input('video_url'),
-                'added_by'              => Auth::guard('sanctum')->user()->id,
-                'updated_by'            => Auth::guard('sanctum')->user()->id,
+                'quantity' => $request->input('quantity'),
+                'price' => $request->input('price'),
+                'installation_cost' => $request->input('installation_cost'),
+                'is_bundle' => $request->boolean('is_bundle'),
+                'subcategory_id' => $request->input('subcategory_id'),
+                'brand_id' => $request->input('brand_id'),
+                'video_url' => $request->input('video_url'),
+                'added_by' => Auth::guard('sanctum')->user()->id,
+                'updated_by' => Auth::guard('sanctum')->user()->id,
             ]);
 
-             // Handle media files using Spatie Media Library
+            // Handle media files using Spatie Media Library
             if ($request->hasFile('cover_image')) {
                 $product->addMediaFromRequest('cover_image')->toMediaCollection('cover_image');
             }
@@ -85,21 +92,16 @@ class ProductsController extends Controller
             $product->technologies()->attach($request->input('technology_id'));
             $product->features()->attach($request->input('feature_id'));
 
-            $dimensionsData = [
-                'product_id'        => $product->id,
-                'width'             => $request->input('width'),
-                'height'            => $request->input('height'),
-                'length'            => $request->input('length'),
-                'capacity'          => $request->input('capacity'),
-                'noise_level'       => $request->input('noise_level'),
-                'weight'            => $request->input('weight'),
-                'power_consumption' => $request->input('power_consumption'),
-            ];
+            $keys = $request->input('dimension_keys');
+            $values = $request->input('dimension_values');
 
-            $hasDimensionData = collect($dimensionsData)->except('product_id')->filter()->isNotEmpty();
-
-            if ($hasDimensionData) {
-                $product->dimensions()->create($dimensionsData);
+            foreach ($keys as $index => $key) {
+                if ($key && isset($values[$index])) {
+                    $product->dimensions()->create([
+                        'dimension_key' => $key,
+                        'value' => $values[$index],
+                    ]);
+                }
             }
 
             // Add color records
@@ -108,22 +110,22 @@ class ProductsController extends Controller
             }
 
             // FAQ Translations
-            if ($request->input('question') && $request->input('answer')) {
-
-                $faq = $product->faqs()->create();
-
-                $faq->translations()->createMany([
-                    [
-                        'question' => $request->input('question'),
-                        'answer'   => $request->input('answer'),
-                        'locale'   => 'en',
-                    ],
-                    [
-                        'question' => $request->input('ar_question'),
-                        'answer'   => $request->input('ar_answer'),
-                        'locale'   => 'ar',
-                    ],
-                ]);
+            if ($request->has('question') && is_array($request->input('question'))) {
+                $questions = $request->input('question');
+                $answers = $request->input('answer');
+                $arQuestions = $request->input('ar_question');
+                $arAnswers = $request->input('ar_answer');
+            
+                foreach ($questions as $index => $question) {
+                    if (isset($answers[$index], $arQuestions[$index], $arAnswers[$index])) {
+                        $product->faqs()->create([
+                            'question' => $question,
+                            'answer' => $answers[$index],
+                            'ar_question' => $arQuestions[$index],
+                            'ar_answer' => $arAnswers[$index],
+                        ]);
+                    }
+                }
             }
 
             // Product reviews Translation
@@ -131,27 +133,21 @@ class ProductsController extends Controller
                 'user_id' => $product->added_by,
                 'comment' => $request->input('comment'),
                 'ar_comment' => $request->input('ar_comment'),
-                'status' => CommentStatusEnum::Published->value
+                'status' => CommentStatusEnum::Published->value,
             ]);
 
             // Product Description Translation
             $product->translations()->createMany([
-                [
-                    'name'                  => $request->input('name'),
-                    'description'           => $request->input('description'),
-                    'additional_description'=> $request->input('additional_description'),
-                    'title'                 => $request->input('title'),
-                    'second_title'          => $request->input('second_title'),
-                    'locale'                => 'en',
-                ],
-                [
-                    'name'                  => $request->input('ar_name'),
-                    'description'           => $request->input('ar_description'),
-                    'additional_description'=> $request->input('ar_additional_description'),
-                    'title'                 => $request->input('ar_title'),
-                    'second_title'          => $request->input('ar_second_title'),
-                    'locale'                => 'ar',
-                ],
+                'name' => $request->input('name'),
+                'ar_name' => $request->input('ar_name'),
+                'description' => $request->input('description'),
+                'additional_description' => $request->input('additional_description'),
+                'ar_description' => $request->input('ar_description'),
+                'ar_additional_description' => $request->input('ar_additional_description'),
+                'title' => $request->input('title'),
+                'second_title' => $request->input('second_title'),
+                'ar_title' => $request->input('ar_title'),
+                'ar_second_title' => $request->input('ar_second_title'),
             ]);
 
         });
@@ -159,20 +155,20 @@ class ProductsController extends Controller
         return $this->success('Product Added Successfully');
     }
 
-    public function update(UpdateProductRequest $request , Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
         DB::transaction(function () use ($request, $product) {
             // Update main product fields
             $product->update([
-                'quantity'              => $request->input('quantity'),
-                'price'                 => $request->input('price'),
-                'installation_cost'     => $request->input('installation_cost'),
-                'is_bundle'             => $request->boolean('is_bundle'),
-                'category_id'           => $request->input('category_id'),
-                'subcategory_id'        => $request->input('subcategory_id'),
-                'brand_id'              => $request->input('brand_id'),
-                'video_url'             => $request->input('video_url'),
-                'updated_by'            => Auth::guard('sanctum')->user()->id,
+                'quantity' => $request->input('quantity'),
+                'price' => $request->input('price'),
+                'installation_cost' => $request->input('installation_cost'),
+                'is_bundle' => $request->boolean('is_bundle'),
+                'category_id' => $request->input('category_id'),
+                'subcategory_id' => $request->input('subcategory_id'),
+                'brand_id' => $request->input('brand_id'),
+                'video_url' => $request->input('video_url'),
+                'updated_by' => Auth::guard('sanctum')->user()->id,
             ]);
 
             // Update media files
@@ -198,19 +194,19 @@ class ProductsController extends Controller
             $product->technologies()->sync($request->input('technology_id', []));
             $product->features()->sync($request->input('feature_id', []));
 
-            // Update or create dimensions
-            $product->dimensions()->updateOrCreate(
-                ['product_id' => $product->id],
-                [
-                    'width'             => $request->input('width'),
-                    'height'            => $request->input('height'),
-                    'length'            => $request->input('length'),
-                    'capacity'          => $request->input('capacity'),
-                    'noise_level'       => $request->input('noise_level'),
-                    'weight'            => $request->input('weight'),
-                    'power_consumption' => $request->input('power_consumption'),
-                ]
-            );
+            $keys = $request->input('dimension_keys');
+            $values = $request->input('dimension_values');
+
+            $product->dimensions()->delete();
+
+            foreach ($keys as $index => $key) {
+                if ($key && isset($values[$index])) {
+                    $product->dimensions()->create([
+                        'dimension_key' => $key,
+                        'value' => $values[$index],
+                    ]);
+                }
+            }
 
             // Update colors
             $product->colors()->delete();
@@ -220,21 +216,23 @@ class ProductsController extends Controller
 
             // Update FAQs with translations
             $product->faqs()->delete();
-            if ($request->input('question') && $request->input('answer')) {
-                $faq = $product->faqs()->create();
-
-                $faq->translations()->createMany([
-                    [
-                        'question' => $request->input('question'),
-                        'answer'   => $request->input('answer'),
-                        'locale'   => 'en',
-                    ],
-                    [
-                        'question' => $request->input('ar_question'),
-                        'answer'   => $request->input('ar_answer'),
-                        'locale'   => 'ar',
-                    ],
-                ]);
+            if ($request->has('question') && is_array($request->input('question'))) {
+                $questions = $request->input('question');
+                $answers = $request->input('answer');
+                $arQuestions = $request->input('ar_question');
+                $arAnswers = $request->input('ar_answer');
+            
+                foreach ($questions as $index => $question) {
+                    // Ensure each element exists at this index before using it
+                    if (isset($answers[$index], $arQuestions[$index], $arAnswers[$index])) {
+                        $product->faqs()->create([
+                            'question' => $question,
+                            'answer' => $answers[$index],
+                            'ar_question' => $arQuestions[$index],
+                            'ar_answer' => $arAnswers[$index],
+                        ]);
+                    }
+                }
             }
 
             // Update reviews translations
@@ -244,30 +242,26 @@ class ProductsController extends Controller
                     'user_id' => $product->added_by,
                     'comment' => $request->input('comment'),
                     'ar_comment' => $request->input('ar_comment'),
-                    'status' => CommentStatusEnum::Published->value
+                    'status' => CommentStatusEnum::Published->value,
                 ],
             );
 
             // Update description translations
-            $product->translations()->delete();
-            $product->translations()->createMany([
+            $product->translations()->updateOrCreate(
+                ['product_id' => $product->id],
                 [
-                    'name'                  => $request->input('name'),
-                    'description'           => $request->input('description'),
-                    'additional_description'=> $request->input('additional_description'),
-                    'title'                 => $request->input('title'),
-                    'second_title'          => $request->input('second_title'),
-                    'locale'                => 'en',
-                ],
-                [
-                    'name'                  => $request->input('ar_name'),
-                    'description'           => $request->input('ar_description'),
-                    'additional_description'=> $request->input('ar_additional_description'),
-                    'title'                 => $request->input('ar_title'),
-                    'second_title'          => $request->input('ar_second_title'),
-                    'locale'                => 'ar',
-                ],
-            ]);
+                    'name' => $request->input('name'),
+                    'ar_name' => $request->input('ar_name'),
+                    'description' => $request->input('description'),
+                    'additional_description' => $request->input('additional_description'),
+                    'ar_description' => $request->input('ar_description'),
+                    'ar_additional_description' => $request->input('ar_additional_description'),
+                    'title' => $request->input('title'),
+                    'second_title' => $request->input('second_title'),
+                    'ar_title' => $request->input('ar_title'),
+                    'ar_second_title' => $request->input('ar_second_title'),
+                ]
+            );
         });
 
         return $this->success('Product Updated Successfully');
@@ -289,10 +283,10 @@ class ProductsController extends Controller
                 $query->latest()->limit(1);
             },
             'colors',
-            'dimensions'
+            'dimensions',
         ]);
 
-        $products = Product::with(['brand', 'platforms' ,'translations'])->get();
+        $products = Product::with(['brand', 'platforms', 'translations'])->get();
 
         $data = [
             'recommended_products' => $products,
@@ -306,15 +300,15 @@ class ProductsController extends Controller
     public function edit(Product $product)
     {
 
-        $product->load(['translations' , 'brand', 'platforms', 'subcategory.category', 'faqs', 'technologies', 'features', 'sale', 'collections', 'reviews', 'colors', 'dimensions']);
+        $product->load(['translations', 'brand', 'platforms', 'subcategory.category', 'faqs', 'technologies', 'features', 'sale', 'collections', 'reviews', 'colors', 'dimensions']);
 
         $data = [
-            'product'   => $product,
-            'brands'    => Brand::all(),
+            'product' => $product,
+            'brands' => Brand::all(),
             'platforms' => Platform::all(),
-            'categories'=> Category::all(),
-            'subs'      => Subcategory::all(),
-            'features'  => Feature::all(),
+            'categories' => Category::all(),
+            'subs' => Subcategory::all(),
+            'features' => Feature::all(),
         ];
 
         return $this->data($data, 'Product data for editing retrieved successfully');
@@ -353,5 +347,4 @@ class ProductsController extends Controller
         }
 
     }
-
 }

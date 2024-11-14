@@ -2,26 +2,25 @@
 
 namespace App\Models;
 
+use App\Traits\HasMediaUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Traits\HasMediaUrl;
 
 class Feature extends Model implements HasMedia
 {
-    use HasFactory , InteractsWithMedia , HasMediaUrl;
+    use HasFactory , HasMediaUrl , InteractsWithMedia;
 
     protected $guarded = ['id'];
 
-    public function products() : BelongsToMany
+    public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class , 'product_feature');
+        return $this->belongsToMany(Product::class, 'product_feature');
     }
 
-    public function collections() : BelongsToMany
+    public function collections(): BelongsToMany
     {
         return $this->belongsToMany(Collection::class);
     }

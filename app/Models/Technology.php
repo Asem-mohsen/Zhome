@@ -17,7 +17,7 @@ class Technology extends Model implements HasMedia
 
     public function product()
     {
-        return $this->belongsToMany(Product::class, 'product_technolgies', 'technology_id' , 'product_id');
+        return $this->belongsToMany(Product::class, 'product_technolgies', 'technology_id', 'product_id');
     }
 
     public function getImageUrlAttribute()

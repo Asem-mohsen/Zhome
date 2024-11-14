@@ -17,15 +17,15 @@ class SaveUserInfoCheckout extends FormRequest
     public function rules(): array
     {
         return [
-            'email'     => ['nullable', 'email'],
-            'name'      => ['nullable', 'max:255', 'string'],
-            'phone'     => ['required', 'array'], 
-            'phone.*'   => ['required', 'numeric'],
-            'street_address'=> ['required', 'string'],
-            'country'   => ['required', 'string'],
-            'city'      => ['required', 'string'],
-            'building'  => ['required'],
-            'floor'     => ['required'],
+            'email' => ['nullable', 'email'],
+            'name' => ['nullable', 'max:255', 'string'],
+            'phone' => ['required', 'array'],
+            'phone.*' => ['required', 'numeric'],
+            'street_address' => ['required', 'string'],
+            'country' => ['required', 'string'],
+            'city' => ['required', 'string'],
+            'building' => ['required'],
+            'floor' => ['required'],
             'apartment' => ['required'],
         ];
     }

@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\UserPhone;
-use App\Models\UserAddress;
 use App\Models\Role;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Models\UserAddress;
+use App\Models\UserPhone;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -31,7 +30,7 @@ class UserSeeder extends Seeder
         });
 
         $role = Role::where('role', 'master admin')->first();
-        
+
         $adminUser = User::factory()->create([
             'name' => 'Zhome Admin',
             'email' => 'zhome-admin@zhome.com',

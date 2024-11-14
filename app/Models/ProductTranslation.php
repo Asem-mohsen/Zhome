@@ -9,8 +9,8 @@ class ProductTranslation extends Model
 {
     use HasFactory;
 
-    protected $table   = 'product_translations';
-    
+    protected $table = 'product_translations';
+
     protected $guarded = ['id'];
 
     public function products()

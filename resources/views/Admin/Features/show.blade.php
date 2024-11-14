@@ -25,7 +25,7 @@
 
                     </div>
                     <div class="ml-2">
-                        <img src="{{ $feature->getFirstImageUrl()}}" height="250px" class="w-100 object-contain mt-5" alt="{{$feature->name}}">
+                        <img src="{{ $feature->getFirstMediaUrl('feature_image')}}" height="250px" class="w-100 object-contain mt-5" alt="{{$feature->name}}">
                         <div class="information-collection mt-5">
                             <h1 class="text-center">{{$feature->name . " Feature"}}</span></h1>
                             <p class="text-center">{{$feature->description}}</span>
@@ -33,15 +33,15 @@
                         <h3 class="mt-5">Products having this feature</h3>
                         <div class="mt-4 ml-2">
                             <div id="owl-demo" class="related-product__carousel owl-carousel owl-theme">
-                                
-                                    @forelse($feature->products as $product)
+                                @forelse($feature->products as $product)
 
-                                        <x-admin.product-card-admin :variable="$product" :productID="$product->ProductID" />
+                                    <x-admin.product-card-admin :variable="$product" :productID="$product->ProductID" />
 
-                                    @empty
-                                        No Prooducts associated to this Feature yet
-                                        
-                                    @endforelse
+                                @empty
+
+                                    <p> No Prooducts associated to this Feature yet </p>
+                                    
+                                @endforelse
                             </div>
                         </div>
                     </div>

@@ -10,5 +10,4 @@ class Tool extends Model
     use HasFactory;
 
     protected $guarded = [];
-
 }

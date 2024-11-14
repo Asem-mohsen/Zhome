@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Collection;
 use App\Models\Feature;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CollectionFeatureFactory extends Factory
 {

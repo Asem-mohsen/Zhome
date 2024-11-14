@@ -12,8 +12,6 @@
 
 @section('Content')
 
-    @include('Admin.Components.Msg')
-
     <div class="container-fluid py-4">
         <form id="productForm" action="{{ route('Products.store') }}" method="post" enctype="multipart/form-data">
             @csrf
@@ -34,8 +32,8 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="example-text-input" class="form-control-label">Name</label>
-                                                <input class="form-control" type="text" id="Name" autocomplete="off" name="name" value="{{ old('name') }}" required>
+                                                <label for="name" class="form-control-label">Name</label>
+                                                <input class="form-control" type="text" id="name" autocomplete="off" name="name" value="{{ old('name') }}" required>
                                             </div>
                                             @error('name')
                                                 <div class="alert alert-danger">{{ $message }}</div>
@@ -43,7 +41,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="example-text-input" class="form-control-label">Arabic Name</label>
+                                                <label for="ar_name" class="form-control-label">Arabic Name</label>
                                                 <input class="form-control" type="text" id="ar_name" autocomplete="off" name="ar_name" value="{{ old('ar_name') }}" required>
                                             </div>
                                             @error('ar_name')
@@ -52,7 +50,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="example-text-input" class="form-control-label">Quantity In Stock</label>
+                                                <label for="quantity" class="form-control-label">Quantity In Stock</label>
                                                 <input class="form-control" type="number" id="quantity" inputmode="numeric" name="quantity" value="{{ old('quantity') }}" autocomplete="off">
                                             </div>
                                             @error('quantity')
@@ -61,8 +59,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label for="example-text-input" class="form-control-label">Price</label>
-                                                <input class="form-control" type="number" id="ProductPrice" inputmode="numeric" name="price" value="{{ old('price') }}" autocomplete="off">
+                                                <label for="price" class="form-control-label">Price</label>
+                                                <input class="form-control" type="number" id="price" inputmode="numeric" name="price" value="{{ old('price') }}" autocomplete="off">
                                             </div>
                                             @error('price')
                                                 <div class="alert alert-danger">{{ $message }}</div>
@@ -162,7 +160,7 @@
                                                     <label class="CatCard" style="--card-height: 100px;--card-width: 100px;">
                                                         <input class="card__input BrandSelectBox" name="brand_id" type="radio" value="{{$brand->id }}" />
                                                         <div class="card__body">
-                                                            <div class="ImgDiv" style="background-image: url({{ $brand->getFirstMediaUrl('brand-image') }});">
+                                                            <div class="ImgDiv" style="background-image: url({{$brand->getFirstMediaUrl('brand-image') }});">
                                                             </div>
                                                         </div>
                                                     </label>
@@ -181,7 +179,7 @@
                                                 <div class="cards tech-card">
                                                     @foreach ($technologies as $technology)
                                                         <label class="CatCard"  style="--card-height: 100px;--card-width: 100px;">
-                                                            <input class="card__input TechBoxSelection" name="technology_id[]" type="checkbox" value="{{$technology->name}}" />
+                                                            <input class="card__input TechBoxSelection" name="technology_id[]" type="checkbox" value="{{$technology->id}}" />
                                                             <div class="card__body">
                                                                 <header class="card__body-header">
                                                                     <h2>{{$technology->name}}</h2>
@@ -216,7 +214,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="ArabicDescription" class="form-control-label">Arabic Description</label>
-                                                <textarea class="form-control" id="ar_description" data-maxlength="1000" name="ar_description" required>{{ old('description') }}</textarea>
+                                                <textarea class="form-control" id="ar_description" data-maxlength="1000" name="ar_description" required>{{ old('ar_description') }}</textarea>
                                             </div>
                                             <div class="d-flex justify-content-between">
                                                 <p class="generate-link" onclick="generateArabicLoremIpsum(30, 'ar_description')">Generate Lorem Ipsum Words</p>
@@ -229,7 +227,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="comment" class="form-control-label">Expert Review</label>
-                                                <textarea class="form-control" id="comment" data-maxlength="700" name="comment" required><{{ old('comment') }}</textarea>
+                                                <textarea class="form-control" id="comment" data-maxlength="700" name="comment" required>{{ old('comment') }}</textarea>
                                             </div>
                                             <div class="d-flex justify-content-between">
                                                 <p class="generate-link" onclick="generateLoremIpsum(30, 'comment')">Generate Lorem Ipsum Words</p>
@@ -297,83 +295,40 @@
                                     <br>
 
                                     <p class="text-uppercase text-sm">Dimensions</p>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="width" class="form-control-label">Width</label>
-                                                <input type="number" class="form-control" id="width"  name="width">
-                                            </div>
-                                            @error('width')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="height" class="form-control-label">Height</label>
-                                                <input class="form-control" type="number" id="height" name="height">
-                                            </div>
-                                            @error('height')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="length" class="form-control-label">Length</label>
-                                                <input class="form-control" type="number" id="length" name="length">
-                                            </div>
-                                            @error('length')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
+                                    <table class="table" id="dimensions-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Key</th>
+                                                <th>Value</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input type="text" name="dimension_keys[]" class="form-control" placeholder="Enter Key"></td>
+                                                <td><input type="text" name="dimension_values[]" class="form-control" placeholder="Enter Value"></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger remove-row">Remove</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <button type="button" class="btn btn-primary" id="add-row">Add Dimension</button>
 
                                     <br>
-                                    <p class="text-uppercase text-sm">Colors</p>
-                                    <div class="row flex-column">
-                                        <div id="colorInputs" class="d-flex align-items-baseline" style="gap:20px">
-                                            <div class="form-group">
-                                                <label for="color" class="form-control-label">Color</label>
-                                                <input type="color" class="color-input" name="color">
+                                    <p class="text-uppercase text-sm pt-5">Colors</p>
+                                    <div class="row flex-column m-2">
+                                        <div id="colorInputs" class="d-grid align-items-baseline" style="gap:20px">
+                                            <div class="color-inputs">
+                                                <input type="color" class="color-input" name="color[]">
                                             </div>
-                                            @error('color')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
                                         </div>
-                                        <div id="addRemoveColor" class="mb-5">
+                                        <div id="addRemoveColor" class="mt-2">
                                             <span id="addColorSpan" onclick="addColorInput()"><i class="fa-solid fa-plus"></i></span>
                                         </div>
                                     </div>
                                     <br>
-                                    <p class="text-uppercase text-sm">Others</p>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="capacity" class="form-control-label">Capacity</label>
-                                                <input class="form-control" type="text" id="capacity" name="capacity">
-                                            </div>
-                                            @error('capacity')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="Power" class="form-control-label">Power Consumption</label>
-                                                <input class="form-control" type="text" id="Power" name="power_consumption">
-                                            </div>
-                                            @error('power_consumption')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="weight" class="form-control-label">Weight</label>
-                                                <input class="form-control" type="text" id="weight" name="weight">
-                                            </div>
-                                            @error('weight')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
+
                                 </section>
 
                                 <h3>Images</h3>
@@ -402,7 +357,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="form-control-label">Other Images</label>
-                                                <input type="file" class="form-control" id="other_images" multiple name="OtherImages[]" accept=".jpg, .jpeg, .png">
+                                                <input type="file" class="form-control" id="other_images" multiple name="other_images[]" accept=".jpg, .jpeg, .png">
                                             </div>
                                             @error('other_images')
                                                 <div class="alert alert-danger">{{ $message }}</div>
@@ -429,7 +384,7 @@
                                             <div class="cards FeatureSelections features-cards">
                                                 @foreach ($features as $feature)
                                                     <label class="CatCard"  style="--card-width: 165px; --card-height:140px;">
-                                                        <input class="card__input FeatureSelectBox" name="feature_id[]" type="checkbox" value="{{ $feature->id }}" />
+                                                        <input class="card__input FeatureSelectBox" name="feature_id" type="checkbox" value="{{ $feature->id }}" />
                                                         <div class="card__body" style="border: 1px solid #eeee;height:92px !important;">
                                                             <header class="card__body-header p-1">
                                                                 <h2 class="card__body-header-title"> {{ $feature->name }}</h2>
@@ -446,25 +401,25 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="form-control-label">Question</label>
-                                                <textarea class="form-control QuestionsTextarea" name="question[]" required></textarea>
+                                                <textarea class="form-control QuestionsTextarea" name="question[]"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="form-control-label">Answer</label>
-                                                <textarea class="form-control AnswersTextarea" name="answer[]" required></textarea>
+                                                <textarea class="form-control AnswersTextarea" name="answer[]"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="form-control-label">Arabic Question</label>
-                                                <textarea class="form-control QuestionsTextarea" name="ar_question[]" required></textarea>
+                                                <textarea class="form-control QuestionsTextarea" name="ar_question[]"></textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="Answer" class="form-control-label">Arabic Answer</label>
-                                                <textarea class="form-control AnswersTextarea" name="ar_answer[]" required></textarea>
+                                                <textarea class="form-control AnswersTextarea" name="ar_answer[]"></textarea>
                                             </div>
                                         </div>
                                         <div id="div-container" class="mt-5"></div>
@@ -491,7 +446,7 @@
                         <h3 class="text-uppercase text-sm pt-3 text-center heading">Main information</h3>
                         <p class="text-Img-link p-2">Please Make sure that the product information you are filling now are
                             compitable with the design in the provided photo, tap on the image for a full view.</p>
-                        <img id="myImg" src="{{asset('Admin/dist/img/web/Products/AllPage.png')}}" alt="All the Page">
+                        <img id="myImg" src="{{asset('Admin/dist/img/web/Products/AllPage.webp')}}" alt="All the Page">
                         <p id="imgLink" class="btn bg-gradient-info">View Full Image</p>
                         <div id="myModal" class="modal">
                             <span class="close">&times;</span>
@@ -601,10 +556,10 @@
 
             if (colorInputCount < 3) {
                 const newColorDiv = document.createElement('div');
-                newColorDiv.classList.add('form-group');
+                newColorDiv.classList.add('color-inputs');
                 newColorDiv.innerHTML = `
-                    <input type="color" class="color-input" name="color${colorInputCount + 1}">
-                    <button class="btn btn-danger remove-color-btn pl-1 pr-1" type="button">x</button>
+                    <input type="color" class="color-input" name="color[]">
+                    <button class="btn btn-danger remove-color-btn" type="button">x</button>
                 `;
                 colorInputs.appendChild(newColorDiv);
                 colorInputCount++;
@@ -676,6 +631,26 @@
 
                 // Initial update on page load
                 updateCharacterCount(textareaId, maxLength);
+            });
+        });
+    </script>
+
+    {{-- Add new deminsion --}}
+    <script>
+        $(document).ready(function () {
+            $('#add-row').on('click', function () {
+                const newRow = `
+                    <tr>
+                        <td><input type="text" name="dimension_keys[]" class="form-control" placeholder="Enter Key"></td>
+                        <td><input type="text" name="dimension_values[]" class="form-control" placeholder="Enter Value"></td>
+                        <td><button type="button" class="btn btn-danger remove-row">Remove</button></td>
+                    </tr>
+                `;
+                $('#dimensions-table tbody').append(newRow);
+            });
+
+            $(document).on('click', '.remove-row', function () {
+                $(this).closest('tr').remove();
             });
         });
     </script>

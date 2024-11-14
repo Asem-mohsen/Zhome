@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->decimal('price', 8, 2);
-            $table->decimal('installation_cost', 8, 2)->nullable();
+            $table->decimal('price', 15, 2);
+            $table->decimal('installation_cost', 10, 2)->nullable();
             $table->integer('quantity');
             $table->boolean('is_bundle')->default(false);
             $table->foreignId('brand_id')->constrained('brands')->cascadeOnDelete();

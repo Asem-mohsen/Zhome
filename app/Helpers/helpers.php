@@ -1,7 +1,8 @@
 <?php
 
-if (!function_exists('ensureArray')) {
-    function ensureArray($input) {
+if (! function_exists('ensureArray')) {
+    function ensureArray($input)
+    {
         if (is_null($input)) {
             return [];
         }

@@ -1,10 +1,7 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Edit ' . $collection->Name)
+@section('Title' , 'Edit ' . $collection->name)
 
 @section('Content')
-
-
-    @include('Admin.Components.Msg')
 
     @section('Css')
         <!-- Select2 -->
@@ -13,7 +10,7 @@
     @endsection
 
 
-    <form action="{{ route('Collections.update', $collection->ID) }}" enctype="multipart/form-data" method="post">
+    <form action="{{ route('Collections.update', $collection->id) }}" enctype="multipart/form-data" method="post">
         @csrf
         @method('PUT')
         <div class="row">
@@ -30,19 +27,19 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Name" class="form-control-label">Name</label>
-                                    <input class="form-control" type="text" id="Name" name="Name" value="{{$collection->Name}}" required>
+                                    <label for="name" class="form-control-label">Name</label>
+                                    <input class="form-control" type="text" id="name" name="name" value="{{$collection->name}}" required>
                                 </div>
-                                @error('Name')
+                                @error('name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="ArabicName" class="form-control-label">Arabic Name</label>
-                                    <input class="form-control" type="text" id="ArabicName" name="ArabicName" value="{{$collection->ArabicName}}" required>
+                                    <label for="ar_name" class="form-control-label">Arabic Name</label>
+                                    <input class="form-control" type="text" id="ar_name" name="ar_name" value="{{$collection->ar_name}}" required>
                                 </div>
-                                @error('ArabicName')
+                                @error('ar_name')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -69,19 +66,19 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Description">Description</label>
-                                    <textarea class="form-control" rows="3" name="Description" id="Description" placeholder="Enter ..." >{{$collection->Description}}</textarea>
+                                    <label for="description">escription</label>
+                                    <textarea class="form-control" rows="3" name="description" id="description" placeholder="Enter ..." >{{$collection->description}}</textarea>
                                 </div>
-                                @error('Description')
+                                @error('description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="Main-Description-AR">Description -AR-</label>
-                                    <textarea class="form-control" rows="3" name="ArabicDescription" id="Main-Description-AR" placeholder="Enter ...">{{$collection->ArabicDescription}}</textarea>
+                                    <label for="ar_description">Description -AR-</label>
+                                    <textarea class="form-control" rows="3" name="ar_description" id="ar_description" placeholder="Enter ...">{{$collection->ar_description}}</textarea>
                                 </div>
-                                @error('ArabicDescription')
+                                @error('ar_description')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -92,26 +89,39 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Select Products to be added to this collection</label>
-                                    <select class="select2bs4 w-100" name="ProductID[]" multiple="multiple" id="product-select" data-placeholder="Select Products">
+                                    <select class="select2bs4 w-100" name="product_id[]" multiple="multiple" id="product-select" data-placeholder="Select Products">
                                         @foreach ( $products as $product )
-                                            <option value='{{$product->ID}}'  @if(in_array($product->ID, $collection->products->pluck('ID')->toArray())) selected @endif >{{$product->Name}}</option>
+                                            <option value='{{$product->id}}'  @if(in_array($product->id, $collection->products->pluck('id')->toArray())) selected @endif >{{$product->translations->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                @error('ProductID')
+                                @error('product_id')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
                         <p class="text-uppercase text-sm">What does this collection offer</p>
-                        <a id="add-feature-btn" class="btn btn-light mb-0" style="margin-left: 14px;width: 31%;">Add New Feature</a>
                         <div id="div-container" class="mt-3">
-                            @forelse ($collection->features as $feature)
-                                @include('Admin.Collections.collection_feature_form', ['index' => $loop->index, 'feature' => $feature])
-                            @empty
-                                @include('Admin.Collections.collection_feature_form', ['index' => 0, 'feature' => null])
-                            @endforelse
+                            <div class="row feature-form position-relative">
+                                <div class="col-md-12" style="overflow-x:scroll;">
+                                    <div class="cards FeatureSelections features-cards">
+                                        @foreach ($features as $feature)
+                                            <label class="CatCard"  style="--card-width: 165px; --card-height:140px;">
+                                                <input class="card__input FeatureSelectBox"  name="feature_id[]" 
+                                                        type="checkbox" 
+                                                        value="{{ $feature->id }}" 
+                                                        @if(in_array($feature->id, $selectedFeatures)) checked @endif />
+                                                <div class="card__body" style="border: 1px solid #eeee;height:92px !important;">
+                                                    <header class="card__body-header p-1">
+                                                        <h2 class="card__body-header-title"> {{ $feature->name }}</h2>
+                                                    </header>
+                                                </div>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <p class="text-uppercase text-sm">Control</p>
@@ -155,43 +165,4 @@
         });
     </script>
 
-    <script>
-        document.getElementById('add-feature-btn').addEventListener('click', function() {
-            var container = document.getElementById('div-container');
-            var index = container.getElementsByClassName('feature-form').length;
-            var newForm = document.querySelector('.feature-form').cloneNode(true);
-
-            newForm.querySelectorAll('input, textarea').forEach(function(input) {
-                // Update the name attribute to have a unique index
-                var name = input.name;
-                if (name) {
-                    input.name = name.replace(/\d+/, index);
-                }
-
-                // Reset input values
-                if (input.type === 'file') {
-                    input.value = ''; // For file input, resetting it to an empty value
-                } else {
-                    input.value = '';
-                }
-            });
-
-            // Reset the labels for file inputs
-            newForm.querySelectorAll('.custom-file-label').forEach(function(label) {
-                label.textContent = 'Choose file';
-            });
-
-            // Add delete event listener
-            newForm.querySelector('.delete-icon').addEventListener('click', function() {
-                newForm.remove();
-            });
-            
-            container.appendChild(newForm);
-        });
-        document.querySelectorAll('.delete-icon').forEach(function(icon) {
-            icon.addEventListener('click', function() {
-                this.closest('.feature-form').remove();
-            });
-        });
-    </script>
 @stop

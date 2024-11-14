@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum StatusEnum : string
+enum StatusEnum: string
 {
     case ACTIVE = 'active';
     case DISACTIVE = 'disactive';
@@ -10,8 +10,6 @@ enum StatusEnum : string
 
     /**
      * Return all possible status values.
-     *
-     * @return array
      */
     public static function values(): array
     {

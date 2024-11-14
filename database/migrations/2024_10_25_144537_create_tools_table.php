@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('tools', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique(); // Tool name
-            $table->text('description')->nullable();   
+            $table->text('description')->nullable();
             $table->string('ar_name')->unique()->nullable();
-            $table->text('ar_description')->nullable();   
+            $table->text('ar_description')->nullable();
             $table->timestamps();
         });
     }

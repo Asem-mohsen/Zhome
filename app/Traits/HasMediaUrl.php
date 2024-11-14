@@ -1,7 +1,6 @@
 <?php
-namespace App\Traits;
 
-use Illuminate\Support\Collection;
+namespace App\Traits;
 
 trait HasMediaUrl
 {
@@ -9,6 +8,7 @@ trait HasMediaUrl
     {
         return $models->map(function ($model) use ($collectionName) {
             $model->image_url = $model->getFirstMediaUrl($collectionName);
+
             return $model;
         });
     }

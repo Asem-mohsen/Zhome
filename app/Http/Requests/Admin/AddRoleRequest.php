@@ -6,19 +6,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AddRoleRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
     }
 
-
     public function rules(): array
     {
         return [
-            'Name'=>['required','max:255','unique:adminrole,Role'],
-            'accessibility' => ['nullable','array'],
-            'accessibility.*' =>['nullable','boolean'],
+            'role' => ['required', 'max:255', 'unique:roles,role'],
         ];
     }
 }

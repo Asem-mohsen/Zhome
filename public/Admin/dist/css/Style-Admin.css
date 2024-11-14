@@ -249,10 +249,14 @@
 
 .TechnologySelection{
     .card__body-header h2{
-        font-size: 19px;
+        font-size: 17px;
         text-align: center;
         font-family: monospace;
-        padding-top: 10px;
+        margin: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
@@ -674,6 +678,19 @@
     color: #302e2f;
     font-size: 24px;
     margin-bottom: 30px;
+}
+.color-inputs{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+.color-input{
+    min-width: 95%;
+}
+.remove-color-btn{
+    padding: 0px 7px;
+    font-size: 12px;
 }
 /* .related-product__carousel .product-one__single {
   margin-bottom: 0;

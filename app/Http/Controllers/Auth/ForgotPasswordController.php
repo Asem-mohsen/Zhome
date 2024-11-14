@@ -3,21 +3,19 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\ResetsPasswords;
-use Illuminate\Support\Facades\Password;
-use App\Traits\ApiResponse;
-use App\Models\User;
-use App\Models\Admin;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordResetMail;
 use App\Models\PasswordReset;
+use App\Models\User;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
-    use ApiResponse ;
+    use ApiResponse;
 
     public function sendCode(Request $request)
     {
@@ -32,7 +30,7 @@ class ForgotPasswordController extends Controller
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return $this->error(['message' => 'Email not found'], 'Email not found please create a new account', 404);
         }
 
@@ -54,12 +52,12 @@ class ForgotPasswordController extends Controller
         ]);
 
         $record = PasswordReset::where('email', $request->input('email'))
-                                ->where('code', $request->input('code'))
-                                ->where('expires_at', '>', now())
-                                ->first();
+            ->where('code', $request->input('code'))
+            ->where('expires_at', '>', now())
+            ->first();
 
-        if (!$record) {
-            return $this->error(['message' => 'Invalid or expired code'] ,'Invalid or expired code' , 400);
+        if (! $record) {
+            return $this->error(['message' => 'Invalid or expired code'], 'Invalid or expired code', 400);
         }
 
         // Code is valid, proceed to password reset
@@ -79,12 +77,12 @@ class ForgotPasswordController extends Controller
         $password = $request->input('password');
 
         $passwordReset = PasswordReset::where('email', $email)
-                                        ->where('code', $code)
-                                        ->where('expires_at', '>', now())
-                                        ->first();
+            ->where('code', $code)
+            ->where('expires_at', '>', now())
+            ->first();
 
-        if (!$passwordReset) {
-            return $this->error(['message' => 'Invalid or expired code'] ,'Invalid or expired code' , 400);
+        if (! $passwordReset) {
+            return $this->error(['message' => 'Invalid or expired code'], 'Invalid or expired code', 400);
         }
 
         $user = User::where('email', $email)->first();

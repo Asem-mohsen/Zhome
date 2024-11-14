@@ -1,35 +1,35 @@
-<div class="item product-one__single" style="height:390px" id="Product-{{ $variable->ID }}">
+<div class="item product-one__single" style="height:390px" id="Product-{{ $variable->id }}">
     <div class="product-one__image">
-        <img src="{{ asset('Admin/dist/img/web/Products/MainImage/' . $variable->MainImage) }}" height="270px" alt="{{$variable->Name}}" />
+        <img src=" {{ $variable->getFirstMediaUrl('product-featured-image') }}" height="270px" alt="{{$variable->translations->name}}" />
     </div>
     <div class="product-one__content">
         <div class="product-one__content-left">
             <h3 class="product-one__title">
-                <a href="{{ route('Products.show', $variable->ID) }}">{{ ucfirst(strtolower($variable->Name)) }}</a>
+                <a href="{{ config('app.frontend_url') }}/product/{{ $variable->id }}">{{ ucfirst(strtolower($variable->translations->name)) }}</a>
             </h3>
             <p class="description-product">
-                {{ 'Brand: ' . $variable->brand->Brand }} <br>
+                {{ 'Brand: ' . $variable->brand->name }} <br>
                 <div class="d-flex gap-1">
                     @foreach ($variable->platforms as $platform)
-                        <a href="{{ route('Platform.edit' , $platform->ID ) }}" title="{{ $platform->Platform . " Platform" }}">
-                            <img src="{{ asset('Admin/dist/img/web/Platforms/' . $platform->Logo) }}" class="Platform-flex-img">
+                        <a href="{{ route('Platform.edit' , $platform->id ) }}" title="{{ $platform->name . " Platform" }}">
+                            <img src="{{ $platform->getFirstMediaUrl('platform-image') }}" class="Platform-flex-img">
                         </a>
                     @endforeach
                 </div>
             </p>
             <div class="product-one__content-right d-flex align-items-center justify-content-between">
-                @if($countSale > 0)
+                @if($variable->isOnSale())
                     <div class="d-grid gap-1">
-                        <p class="product-one__text">{{ $priceSale->PriceAfter . ' EGP' }}</p>
-                        <p class="product-one__text" style="text-decoration: line-through; font-size:14px">{{ $variable->Price . ' EGP' }}</p>
+                        <p class="product-one__text">{{ $priceSale->sale_price . ' EGP' }}</p>
+                        <p class="product-one__text" style="text-decoration: line-through; font-size:14px">{{ $variable->price . ' EGP' }}</p>
                     </div>
                 @else
-                    <p class="product-one__text">{{ $variable->Price . ' EGP' }}</p>
+                    <p class="product-one__text">{{ $variable->price . ' EGP' }}</p>
                 @endif
-                @if($variable->Quantity <= 0)
+                @if($variable->quantity <= 0)
                     <p class="OutStock">{{ __('OutofStock') }}</p>
                 @else
-                    <a href="{{ route('Products.show' , $variable->ID)}}" data-placement="top" class="product-one__cart-btn"><i class="fa-solid fa-search text-white"></i></a>
+                    <a href="{{ config('app.frontend_url') }}/product/{{ $variable->id }}" data-placement="top" class="product-one__cart-btn"><i class="fa-solid fa-search text-white"></i></a>
                 @endif
             </div>
         </div>

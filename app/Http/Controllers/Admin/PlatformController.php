@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Platform;
-use App\Models\PlatformFAQ;
 use App\Http\Requests\Admin\AddPlatformRequest;
 use App\Http\Requests\Admin\UpdatePlatfromRequest;
+use App\Models\Platform;
+use App\Models\PlatformFAQ;
 
 class PlatformController extends Controller
 {
@@ -15,7 +14,7 @@ class PlatformController extends Controller
     {
         $platforms = Platform::with('media')->withCount('products')->get();
 
-        return view('Admin.Platforms.index' , compact('platforms'));
+        return view('Admin.Platforms.index', compact('platforms'));
     }
 
     public function create()
@@ -23,22 +22,22 @@ class PlatformController extends Controller
         return view('Admin.Platforms.create');
     }
 
-    public function store(AddPlatformRequest $request){
+    public function store(AddPlatformRequest $request)
+    {
 
-        $data = $request->except('image','_token','_method','question','answer');
+        $data = $request->except('image', '_token', '_method', 'question', 'answer');
 
         $platform = Platform::create($data);
 
-        if ($request->hasFile('image')) 
-        {
+        if ($request->hasFile('image')) {
             $platform->addMediaFromRequest('image')->toMediaCollection('platform-image');
         }
-        
-        $faqData = $request->only('question','answer');
+
+        $faqData = $request->only('question', 'answer');
 
         if ($request->filled('question')) {
             foreach ($request->question as $index => $question) {
-                if (!empty($question) && !empty($request->answer[$index])) {
+                if (! empty($question) && ! empty($request->answer[$index])) {
                     PlatformFAQ::create([
                         'platform_id' => $platform->id,
                         'question' => $question,
@@ -48,19 +47,22 @@ class PlatformController extends Controller
             }
         }
 
-        return redirect()->route('Platform.index')->with('success', 'Platform Added Successfully');
+        toastr()->success(message: 'Platform created successfully!');
+
+        return redirect()->route('Platform.index');
     }
 
-    public function edit(Platform $platform){
+    public function edit(Platform $platform)
+    {
 
         $platform->load('faqs');
 
-        return view('Admin.Platforms.edit' ,compact('platform'));
+        return view('Admin.Platforms.edit', compact('platform'));
     }
 
-    public function update(UpdatePlatfromRequest $request , Platform $platform)
+    public function update(UpdatePlatfromRequest $request, Platform $platform)
     {
-        $data = $request->except('image', '_token','_method','question','answer');
+        $data = $request->except('image', '_token', '_method', 'question', 'answer');
 
         $platform->update($data);
 
@@ -71,21 +73,24 @@ class PlatformController extends Controller
             $platform->addMediaFromRequest('image')->toMediaCollection('platform-image');
         }
 
-        $faqData = $request->only('question','answer');
+        $faqData = $request->only('question', 'answer');
 
         $platform->faqs()->update($faqData);
 
-        return redirect()->route('Platform.edit', $platform->id)->with('success' , 'Platform Updated Successfully');
+        toastr()->success(message: 'Platform updated successfully!');
 
+        return redirect()->route('Platform.edit', $platform->id);
     }
 
-    public function destroy(Platform $platform){
-
+    public function destroy(Platform $platform)
+    {
         $platform->clearMediaCollection('platform-image');
 
         $platform->delete();
 
-        return redirect()->route('Platform.index')->with('success', 'Platform Deleted Successfully');
+        toastr()->success(message: 'Platform deleted successfully!');
+
+        return redirect()->route('Platform.index');
 
     }
 }

@@ -7,7 +7,6 @@ use Illuminate\Validation\Rule;
 
 class RegisterUserRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;

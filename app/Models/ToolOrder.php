@@ -20,5 +20,4 @@ class ToolOrder extends Model
     {
         return $this->hasMany(ToolsCategories::class, 'tool_order_id');
     }
-
 }

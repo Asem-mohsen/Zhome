@@ -1,5 +1,5 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Add New Promocode')
+@section('Title' , 'Add New Promotion')
 
 @section('Content')
 
@@ -11,7 +11,7 @@
                     <div class="col-md-12">
                         <div class="card-header pb-2">
                             <div class="d-flex align-items-center">
-                                <p class="mb-0">Add New Promo Code</p>
+                                <p class="mb-0">Add New Promotion</p>
                                 <button class="btn btn-primary btn-sm ml-2">Add</button>
                             </div>
                         </div>

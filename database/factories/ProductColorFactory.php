@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductColorFactory extends Factory
 {
-
     public function definition(): array
     {
         return [

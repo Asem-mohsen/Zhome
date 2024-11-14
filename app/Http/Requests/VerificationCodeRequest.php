@@ -22,7 +22,7 @@ class VerificationCodeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'verification_code'=> ['required', 'integer' , 'digits:5', 'exists:user,verification_code' ]
+            'verification_code' => ['required', 'integer', 'digits:5', 'exists:user,verification_code'],
         ];
     }
 }

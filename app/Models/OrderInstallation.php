@@ -11,5 +11,5 @@ class OrderInstallation extends Model
 
     protected $table = 'order_installtions';
 
-    protected $fillable = ['order_id' , 'installation_cost' , 'created_at' , 'updated_at'];
+    protected $fillable = ['order_id', 'installation_cost', 'created_at', 'updated_at'];
 }

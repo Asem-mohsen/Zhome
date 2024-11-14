@@ -2,8 +2,6 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Events\ContactUsEvent;
 use App\Mail\ContactUsMail;
 use Illuminate\Support\Facades\Mail;

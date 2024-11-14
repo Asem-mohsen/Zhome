@@ -53,7 +53,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-
+    'frontend_url' => env('FRONTEND_URL', 'https://orangered-curlew-529745.hostingersite.com'),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

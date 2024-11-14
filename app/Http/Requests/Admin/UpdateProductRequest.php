@@ -3,19 +3,16 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class UpdateProductRequest extends FormRequest
 {
-
     protected $id;
 
     public function __construct(Request $request)
     {
-        $this->id = (integer) $request->route()->product->ID;
+        $this->id = (int) $request->route()->product->ID;
     }
-
 
     public function authorize(): bool
     {
@@ -25,41 +22,33 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Name'                   => ['required', 'max:255' , Rule::unique('product', 'Name')->ignore($this->id)],
-            'ArabicName'             => ['nullable', 'max:255' , Rule::unique('product', 'ArabicName')->ignore($this->id)],
-            'Quantity'               => ['nullable', 'numeric'],
-            'Price'                  => ['nullable', 'numeric'],
-            'InstallationCost'       => ['nullable', 'numeric'],
-            'IsBundle'               => ['nullable', 'boolean'],
-            'Categories'             => ['nullable', 'exists:category,ID'],
-            'SubCategoryID'          => ['nullable', 'exists:subcategory,ID'],
-            'PlatformID'             => ['nullable', 'array','min:1' ,'exists:platform,ID'],
-            'BrandID'                => ['nullable', 'exists:brands,ID'],
-            'Technology'             => ['required' ,'array' ,'min:1'],
-            'Description'            => ['required','max:1000'],
-            'ArabicDescription'      => ['required','max:1000'],
-            'OtherDescription'       => ['nullable','max:1000'],
-            'OtherArabicDescription' => ['nullable','max:1000'],
-            'Evaluation'             => ['required','max:1000'],
-            'ArabicEvaluation'       => ['required','max:1000'],
-            'Title'                  => ['required','max:255'],
-            'Title2'                 => ['required','max:255'],
-            'ArabicTitle'            => ['required','max:255'],
-            'ArabicTitle2'           => ['required','max:255'],
-            'Width'                  => ['nullable','numeric'],
-            'Height'                 => ['nullable','numeric'],
-            'Length'                 => ['nullable','numeric'],
-            'Color'                  => ['nullable'],
-            'Capacity'               => ['nullable'],
-            'PowerConsumption'       => ['nullable'],
-            'Weight'                 => ['nullable'],
-            'MainImage'              => ['nullable','max:2048'],
-            'CoverImage'             => ['nullable','image'],
-            'OtherImages'            => ['nullable','array','min:1' ,'max:2048'],
-            'Video'                  => ['nullable','url'],
-            'FeatureID'              => ['nullable','array','min:1' , 'exists:features,ID'],
-            'Question'               => ['nullable','max:1000'],
-            'Answer'                 => ['nullable','max:1000'],
+            'name' => ['required', 'max:255'],
+            'ar_name' => ['required', 'max:255'],
+            'quantity' => ['required'],
+            'price' => ['required'],
+            'installation_cost' => ['nullable'],
+            'is_bundle' => ['required'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'subcategory_id' => ['required', 'exists:subcategories,id'],
+            'platform_id' => ['required', 'exists:platforms,id'],
+            'brand_id' => ['required', 'exists:brands,id'],
+            'technology_id' => ['required', 'array', 'exists:technologies,id'],
+            'description' => ['required'],
+            'ar_description' => ['required'],
+            'comment' => ['required'],
+            'ar_comment' => ['required'],
+            'title' => ['required'],
+            'second_title' => ['required'],
+            'ar_title' => ['required'],
+            'ar_second_title' => ['required'],
+            'image' => ['nullable'],
+            'cover_image' => ['nullable'],
+            'video_url' => ['nullable'],
+            'feature_id' => ['nullable', 'exists:features,id'],
+            'question' => ['nullable'],
+            'answer' => ['nullable'],
+            'ar_question' => ['nullable'],
+            'ar_answer' => ['nullable'],
         ];
     }
 }

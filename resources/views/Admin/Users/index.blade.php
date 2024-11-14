@@ -47,7 +47,11 @@
                                     @endforelse
                                 </td>
                                 <td>
-                                    {{\Illuminate\Support\Str::limit($user->address->street_address, 25) }}
+                                    @if ($user->address)
+                                        {{ \Illuminate\Support\Str::limit($user->address->street_address, 25) }}
+                                    @else
+                                        No data
+                                    @endif
                                 </td>
                                 <td>{{ $user->created_at->format('d F Y') }}</td>
                                 <td>

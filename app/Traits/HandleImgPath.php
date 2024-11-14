@@ -1,18 +1,13 @@
 <?php
 
 namespace App\Traits;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use App\Models\Brand;
+
 use App\Models\Product;
-use App\Models\Category;
-use App\Models\Platform;
-use App\Models\Subcategory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
 trait HandleImgPath
 {
-
     protected function getImageConfig($modelName)
     {
         return Config::get("image_paths.$modelName", []);
@@ -30,7 +25,7 @@ trait HandleImgPath
                         $path = $config['path'] ?? '';
                         // Check if the path has already been transformed
                         if (strpos($item->$field, $path) === false) {
-                            $item->$field = asset($path . $item->$field);
+                            $item->$field = asset($path.$item->$field);
                         }
                     }
                 }
@@ -51,9 +46,9 @@ trait HandleImgPath
                 // Handle array items (like images)
                 foreach ($item as $key => $value) {
                     if (is_string($value) && strpos($key, 'Image') !== false) {
-                        $path = Config::get("image_paths.images.Image.path", '');
+                        $path = Config::get('image_paths.images.Image.path', '');
                         if (strpos($value, $path) === false) {
-                            $item[$key] = asset($path . $value);
+                            $item[$key] = asset($path.$value);
                         }
                     }
                 }
@@ -68,6 +63,7 @@ trait HandleImgPath
 
         if ($data instanceof \Illuminate\Pagination\LengthAwarePaginator) {
             $data->setCollection($data->getCollection()->map($transform));
+
             return $data;
         }
 
@@ -77,17 +73,19 @@ trait HandleImgPath
 
         return $data;
     }
+
     public function transformProductImagePaths(Product $product)
     {
         // Transform Product's own image
         if (isset($product->MainImage)) {
-            $product->MainImage = asset('Admin/dist/img/web/Products/MainImage/' . $product->MainImage);
+            $product->MainImage = asset('Admin/dist/img/web/Products/MainImage/'.$product->MainImage);
         }
 
         // Transform images relationship
         if ($product->images) {
             $product->images->transform(function ($image) {
-                $image->Image = asset('Admin/dist/img/web/Products/OtherImages/' . $image->Image);
+                $image->Image = asset('Admin/dist/img/web/Products/OtherImages/'.$image->Image);
+
                 return $image;
             });
         }
@@ -96,15 +94,16 @@ trait HandleImgPath
         if ($product->features) {
             $product->features->transform(function ($feature) {
                 if (isset($feature->Image)) {
-                    $feature->Image = asset('Admin/dist/img/web/Features/' . $feature->Image);
+                    $feature->Image = asset('Admin/dist/img/web/Features/'.$feature->Image);
                 }
+
                 return $feature;
             });
         }
 
         // Transform productDetails relationship
         if ($product->productDetails && isset($product->productDetails->CoverImage)) {
-            $product->productDetails->CoverImage = asset('Admin/dist/img/web/Products/CoverImage/' . $product->productDetails->CoverImage);
+            $product->productDetails->CoverImage = asset('Admin/dist/img/web/Products/CoverImage/'.$product->productDetails->CoverImage);
         }
 
         // Use the general transformImagePaths for other relationships

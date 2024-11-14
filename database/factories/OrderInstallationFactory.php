@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Order;
 use App\Models\OrderInstallation;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OrderInstallationFactory extends Factory
 {

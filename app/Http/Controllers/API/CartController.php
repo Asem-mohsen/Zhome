@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\{ Order , Product , OrderInstallation};
-use Illuminate\Support\Facades\{ Auth , Session};
-use App\Traits\ApiResponse;
 use App\Enums\OrderStatusEnum;
-use App\Http\Resources\ProductCardResource;
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\OrderInstallation;
+use App\Models\Product;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
@@ -25,6 +27,7 @@ class CartController extends Controller
         }
 
         $sessionId = $request->header('X-Session-ID') ?: Session::getId();
+
         return ['session_id' => $sessionId];
     }
 
@@ -32,7 +35,7 @@ class CartController extends Controller
     {
         $identifier = $this->getIdentifier($request);
 
-        $cartItems = Order::where($identifier)->where('status', $this->pending)->with([ 'product.brand', 'product.platforms', 'product.translations'])->get();
+        $cartItems = Order::where($identifier)->where('status', $this->pending)->with(['product.brand', 'product.platforms', 'product.translations'])->get();
 
         $count = $cartItems->sum('quantity');
 
@@ -43,12 +46,12 @@ class CartController extends Controller
     {
         $sessionId = $request->header('X-Session-ID') ?: Session::getId();
         $productId = $request->product_id;
-        $quantity  = $request->input('quantity', 1);
+        $quantity = $request->input('quantity', 1);
         $installationCost = $request->input('installation_cost', 0);
         $withInstallation = $request->input('with_installation', false);
 
         $product = Product::with('sale')->find($productId);
-        if (!$product) {
+        if (! $product) {
             return $this->error(['error' => 'Product not found'], 'Product not found', 404);
         }
 
@@ -68,14 +71,14 @@ class CartController extends Controller
             ]);
         } else {
             $cartItem = Order::create([
-                'user_id'         => $identifier['user_id'] ?? null,
-                'session_id'      => $identifier['session_id'] ?? $sessionId,
-                'product_id'      => $productId,
-                'quantity'        => $quantity,
-                'price'           => $price,
-                'is_on_sale'      => $is_sale,
-                'total_amount'    => $quantity * $price + ($withInstallation ? $installationCost : 0),
-                'status'          => $this->pending,
+                'user_id' => $identifier['user_id'] ?? null,
+                'session_id' => $identifier['session_id'] ?? $sessionId,
+                'product_id' => $productId,
+                'quantity' => $quantity,
+                'price' => $price,
+                'is_on_sale' => $is_sale,
+                'total_amount' => $quantity * $price + ($withInstallation ? $installationCost : 0),
+                'status' => $this->pending,
                 'with_installation' => $withInstallation,
             ]);
         }
@@ -94,7 +97,7 @@ class CartController extends Controller
         $withInstallation = $request->input('with_installation', false);
 
         $cartItem = Order::where($identifier)->where('product_id', $productId)->first();
-        if (!$cartItem) {
+        if (! $cartItem) {
             return $this->error(['error' => 'Cart item not found'], 'Cart item not found', 404);
         }
 
@@ -103,8 +106,8 @@ class CartController extends Controller
         }
 
         $cartItem->update([
-            'quantity'       => $quantity,
-            'total_amount'   => $quantity * $cartItem->price + ($withInstallation ? $installationCost : 0),
+            'quantity' => $quantity,
+            'total_amount' => $quantity * $cartItem->price + ($withInstallation ? $installationCost : 0),
             'with_installation' => $withInstallation,
         ]);
 
@@ -154,9 +157,9 @@ class CartController extends Controller
         $identifier = $this->getIdentifier($request);
 
         $cartItem = Order::where($identifier)
-                        ->where('product_id', $productId)
-                        ->where('status', $this->pending)
-                        ->first();
+            ->where('product_id', $productId)
+            ->where('status', $this->pending)
+            ->first();
 
         $cartItem->delete();
 
@@ -167,9 +170,9 @@ class CartController extends Controller
     {
         $identifier = $this->getIdentifier($request);
 
-        $count = Order::where($identifier)->where('status' , $this->pending)->count();
+        $count = Order::where($identifier)->where('status', $this->pending)->count();
 
-        return $this->data(['count' => $count] , 'data retrived successfully');
+        return $this->data(['count' => $count], 'data retrived successfully');
     }
 
     public function clearCart(Request $request)

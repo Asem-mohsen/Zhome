@@ -4,87 +4,70 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AddRoleRequest;
-use App\Models\User;
 use App\Models\Role;
-use App\Models\Accessability;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
 class RolesController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
         $roles = Role::withCount('users')->get();
 
-        return view('Admin.Roles.index' , compact('roles'));
+        return view('Admin.Roles.index', compact('roles'));
     }
 
-    public function edit(Request $request , Role $role){
+    public function edit(Request $request, Role $role)
+    {
 
-        $admins = User::where('role_id','=', $role->id)->get();
+        $role->load('users');
 
-        $accessability = Accessability::where('role_id', $role->id)->first();
+        $role->withCount('users');
 
-        $columnsToExclude = ['id', 'role_id', 'updated_at', 'created_at'];
-
-        $checkboxColumns = array_diff(array_keys($accessability->toArray()),$columnsToExclude);
-
-        $adminCount = $admins->count();
-
-        return view('Admin.Roles.edit' , compact('Role' , 'admins' , 'adminCount', 'checkboxColumns' , 'accessability'));
+        return view('Admin.Roles.edit', compact('role'));
     }
 
-    public function create(){
-        $accessability = Accessability::all();
-        $firstItem = $accessability->first();
-        $columnNames = $firstItem ? array_keys($firstItem->toArray()) : [];
-        $columnsToExclude = ['ID', 'RoleID', 'updated_at', 'created_at'];
-        $checkboxColumns = array_diff($columnNames, $columnsToExclude);
-        return view('Admin.Roles.create' , compact('accessability', 'checkboxColumns'));
+    public function create()
+    {
+        return view('Admin.Roles.create');
     }
 
-    public function store(AddRoleRequest $request){
+    public function store(AddRoleRequest $request)
+    {
 
-        $roleName = $request->role;
-        $role = Role::create(['role' => $roleName]);
+        $data = $request->except('_token', '_method');
 
-        $checkboxValues = [];
-        foreach ($request->except('_token','_method', 'Name') as $key => $value) {
-            $checkboxValues[$key] = isset($value) ? 1 : 0;
-        }
-
-        $data = array_merge($request->except('_token','_method', 'Name'), $checkboxValues);
-        $data['RoleID'] = $role->id;
-        Accessability::create($data);
+        Role::create($data);
 
         return redirect()->route('Roles.index')->with('success', 'Role created successfully');
     }
 
-    public function update(AddRoleRequest $request , Role $role , Accessability $accessability){
-        $data = $request->except('_token','_method');
-        $role->update(['Role'=>$data['Name']]);
-        $role::where('ID', $role->ID)->update(['Role'=>$data['Name']]);
+    public function update(Request $request, Role $role)
+    {
+        $data = $request->except('_token', '_method');
 
-        $checkboxValues = [];
-        foreach ($request->except('_token','_method', 'Name') as $key => $value) {
-            $checkboxValues[$key] = isset($value) ? 1 : 0;
-        }
+        $role->update($data);
 
-        $accessabilityData = array_merge($request->except('_token','_method', 'Name'), $checkboxValues);
-        $accessability::where('RoleID', $role->ID)->update($accessabilityData);
+        toastr()->success(message: 'Role updated successfully');
 
-        return redirect()->route('Roles.edit' , $role->ID)->with('success', 'Role updated successfully');
+        return redirect()->route('Roles.edit', $role->id);
     }
 
-    public function destroy(Role $role , Accessability $accessability){
+    public function destroy(Role $role)
+    {
 
-        $admins = Admin::where('RoleID','=', $role->ID)->count();
-        if($admins > 0){
-            return redirect()->route('Roles.index')->with('error', 'Cannot delete this role as an admin already associated to it');
-        }else{
-            Accessability::where('RoleID', $role->ID)->delete();
-            $role::where('ID', $role->ID)->delete();
-            return redirect()->route('Roles.index')->with('success', 'Role Deleted Successfully');
+        if ($role->users()->exists()) {
+
+            toastr()->error(message: 'Cannot delete this role as an users is already associated with it');
+
+            return redirect()->route('Roles.index');
         }
+
+        $role->delete();
+
+        toastr()->success(message: 'Role deleted successfully');
+
+        return redirect()->route('Roles.index');
 
     }
 }

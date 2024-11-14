@@ -17,9 +17,4 @@ class ProductFaq extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    public function translations()
-    {
-        return $this->hasMany(ProductFaqTranslation::class, 'faq_id');
-    }
 }

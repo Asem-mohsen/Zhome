@@ -2,7 +2,6 @@
 @section('Title' , 'Edit')
 
 @section('Content')
-@include('Admin.Components.Msg')
     <div class="card shadow-lg mx-4 card-profile-bottom">
         <div class="card-body p-3">
             <div class="row gx-4">
@@ -43,7 +42,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Name</label>
-                                        <input class="form-control" type="text"  name="name" value="{{$user->name}}" required>
+                                        <input class="form-control @error('neme') is-invalid @enderror" type="text"  name="name" value="{{$user->name}}" required>
                                     </div>
                                     @error('name')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -52,7 +51,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Email address</label>
-                                        <input class="form-control" type="email" name="email" value="{{$user->email}}" required>
+                                        <input class="form-control @error('email') is-invalid @enderror" type="email" name="email" value="{{$user->email}}" required>
                                     </div>
                                     @error('email')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -60,7 +59,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <label for="example-text-input" class="form-control-label">Role</label>
-                                    <select class="form-control" name="role_id" id="choices-button">
+                                    <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="choices-button">
                                         @foreach ($roles as $role)
                                             <option @selected($role->id == $user->role_id) value="{{ $role->id }}">{{ $role->role }}</option>
                                         @endforeach
@@ -76,7 +75,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Address</label>
-                                        <textarea class="form-control" name="street_address">{{$user->address->street_address}}</textarea>
+                                        <textarea class="form-control @error('street_address') is-invalid @enderror" name="street_address">{{$user->address->street_address}}</textarea>
                                         @error('street_address')
                                             <div class="alert alert-danger">{{ $message }}</div>
                                         @enderror
@@ -85,7 +84,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Country</label>
-                                        <input class="form-control" type="text" name="country" value="{{$user->address->country}}">
+                                        <input class="form-control @error('country') is-invalid @enderror" type="text" name="country" value="{{$user->address->country}}">
                                     </div>
                                     @error('country')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -94,7 +93,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">City</label>
-                                        <input class="form-control" name="city" type="text" value="{{$user->address->city}}">
+                                        <input class="form-control @error('city') is-invalid @enderror" name="city" type="text" value="{{$user->address->city}}">
                                     </div>
                                     @error('city')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -103,7 +102,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">ZIP-Code</label>
-                                        <input class="form-control" type="text" name="zip_code" value="{{$user->zip_code}}">
+                                        <input class="form-control @error('zip_code') is-invalid @enderror" type="text" name="zip_code" value="{{$user->zip_code}}">
                                     </div>
                                     @error('zip_code')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -113,7 +112,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="example-text-input" class="form-control-label">Phone</label>
-                                            <input class="form-control" type="text" name="phone" value="{{$phone->phone}}">
+                                            <input class="form-control @error('phone') is-invalid @enderror" type="text" name="phone" value="{{$phone->phone}}">
                                         </div>
                                         @error('phone')
                                             <div class="alert alert-danger">{{ $message }}</div>
@@ -123,7 +122,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Building</label>
-                                        <input class="form-control" type="text" name="building" value="{{$user->address->building}}">
+                                        <input class="form-control @error('building') is-invalid @enderror" type="text" name="building" value="{{$user->address->building}}">
                                     </div>
                                     @error('building')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -132,7 +131,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Floor</label>
-                                        <input class="form-control" type="text" name="floor" value="{{$user->address->floor}}">
+                                        <input class="form-control @error('floor') is-invalid @enderror" type="text" name="floor" value="{{$user->address->floor}}">
                                     </div>
                                     @error('floor')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -141,7 +140,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="example-text-input" class="form-control-label">Apartment</label>
-                                        <input class="form-control" type="text" name="apartment" value="{{$user->address->apartment}}">
+                                        <input class="form-control @error('apartment') is-invalid @enderror" type="text" name="apartment" value="{{$user->address->apartment}}">
                                     </div>
                                     @error('apartment')
                                         <div class="alert alert-danger">{{ $message }}</div>

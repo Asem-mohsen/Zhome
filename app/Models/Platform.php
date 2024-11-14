@@ -29,5 +29,4 @@ class Platform extends Model implements HasMedia
     {
         return $this->getFirstMediaUrl('platform-image');
     }
-
 }

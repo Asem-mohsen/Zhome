@@ -2,14 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Tool;
 use App\Models\ToolOrder;
+use Illuminate\Database\Seeder;
 
 class ToolSeeder extends Seeder
 {
-
     public function run(): void
     {
         Tool::factory(5)->create();

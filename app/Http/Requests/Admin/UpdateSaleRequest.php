@@ -22,10 +22,10 @@ class UpdateSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => ['required','exists:products,id'],
-            'end_date'   => ['required','date','after:start_date'],
-            'sale_price' => ['required','numeric'],
-            'start_date' => ['required','date'],
+            'product_id' => ['required', 'exists:products,id'],
+            'end_date' => ['required', 'date', 'after:start_date'],
+            'sale_price' => ['required', 'numeric'],
+            'start_date' => ['required', 'date'],
         ];
     }
 }

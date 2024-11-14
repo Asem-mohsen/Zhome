@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('promotion_id')->constrained('promotions')->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['order_id', 'user_id' , 'promotion_id']);
+            $table->unique(['order_id', 'user_id', 'promotion_id']);
         });
     }
 

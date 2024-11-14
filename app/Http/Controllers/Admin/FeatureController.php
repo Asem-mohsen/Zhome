@@ -3,30 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Feature;
-use App\Models\ProductFeatures;
 use App\Http\Requests\Admin\AddFeatureRequest;
 use App\Http\Requests\Admin\UpdateFeatureRequest;
-
-use App\Http\Services\Media;
-
+use App\Models\Feature;
 
 class FeatureController extends Controller
 {
     public function index()
     {
-        $features = Feature::withCount(['products' , 'collections'])->get();
+        $features = Feature::withCount(['products', 'collections'])->get();
 
-        return view('Admin.Features.index' , compact('features'));
+        return view('Admin.Features.index', compact('features'));
     }
 
     public function show(Feature $feature)
     {
-        $feature->load(['products']);
+        $feature->load(['products.translations', 'products.platforms', 'products.brand']);
 
-        return view('Admin.Features.show' , compact('feature'));
+        return view('Admin.Features.show', compact('feature'));
     }
 
     public function create()
@@ -36,7 +30,7 @@ class FeatureController extends Controller
 
     public function store(AddFeatureRequest $request)
     {
-        $data = $request->except('_token','_method','image');
+        $data = $request->except('_token', '_method', 'image');
 
         $feature = Feature::create($data);
 
@@ -44,17 +38,19 @@ class FeatureController extends Controller
             $feature->addMediaFromRequest('image')->toMediaCollection('feature-image');
         }
 
-        return redirect()->route('Features.index')->with('success','Feature Added Successfully');
+        toastr()->success(message: 'Feature created successfully!');
+
+        return redirect()->route('Features.index');
     }
 
     public function edit(Feature $feature)
     {
-        return view('Admin.Features.edit' , compact('feature'));
+        return view('Admin.Features.edit', compact('feature'));
     }
 
-    public function update(UpdateFeatureRequest $request , Feature $feature)
+    public function update(UpdateFeatureRequest $request, Feature $feature)
     {
-        $data = $request->except('_token','_method','image');
+        $data = $request->except('_token', '_method', 'image');
 
         $feature->update($data);
 
@@ -65,15 +61,20 @@ class FeatureController extends Controller
             $feature->addMediaFromRequest('image')->toMediaCollection('feature-image');
         }
 
-        return redirect()->route('Features.show', $feature->id)->with('success',"Feature {$request->name} Updated Successfully");
+        toastr()->success(message: "Feature {$request->name} updated successfully!");
+
+        return redirect()->route('Features.show', $feature->id);
     }
 
-    public function destroy(Feature $feature){
+    public function destroy(Feature $feature)
+    {
 
         $feature->clearMediaCollection('feature-image');
 
         $feature->delete();
-        
-        return redirect()->route('Features.index')->with('success','Feature Deleted Successfully');
+
+        toastr()->success(message: 'Feature deleted successfully!');
+
+        return redirect()->route('Features.index');
     }
 }

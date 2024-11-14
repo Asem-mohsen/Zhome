@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePromocodeRequest extends FormRequest
 {
-
     public function authorize(): bool
     {
         return true;
@@ -15,10 +14,10 @@ class UpdatePromocodeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Promocode'   =>['required','max:255','unique:promocode,Promocode,except,ID'],
-            'Save'        =>['numeric' , 'required'],
-            'AvailableFor'=>['integer' , 'required'],
-            'Status'      =>['boolean' , 'required'],
+            'code' => ['required', 'max:255'],
+            'discount_amount' => ['required'],
+            'valid_from' => ['date', 'required'],
+            'status' => ['required','string'],
         ];
     }
 }

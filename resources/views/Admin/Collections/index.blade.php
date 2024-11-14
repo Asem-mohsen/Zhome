@@ -3,8 +3,6 @@
 
 @section('Content')
 
-@include('Admin.Components.Msg')
-
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -28,26 +26,27 @@
                             $i = 1;
                         @endphp
 
-                        @foreach ($collectionsWithNumberOfProducts as $collection)
+                        @foreach ($collections as $collection)
 
                             <tr>
                                 <td>
                                     {{ $i++ }}
                                 </td>
                                 <td>
-                                    {{$collection->Name}}
+                                    {{$collection->name}}
                                 </td>
 
                                 <td>
-                                    {{ \Illuminate\Support\Str::limit($collection->Description, 100, '...') }}                                </td>
+                                    {{ \Illuminate\Support\Str::limit($collection->description, 50, '...') }}
+                                </td>
                                 <td>
-                                    {{$collection->countUsed . " Products In this Collection"}}
+                                    {{$collection->products_count . " Products In this Collection"}}
                                 </td>
                                 <td class="d-flex justify-content-around align-items-baseline">
-                                    <a href="{{ route('Collections.edit',$collection->ID) }}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
+                                    <a href="{{ route('Collections.edit',$collection->id) }}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">
                                         Edit
                                     </a>
-                                    <form action="{{ route('Collections.delete' ,$collection->ID )}}" method="post">
+                                    <form action="{{ route('Collections.delete' ,$collection->id )}}" method="post">
                                         @csrf
                                         @method('DELETE')
                                         <button  class="border-0 bg-transparent p-0 text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete">

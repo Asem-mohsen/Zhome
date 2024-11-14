@@ -7,7 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CategoryResource extends JsonResource
 {
-
     public function toArray(Request $request): array
     {
         return [
@@ -28,7 +27,7 @@ class CategoryResource extends JsonResource
             // Count products
             'products_count' => $this->products()->count(),
 
-            'subcategories'=> SubcategoryResource::collection($this->whenLoaded('subcategories')),
+            'subcategories' => SubcategoryResource::collection($this->whenLoaded('subcategories')),
             'products' => ProductCardResource::collection($this->whenLoaded('products')),
         ];
     }

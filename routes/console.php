@@ -8,4 +8,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::command('sales:remove-expired')->daily();
+Schedule::command('app:clear-expired-sales')->daily();

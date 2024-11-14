@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\Subcategory;
 use App\Http\Requests\Admin\AddCategoryReqeust;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
-use App\Traits\ApiResponse;
 use App\Http\Resources\CategoryResource;
+use App\Models\Category;
+use App\Traits\ApiResponse;
 
 class CategoriesController extends Controller
 {
@@ -39,10 +36,10 @@ class CategoriesController extends Controller
         return $this->data($category->toArray(), 'category retrieved successfully');
     }
 
-    public function update(UpdateCategoryRequest $request ,Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $data = $request->except('image', '_token','_method');
-        
+        $data = $request->except('image', '_token', '_method');
+
         $category->update($data);
 
         if ($request->hasFile('image')) {
@@ -59,22 +56,22 @@ class CategoriesController extends Controller
     {
         $data = $request->validated();
 
-        $data = $request->except('image','_token','_method');
-        
+        $data = $request->except('image', '_token', '_method');
+
         $category = Category::create($data);
 
-        if ($request->hasFile('image')) 
-        {
+        if ($request->hasFile('image')) {
             $category->addMediaFromRequest('image')->toMediaCollection('category-image');
         }
 
         return $this->success('Category Added Successfully');
     }
 
-    public function destroy(Category $category){
+    public function destroy(Category $category)
+    {
 
         try {
-            
+
             $category->clearMediaCollection('category-image');
 
             $category->delete();

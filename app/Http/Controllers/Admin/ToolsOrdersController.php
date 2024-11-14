@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\{User ,Tool, ToolOrder };
-
+use App\Models\ToolOrder;
 
 class ToolsOrdersController extends Controller
 {
@@ -13,14 +11,14 @@ class ToolsOrdersController extends Controller
     {
         $orders = ToolOrder::with(['user'])->get();
 
-        return view('Admin.Orders.Tools.index' , compact('orders'));
+        return view('Admin.Orders.Tools.index', compact('orders'));
     }
 
     public function show(ToolOrder $toolsorder)
     {
-        $order = $toolsorders->load(['user' ,'toolsCategories']);
+        $order = $toolsorders->load(['user', 'toolsCategories']);
 
-        return view('Admin.Orders.Tools.show' , compact('order'));
+        return view('Admin.Orders.Tools.show', compact('order'));
     }
 
     public function destroy(ToolsOrder $toolsorder)

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
-use Illuminate\Http\Request;
 use App\Http\Requests\Admin\AddBrandRequest;
 use App\Http\Requests\Admin\UpdateBrandRequest;
-use App\Http\Services\Media;
+use App\Models\Brand;
 
 class BrandController extends Controller
 {
@@ -15,7 +13,7 @@ class BrandController extends Controller
     {
         $brands = Brand::with('media')->withCount('products')->get();
 
-        return view('Admin.Brands.index' , compact('brands'));
+        return view('Admin.Brands.index', compact('brands'));
     }
 
     public function create()
@@ -25,13 +23,15 @@ class BrandController extends Controller
 
     public function store(AddBrandRequest $request)
     {
-        $data = $request->except('image', '_token','_method');
+        $data = $request->except('image', '_token', '_method');
 
         $brand = Brand::create($data);
 
         if ($request->hasFile('image')) {
             $brand->addMediaFromRequest('image')->toMediaCollection('brand-image');
         }
+
+        toastr()->success(message: 'Brand created successfully!');
 
         return redirect()->route('Brands.index')->with('success', 'Brand Added Successfully');
     }
@@ -40,12 +40,12 @@ class BrandController extends Controller
     {
         $brand->load('media');
 
-        return view('Admin.Brands.edit' ,compact('brand'));
+        return view('Admin.Brands.edit', compact('brand'));
     }
 
-    public function update(UpdateBrandRequest $request , Brand $brand)
+    public function update(UpdateBrandRequest $request, Brand $brand)
     {
-        $data = $request->except('image', '_token','_method');
+        $data = $request->except('image', '_token', '_method');
 
         $brand->update($data);
 
@@ -56,7 +56,9 @@ class BrandController extends Controller
             $brand->addMediaFromRequest('image')->toMediaCollection('brand-image');
         }
 
-        return redirect()->route('Brands.edit', $brand->id)->with('success' , 'Brand Updated Successfully');
+        toastr()->success('Data has been saved successfully!');
+
+        return redirect()->route('Brands.edit', $brand->id);
 
     }
 
@@ -66,6 +68,8 @@ class BrandController extends Controller
 
         $brand->delete();
 
-        return redirect()->route('Brands.index')->with('success', 'Brand Deleted Successfully');
+        toastr()->success('Brand deleted successfully!');
+
+        return redirect()->route('Brands.index');
     }
 }

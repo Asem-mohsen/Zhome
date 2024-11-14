@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('product_faqs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->text('question');
+            $table->text('answer');
+            $table->text('ar_question')->nullable();
+            $table->text('ar_answer')->nullable();
             $table->timestamps();
 
         });

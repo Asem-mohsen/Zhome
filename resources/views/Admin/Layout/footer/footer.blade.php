@@ -1,20 +1,3 @@
-   <script>
-        @if (session('success'))
-            toastr.success("{{ session('success') }}");
-        @endif
-
-        @if (session('error'))
-            toastr.error("{{ session('error') }}");
-        @endif
-
-        @if (session('info'))
-            toastr.info("{{ session('info') }}");
-        @endif
-
-        @if (session('warning'))
-            toastr.warning("{{ session('warning') }}");
-        @endif
-    </script>
 
     <script src="{{ asset('Admin/plugins/jquery/jquery.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
@@ -64,9 +47,7 @@
     <script src="{{ asset('Admin/dist/js/demo.js') }}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="{{ asset('Admin/dist/js/pages/dashboard.js') }}"></script>
-    {{-- Toaster --}}
-    <script src="{{ asset('Admin/dist/js/toastr-config.js') }}"></script>
-    <!-- Main JS -->
+
     <script src="{{ asset('Admin/dist/js/main.js') }}"></script>
 
     @yield('Js')

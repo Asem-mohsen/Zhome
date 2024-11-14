@@ -3,8 +3,6 @@
 
 @section('Content')
 
-@include('Admin.Components.Msg')
-
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -81,7 +79,7 @@
                                     {{$product->price . " EGP"}}
                                 </td>
                                 <td class="d-flex justify-content-around gap-1 align-items-baseline">
-                                    <a href="{{ route('Products.show',$product->id) }}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Your Profile">
+                                    <a href="{{ config('app.frontend_url') }}/product/{{ $product->id }}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="check">
                                         Check
                                     </a>
                                     <a href="{{ route('Products.edit',$product->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">

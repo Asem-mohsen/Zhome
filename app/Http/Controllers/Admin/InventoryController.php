@@ -3,22 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\{Order , Product};
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
-    public function index(){
-        
+    public function index()
+    {
+
         $products = Product::with(['brand', 'platforms', 'translations'])
-        ->withCount([
-            'users as ordered_by_users_count' => function (Builder $query) {
-                $query->distinct('user_id');
-            },
-        ])
-        ->get();
+            ->withCount([
+                'users as ordered_by_users_count' => function (Builder $query) {
+                    $query->distinct('user_id');
+                },
+            ])
+            ->get();
 
         $inventoryStats = Product::selectRaw('
                             COUNT(*) as total_products,
@@ -26,14 +27,14 @@ class InventoryController extends Controller
                             COUNT(CASE WHEN quantity <= 3 THEN 1 END) as about_to_end,
                             COUNT(CASE WHEN created_at >= ? THEN 1 END) as newest
                         ', [Carbon::now()])
-                        ->first();
-        
+            ->first();
+
         $totalProducts = $inventoryStats->total_products;
         $soldOut = $inventoryStats->sold_out;
         $aboutToEnd = $inventoryStats->about_to_end;
         $newest = $inventoryStats->newest;
 
-        return view('Admin.Inventory.index' , get_defined_vars());
+        return view('Admin.Inventory.index', get_defined_vars());
     }
 
     public function update(Request $request)

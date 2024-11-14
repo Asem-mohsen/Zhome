@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\SiteSetting;
-use App\Models\SitePhone;
 use App\Models\SiteMarket;
+use App\Models\SitePhone;
+use App\Models\SiteSetting;
+use Illuminate\Database\Seeder;
 
 class SiteSettingSeeder extends Seeder
 {

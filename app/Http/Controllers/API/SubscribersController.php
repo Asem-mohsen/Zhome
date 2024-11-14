@@ -3,19 +3,20 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Subscribers;
+use App\Models\Subscription;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 
 class SubscribersController extends Controller
 {
     use ApiResponse;
 
-    public function index(){
+    public function index()
+    {
 
-        $subscribers = Subscribers::all();
+        $subscribers = Subscription::all();
 
-        return $this->data(compact('subscribers') , 'All Subscribers Retrieved Successfully');
+        return $this->data(compact('subscribers'), 'All Subscribers Retrieved Successfully');
 
     }
 
@@ -28,10 +29,11 @@ class SubscribersController extends Controller
         $data = $request->only('email');
 
         try {
-            Subscribers::create($data);
-            return $this->success('Email Subscribed Successfully' , 200);
+            Subscription::create($data);
+
+            return $this->success('Email Subscribed Successfully', 200);
         } catch (\Exception $e) {
-            return $this->error([] , 'An error occured');
+            return $this->error([], 'An error occured');
         }
 
     }

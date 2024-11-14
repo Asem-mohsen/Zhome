@@ -1,10 +1,10 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Edit Promocode')
+@section('Title' , 'Edit Promotion')
 
 @section('Content')
 
     <div class="container-fluid py-4">
-        <form action="{{route('Sales.Promocode.update' , $promocode->id )}}" method="post">
+        <form action="{{route('Sales.Promocode.update' , $promotion->id )}}" method="post">
             @csrf
             @method('PUT')
 
@@ -13,7 +13,7 @@
                     <div class="card">
                         <div class="card-header pb-2">
                             <div class="d-flex align-items-center">
-                                <p class="mb-0">Edit Promocode</p>
+                                <p class="mb-0">Edit Promotion</p>
                                 <button class="btn btn-success btn-sm mL-2">Edit</button>
                             </div>
                         </div>
@@ -48,21 +48,21 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group d-grid justify-content-center text-center">
-                                        <label for="status" class="form-control-label">Status</label>
-                                        <input type="hidden" name="status" value="0">
-                                        <input type="checkbox" name="status" value="{{$promotion->status}}" @checked($promotion->status == 'activr') data-bootstrap-switch data-off-color="danger" data-on-color="success">
-                                    </div>
-                                    @error('status')
-                                        <div class="alert alert-danger">{{$message}}</div>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="valid_until" class="form-control-label w-100 text-center">Valid Until</label>
                                         <input class="form-control" id="valid_until" type="text" name="valid_until" value="{{$promotion->valid_until}}" disabled>
                                     </div>
                                     @error('valid_until')
+                                        <div class="alert alert-danger">{{$message}}</div>
+                                    @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group d-grid justify-content-center text-center">
+                                        <label for="status" class="form-control-label">Status</label>
+                                        <input type="hidden" name="status" value="0">
+                                        <input type="checkbox" name="status" value="{{$promotion->status}}" @checked($promotion->status == 'active') data-bootstrap-switch data-off-color="danger" data-on-color="success">
+                                    </div>
+                                    @error('status')
                                         <div class="alert alert-danger">{{$message}}</div>
                                     @enderror
                                 </div>
@@ -93,7 +93,7 @@
                         <div class="card-header text-center border-0 pt-0 pt-lg-2 pb-4 pb-lg-3">
                             <div class="d-flex justify-content-center">
                                 <a href="" class="btn btn-sm btn-info mb-0 d-none d-lg-block">
-                                    @if($promotion->status == 'activr')
+                                    @if($promotion->status == 'active')
                                         Working
                                     @else
                                         Disabled
@@ -145,13 +145,11 @@
                 $(this).bootstrapSwitch('state', $(this).prop('checked'));
             })
 
-            // Handle form submission
             $('form').on('submit', function () {
-                // Manually update the hidden input value based on the checkbox state
                 if ($('input[name="status"]').bootstrapSwitch('state')) {
-                    $('input[name="status"]').val(1);
+                    $('input[name="status"]').val('active');
                 } else {
-                    $('input[name="status"]').val(0);
+                    $('input[name="status"]').val('disactive');
                 }
             });
         });

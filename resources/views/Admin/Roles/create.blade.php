@@ -50,20 +50,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <hr class="horizontal dark">
-                            <p class="text-uppercase text-sm">Accessibility Information</p>
-                            <div class="row">
-                                @foreach ($checkboxColumns as $columnName)
-                                    <div class="col-md-3 pt-3 pb-3">
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" name="accessibility[]"
-                                                role="switch" id="{{ $columnName }}" data-action="{{ $columnName }}">
-                                            <label class="form-check-label"
-                                                for="{{ $columnName }}">{{ $columnName }}</label>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
+                            
                             <hr class="horizontal dark">
 
                             <p class="text-uppercase text-sm">Control</p>

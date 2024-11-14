@@ -2,14 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Collection;
 use App\Models\Feature;
+use Illuminate\Database\Seeder;
 
 class CollectionFeatureSeeder extends Seeder
 {
-
     public function run(): void
     {
         Collection::all()->each(function ($collection) {

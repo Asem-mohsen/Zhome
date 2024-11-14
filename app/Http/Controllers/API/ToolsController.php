@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\AddNewToolRequest;
 use App\Models\Platform;
 use App\Models\ToolsCategories;
 use App\Models\ToolsOrders;
-use App\Http\Requests\User\AddNewToolRequest;
-use App\Http\Services\Media;
-use Illuminate\Support\Facades\Auth;
 use App\Traits\ApiResponse;
-use Illuminate\Support\Composer;
 use App\Traits\HandleImgPath;
+use Illuminate\Support\Facades\Auth;
 
 class ToolsController extends Controller
 {
@@ -22,25 +20,25 @@ class ToolsController extends Controller
         $platforms = Platform::all();
         $platforms = $this->transformImagePaths($platforms);
 
-        return $this->data(compact('platforms') , 'Platforms Retrieved Successfully');
+        return $this->data(compact('platforms'), 'Platforms Retrieved Successfully');
     }
 
     public function interior()
     {
         $platforms = Platform::all();
 
-        return $this->data(compact('platforms') , 'Platforms Retrieved Successfully');
+        return $this->data(compact('platforms'), 'Platforms Retrieved Successfully');
     }
 
     public function store(AddNewToolRequest $request)
     {
-        $data = $request->except('_method' , '_token' , 'Categories' ,'RoomsInput' , 'file');
+        $data = $request->except('_method', '_token', 'Categories', 'RoomsInput', 'file');
 
         // Handle file upload if present
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $userName = $data['Name'];
-            $filename = $userName .'_' . time() . '_' . $file->getClientOriginalName();
+            $filename = $userName.'_'.time().'_'.$file->getClientOriginalName();
             $filePath = 'Admin/dist/img/web/Tools/UserFiles';
             $newFileName = $file->storeAs($filePath, $filename, 'public');
             $data['PlanHouseDocument'] = $filename;
@@ -66,7 +64,7 @@ class ToolsController extends Controller
         } else {
             $sessionId = $request->header('X-Session-ID');
 
-            $data['UnkownID'] = $sessionId ;
+            $data['UnkownID'] = $sessionId;
 
             $data['Name'] = $request->input('Name');
             $data['Email'] = $request->input('Email');

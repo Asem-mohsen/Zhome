@@ -22,7 +22,7 @@ class Product extends Model implements HasMedia
 
     public function platforms()
     {
-        return $this->belongsToMany(Platform::class, 'product_platforms' ,'product_id', 'platform_id');
+        return $this->belongsToMany(Platform::class, 'product_platforms', 'product_id', 'platform_id');
     }
 
     public function subcategory()
@@ -42,22 +42,22 @@ class Product extends Model implements HasMedia
 
     public function dimensions()
     {
-        return $this->hasOne(ProductDimension::class);
+        return $this->hasMany(ProductDimension::class);
     }
 
     public function technologies()
     {
-        return $this->belongsToMany(Technology::class, 'product_technologies' ,'product_id', 'technology_id');
+        return $this->belongsToMany(Technology::class, 'product_technologies', 'product_id', 'technology_id');
     }
 
     public function features()
     {
-        return $this->belongsToMany(Feature::class, 'product_feature' ,'product_id' , 'feature_id');
+        return $this->belongsToMany(Feature::class, 'product_feature', 'product_id', 'feature_id');
     }
 
     public function collections()
     {
-        return $this->belongsToMany(Collection::class,'product_collection' ,'product_id', 'collection_id');
+        return $this->belongsToMany(Collection::class, 'product_collection', 'product_id', 'collection_id');
     }
 
     public function faqs()
@@ -80,7 +80,11 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(User::class, 'orders', 'user_id');
     }
 
-
+    public function deliveryEstimations()
+    {
+        return $this->belongsToMany(DeliveryProductEstimation::class, 'delivery_product', 'product_id', 'delivery_product_estimation_id');
+    }
+    
     public function isOnSale()
     {
         return $this->sale && $this->sale->sale_price < $this->price;

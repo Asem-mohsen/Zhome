@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -13,9 +12,6 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $authenticatedAdmin = Auth::guard('admin')->user();
-        
-        return $this->data($authenticatedAdmin->toArray(), 'contact retrieved successfully');
-
+        // return $this->data('contact retrieved successfully');
     }
 }

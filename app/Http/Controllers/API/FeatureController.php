@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\{Product , Feature};
-use App\Http\Requests\Admin\{AddFeatureRequest , UpdateFeatureRequest};
+use App\Http\Requests\Admin\AddFeatureRequest;
+use App\Http\Requests\Admin\UpdateFeatureRequest;
+use App\Models\Feature;
 use App\Traits\ApiResponse;
 
 class FeatureController extends Controller
@@ -14,9 +14,9 @@ class FeatureController extends Controller
 
     public function index()
     {
-        $features = Feature::withCount(['products' , 'collections'])->get();
+        $features = Feature::withCount(['products', 'collections'])->get();
 
-        return $this->data($features, 'features retrieved successfully');
+        return $this->data(compact('features'), 'features retrieved successfully');
     }
 
     public function show(Feature $feature)
@@ -28,7 +28,7 @@ class FeatureController extends Controller
 
     public function store(AddFeatureRequest $request)
     {
-        $data = $request->except('_token','_method','image');
+        $data = $request->except('_token', '_method', 'image');
 
         $feature = Feature::create($data);
 
@@ -44,9 +44,9 @@ class FeatureController extends Controller
         return $this->data($feature->toArray(), 'feature data retrieved successfully');
     }
 
-    public function update(UpdateFeatureRequest $request , Feature $feature)
+    public function update(UpdateFeatureRequest $request, Feature $feature)
     {
-        $data = $request->except('_token','_method','image');
+        $data = $request->except('_token', '_method', 'image');
 
         $feature->update($data);
 
@@ -68,5 +68,4 @@ class FeatureController extends Controller
 
         return $this->success('Feature Deleted Successfully');
     }
-
 }

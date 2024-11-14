@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\SiteSetting;
-use App\Http\Requests\Admin\UpdateContactRequest;
-use App\Http\Requests\User\AddNewContactRequest;
-use App\Traits\ApiResponse;
 use App\Events\ContactUsEvent;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateContactRequest;
+use App\Models\SiteSetting;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
@@ -16,7 +15,7 @@ class ContactController extends Controller
 
     public function index()
     {
-        $site = SiteSetting::with(['phones' , 'markets'])->first();
+        $site = SiteSetting::with(['phones', 'markets'])->first();
 
         return $this->data(compact('site'), 'Site data retrieved successfully');
     }
@@ -26,7 +25,7 @@ class ContactController extends Controller
         return $this->data($site->toArray(), 'Site data retrieved successfully');
     }
 
-    public function update(UpdateContactRequest $request ,SiteSetting $site)
+    public function update(UpdateContactRequest $request, SiteSetting $site)
     {
 
         $data = $request->except('_method', '_token');

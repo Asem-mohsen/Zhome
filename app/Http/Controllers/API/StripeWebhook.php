@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payments;
+use App\Models\ShopOrders;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\Webhook;
-use Stripe\Checkout\Session as StripeSession;
-use App\Models\ShopOrders;
-use App\Models\Payments;
-use Illuminate\Support\Facades\Log;
 
 class StripeWebhook extends Controller
 {
@@ -26,9 +25,11 @@ class StripeWebhook extends Controller
             $event = Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
         } catch (\UnexpectedValueException $e) {
             Log::error('Invalid payload');
+
             return response()->json(['error' => 'Invalid payload'], 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
             Log::error('Invalid signature');
+
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
@@ -53,7 +54,7 @@ class StripeWebhook extends Controller
                     'transaction_id' => $transactionID,
                     'amount' => $session->amount_total / 100, // Convert amount from cents to currency
                     'currency' => $session->currency,
-                    'status' => $session->payment_status
+                    'status' => $session->payment_status,
                 ]
             );
 

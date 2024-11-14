@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Services;
+use App\Models\Service;
 use App\Traits\ApiResponse;
 
 class ServicesController extends Controller
@@ -13,7 +12,7 @@ class ServicesController extends Controller
 
     public function index()
     {
-        $services = Services::all();
+        $services = Service::all();
 
         return $this->data(compact('services'), 'All Services Retrived Successfully');
     }

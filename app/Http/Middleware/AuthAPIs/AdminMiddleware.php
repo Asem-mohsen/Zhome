@@ -2,12 +2,11 @@
 
 namespace App\Http\Middleware\AuthAPIs;
 
+use App\Traits\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use App\Traits\ApiResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {

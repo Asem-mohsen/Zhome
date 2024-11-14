@@ -3,9 +3,6 @@
 
 @section('Content')
 
-@include('Admin.Components.Msg')
-
-
     <form action="{{ route('Brands.update', $brand->id) }}" enctype="multipart/form-data" method="post">
         @method('PUT')
         @csrf

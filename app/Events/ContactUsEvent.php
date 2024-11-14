@@ -2,11 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -14,7 +11,13 @@ class ContactUsEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $userName , $userEmail , $subject , $messageContent;
+    public $userName;
+
+    public $userEmail;
+
+    public $subject;
+
+    public $messageContent;
 
     public function __construct($userName, $userEmail, $subject, $messageContent)
     {

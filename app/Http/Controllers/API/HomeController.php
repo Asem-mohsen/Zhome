@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Resources\BrandResource;
+use App\Http\Resources\PlatformResource;
+use App\Http\Resources\ProductCardResource;
 use App\Models\Brand;
 use App\Models\Platform;
 use App\Models\Product;
 use App\Traits\ApiResponse;
-use App\Http\Resources\BrandResource;
-use App\Http\Resources\ProductCardResource;
-use App\Http\Resources\PlatformResource;
 
 class HomeController extends Controller
 {
@@ -18,17 +17,16 @@ class HomeController extends Controller
 
     public function index()
     {
-        $brands    = Brand::all();
-        $products  = Product::with(['brand', 'platforms'])->get();
+        $brands = Brand::all();
+        $products = Product::with(['brand', 'platforms'])->get();
         $platforms = Platform::all();
 
         $data = [
-            "brands"   => BrandResource::collection($brands),
-            "products" => ProductCardResource::collection($products),
-            "platforms"=> PlatformResource::collection($platforms),
+            'brands' => BrandResource::collection($brands),
+            'products' => ProductCardResource::collection($products),
+            'platforms' => PlatformResource::collection($platforms),
         ];
 
-        return $this->data($data , 'Home data retrived successfully');
+        return $this->data($data, 'Home data retrived successfully');
     }
-
 }

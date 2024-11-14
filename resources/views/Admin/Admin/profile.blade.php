@@ -3,7 +3,6 @@
 
     @section('Content')
 
-    @include('Admin.Components.Msg')
     <div class="card shadow-lg mx-4 card-profile-bottom">
         <div class="card-body p-3">
             <div class="row gx-4">

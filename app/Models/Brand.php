@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\HasMediaUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use App\Traits\HasMediaUrl;
 
 class Brand extends Model implements HasMedia
 {
-    use HasFactory , InteractsWithMedia , HasMediaUrl;
+    use HasFactory , HasMediaUrl , InteractsWithMedia;
 
     protected $guarded = ['id'];
 
@@ -25,5 +25,4 @@ class Brand extends Model implements HasMedia
     {
         return $this->getFirstMediaUrl('brand-image');
     }
-
 }

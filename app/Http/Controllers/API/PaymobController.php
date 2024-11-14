@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Traits\ApiResponse;
-use App\Services\PaymobService;
-use Illuminate\Support\Facades\Auth;
 use App\Enums\OrderStatusEnum;
-use App\Events\OrderConfirmed;
+use App\Events\OrderConfirmedEvent;
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Payment;
+use App\Services\PaymobService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PaymobController extends Controller
 {
-    use ApiResponse ;
+    use ApiResponse;
 
     protected $paymobService;
 
@@ -26,14 +28,14 @@ class PaymobController extends Controller
     public function createCheckoutSession(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
-    
-        if (!$user) {
+
+        if (! $user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-    
+
         // Step 1: Calculate total amount for unpaid orders
         $totalAmount = $this->calculateTotalAmount($user);
-    
+
         if ($totalAmount <= 0) {
             return response()->json(['message' => 'No amount due for payment'], 400);
         }
@@ -68,7 +70,7 @@ class PaymobController extends Controller
 
     protected function getUserBillingData($user)
     {
-        $user->load(['phones' , 'address']);
+        $user->load(['phones', 'address']);
 
         $address = $user->userAddress;
         $phone = $user->phones->first();
@@ -78,27 +80,27 @@ class PaymobController extends Controller
         $lastName = count($nameParts) > 1 ? end($nameParts) : '';
 
         return [
-            'apartment'     => $address->apartment ?? 'N/A',
-            'email'         => $user->email,
-            'floor'         => $address->floor ?? 'N/A',
-            'first_name'    => $firstName,
-            'street'        => $address->street_address ?? 'N/A',
-            'building'      => $address->building ?? 'N/A',
-            'phone_number'  => $phone->phone ?? 'N/A',
-            'shipping_method'=> 'PKG',
-            'postal_code'   => $address->postal_code ?? '00000',
-            'city'          => $address->city ?? 'N/A',
-            'country'       => $address->country ?? 'EG',
-            'last_name'     => $lastName,
-            'state'         => $address->state ?? 'N/A'
+            'apartment' => $address->apartment ?? 'N/A',
+            'email' => $user->email,
+            'floor' => $address->floor ?? 'N/A',
+            'first_name' => $firstName,
+            'street' => $address->street_address ?? 'N/A',
+            'building' => $address->building ?? 'N/A',
+            'phone_number' => $phone->phone ?? 'N/A',
+            'shipping_method' => 'PKG',
+            'postal_code' => $address->postal_code ?? '00000',
+            'city' => $address->city ?? 'N/A',
+            'country' => $address->country ?? 'EG',
+            'last_name' => $lastName,
+            'state' => $address->state ?? 'N/A',
         ];
     }
 
     public function cashPayment(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
-    
-        if (!$user) {
+
+        if (! $user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -118,7 +120,7 @@ class PaymobController extends Controller
             'amount' => $amount,
             'status' => '2', // Payment is pending until cash is received
             'source_data_type' => 'cash',
-            'source_data_sub_type'=>'cash',
+            'source_data_sub_type' => 'cash',
         ]);
 
         event(new OrderConfirmedEvent($order, $user));
@@ -132,24 +134,23 @@ class PaymobController extends Controller
         $transactionID = $request->query('transactionID');
 
         // Update the ShopOrders table
-        $orders = ShopOrders::where('CartID', $cartID)->get();
+        $orders = Order::where('CartID', $cartID)->get();
 
         foreach ($orders as $order) {
-            $order->Status = 1 ;
+            $order->Status = 1;
             $order->TransactionID = $transactionID;
             $order->save();
         }
 
         // Insert or update the Payment table
-        Payments::updateOrCreate(
+        Payment::updateOrCreate(
             ['OrderID' => $cartID],
             [
                 'TransactionID' => $transactionID,
                 'source_data_type' => 'card',
-                'source_data_sub_type'=>'visa',
+                'source_data_sub_type' => 'visa',
             ]
         );
-
 
     }
 }
