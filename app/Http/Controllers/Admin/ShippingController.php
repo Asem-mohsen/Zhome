@@ -23,9 +23,9 @@ class ShippingController extends Controller
 
     public function estimations()
     {
-        $delivery = DeliveryProductEstimation::with('products.translations')->get();
+        $exceptions = DeliveryProductEstimation::with('products.translations' , 'country' ,'city')->get();
 
-        return view("Admin.Shipping.Estimation.index" , compact("delivery"));
+        return view("Admin.Shipping.Estimation.index" , compact("exceptions"));
     }
 
     public function costCreate()
@@ -37,9 +37,11 @@ class ShippingController extends Controller
 
     public function estimationCreate()
     {
-        $products = Product::with('translations')->get();
+        $products = Product::with('translations')->whereDoesntHave('deliveryEstimations')->get();
 
-        return view("Admin.Shipping.Estimation.create" , compact("products"));
+        $countries = Country::all();
+
+        return view("Admin.Shipping.Estimation.create" , compact("products", "countries"));
     }
 
     public function costStore(AddShippingCostRequest $request)
@@ -51,6 +53,7 @@ class ShippingController extends Controller
                 'country_id' => $validated['country_id'],
                 'city_id' => $validated['city_id'],
                 'shipping_fee' => $validated['shipping_fee'], 
+                'delivery_estimations'=> $validated['delivery_estimations'],
             ]);
     
             toastr()->success('Shipping data saved successfully.');
@@ -73,8 +76,10 @@ class ShippingController extends Controller
             }
 
             $deliveryEstimation = DeliveryProductEstimation::create([
-                'estimation_details' => $request->estimation_details,
-                'estimated_delivery_date' => $request->estimated_delivery_date,
+                'country_id' => $validated['country_id'],
+                'city_id'    => $validated['city_id'],
+                'estimation_details' => $validated['estimation_details'],
+                'estimated_delivery_date' =>$validated['estimated_delivery_date'],
             ]);
 
             $deliveryEstimation->products()->attach($request->product_id);
@@ -113,6 +118,7 @@ class ShippingController extends Controller
                 'country_id' => $validated['country_id'],
                 'city_id' => $validated['city_id'],
                 'shipping_fee' => $validated['shipping_fee'], 
+                'delivery_estimations'=> $validated['delivery_estimations'],
             ]);
     
             toastr()->success('Shipping data saved successfully.');
@@ -135,8 +141,10 @@ class ShippingController extends Controller
             }
         
             $estimation->update([
-                'estimation_details' => $request->estimation_details,
-                'estimated_delivery_date' => $request->estimated_delivery_date,
+                'country_id' => $validated['country_id'],
+                'city_id'    => $validated['city_id'],
+                'estimation_details' => $validated['estimation_details'],
+                'estimated_delivery_date' =>$validated['estimated_delivery_date'],
             ]);
     
             $estimation->products()->sync($request->product_id);

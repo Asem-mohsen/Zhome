@@ -27,6 +27,10 @@ use App\Http\Controllers\Auth\GoogleLoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -238,8 +242,8 @@ Route::middleware('auth.admin')->group(function () {
         Route::prefix('ToolsOrders')->name('ToolsOrders.')->group(function () {
             Route::controller(ToolsOrdersController::class)->group(function () {
                 Route::get('/', 'index')->name('index');
-                Route::get('/{toolsorders}/show', 'show')->name('show');
-                Route::delete('/{toolsorders}/delete', 'destroy')->name('delete');
+                Route::get('/{toolsorder}/show', 'show')->name('show');
+                Route::delete('/{toolsorder}/delete', 'destroy')->name('delete');
             });
         });
     });

@@ -5,16 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\SaveUserInfoCheckout;
-use App\Models\Order;
-use App\Models\Promotion;
-use App\Models\Shipping;
-use App\Models\UserAddress;
-use App\Models\UserPhone;
+use App\Models\{Order , Promotion , Shipping , UserAddress ,UserPhone};
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\{Auth ,Session };
 
 class CheckoutController extends Controller
 {
@@ -135,10 +130,10 @@ class CheckoutController extends Controller
     public function getDeliveryCost(Request $request)
     {
         $request->validate([
-            'city' => 'required|string',
+            'cityId' => 'required|string',
         ]);
 
-        $city = $request->city;
+        $city = $request->cityId;
 
         $cityData = Shipping::where('city_id', $city)->first();
 

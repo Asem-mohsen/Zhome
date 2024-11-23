@@ -18,6 +18,7 @@ class AddShippingCostRequest extends FormRequest
             'country_id' => 'required|exists:countries,id',
             'city_id' => 'required|exists:cities,id',
             'shipping_fee' => 'required|numeric',
+            'delivery_estimations'=> 'nullable',
         ];
     }
 }

@@ -13,21 +13,15 @@ class OrderConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $userName;
+    public $userName , $supportMail , $appName , $orders;
 
-    public $order;
-
-    public $appName;
-
-    public $supportMail;
-
-    public function __construct($userName, $order)
-    {
-        $this->userName = $userName;
-        $this->order = $order;
-        $this->appName = config('app.name');
-        $this->supportMail = config('constants.support_email');
-    }
+    public function __construct($userName, $orders)
+{
+    $this->userName = $userName;
+    $this->orders = $orders;
+    $this->appName = config('app.name');
+    $this->supportMail = config('constants.support_email');
+}
 
     public function envelope(): Envelope
     {

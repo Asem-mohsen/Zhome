@@ -17,7 +17,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <p class="mb-0">Add delivery estimation date</p>
+                            <p class="mb-0">Add delivery estimation data</p>
                             <button class="btn btn-primary btn-sm ms-auto m-2">Add</button>
                         </div>
                     </div>
@@ -43,6 +43,31 @@
                                     <input class="form-control" type="date" id="estimated_delivery_date" name="estimated_delivery_date">
                                 </div>
                                 @error('estimated_delivery_date')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="country_id" class="form-control-label">Country</label>
+                                    <select name="country_id" id="country_id" class="form-control">
+                                        <option hidden disabled selected>Select Country</option>
+                                        @foreach ($countries as $country)
+                                            <option value="{{ $country->id }}"> {{ $country->country }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                @error('country_id')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="city_id" class="form-control-label">City</label>
+                                    <select name="city_id" id="city_id" class="form-control" disabled>
+                                        <option hidden disabled selected>Select City</option>
+                                    </select>
+                                </div>
+                                @error('city_id')
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -90,4 +115,34 @@
             })
         });
     </script>
+
+<script>
+    $(document).ready(function() {
+        $('#country_id').change(function() {
+            var countryId = $(this).val();
+
+            if (countryId) {
+                $('#city_id').prop('disabled', false);
+
+                $.ajax({
+                    url: '/get-cities/' + countryId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#city_id').empty();
+                        $('#city_id').append('<option hidden disabled selected>Select City</option>');
+                        $.each(data, function(key, city) {
+                            $('#city_id').append('<option value="' + city.id + '">' + city.name + '</option>');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            } else {
+                $('#city_id').prop('disabled', true);
+            }
+        });
+    });
+</script>
 @stop

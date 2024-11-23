@@ -25,6 +25,10 @@ class Platform extends Model implements HasMedia
         return $this->hasMany(PlatformFAQ::class);
     }
 
+    public function toolOrders()
+    {
+        return $this->belongsToMany(ToolOrder::class, 'tool_platforms', 'platform_id', 'tool_order_id');
+    }
     public function getImageUrlAttribute()
     {
         return $this->getFirstMediaUrl('platform-image');

@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\ToolsCategories;
-use App\Models\ToolsOrders;
+use App\Models\ToolOrder;
 use App\Traits\ApiResponse;
 
 class ToolsOrderController extends Controller
@@ -14,28 +13,24 @@ class ToolsOrderController extends Controller
     public function index()
     {
 
-        $orders = ToolsOrders::with(['user'])->get();
+        $orders = ToolOrder::with(['option'])->get();
 
-        return $this->data($orders->toArray(), 'orders data retrieved successfully');
+        return $this->data(compact('orders'), 'orders data retrieved successfully');
     }
 
-    public function show(ToolsOrders $toolsorders)
+    public function show(ToolOrder $toolsorder)
     {
 
-        $order = $toolsorders::with(['user', 'toolsCategories'])->first();
+        $toolsorder->load(['toolCategories' ,'option' ,'platforms']);
 
-        return $this->data($order->toArray(), 'order data retrieved successfully');
+        return $this->data(compact('toolsorder'), 'order data retrieved successfully');
 
     }
 
-    public function destroy(ToolsOrders $toolsorders)
+    public function destroy(ToolOrder $toolsorder)
     {
-
         try {
-
-            ToolsCategories::where('ToolOrderID', $toolsorders->ID)->delete();
-
-            $toolsorders::where('ID', $toolsorders->ID)->delete();
+            $toolsorder->delete();
 
             return $this->success('Tool Order Deleted Successfully');
 

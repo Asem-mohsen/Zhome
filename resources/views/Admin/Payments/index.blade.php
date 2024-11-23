@@ -72,7 +72,7 @@
                         <div class="row">
                         <div class="col-md-6 mb-md-0 mb-4">
                             <div class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row" style="min-height: 103px;">
-                            <img class="w-10 me-3 mb-0" src="./Images/Uploads/mastercard.png" alt="logo">
+                            <img class="w-10 me-3 mb-0" src="{{asset('Admin/dist/img/credit/mastercard.png')}}" alt="logo">
                             <h6 class="mb-0">{{$totalCards}} User Paid with Cards</h6>
                             </div>
                         </div>
@@ -103,39 +103,31 @@
                                 <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
                                     <div class="d-flex flex-column">
                                         <h6 class="mb-3 text-sm">
-                                            @if ($newestTransaction->user)
-                                                {{$newestTransaction->user->Name}}
-                                            @else
-                                                {{$newestTransaction->Name}}
-                                            @endif
+                                            {{$newestTransaction->user->name ?? '-'}}
                                         </h6>
                                         <span class="mb-2 text-xs">
                                             Product: 
                                             <span class="text-dark font-weight-bold ms-sm-2">
-                                                {{$newestTransaction->product->Name}}
+                                                {{$newestTransaction->product->translations->name}}
                                             </span>
                                         </span>
 
                                         <span class="mb-2 text-xs">
                                             Email Address: 
                                             <span class="text-dark ms-sm-2 font-weight-bold">
-                                                @if ($newestTransaction->user)
-                                                    {{$newestTransaction->user->Email}}
-                                                @else
-                                                    {{$newestTransaction->Email}}
-                                                @endif
+                                                {{$newestTransaction->user->email ?? '-'}}                                                
                                             </span>
                                         </span>
 
                                         <span class="text-xs">Order ID: 
                                             <span class="text-dark ms-sm-2 font-weight-bold">
-                                                {{$newestTransaction->ID}}
+                                                {{$newestTransaction->id}}
                                             </span>
                                         </span>
 
                                     </div>
                                     <div class="ms-auto text-end">
-                                        <a class="btn btn-link text-dark px-3 mb-0" href="{{route('Orders.ShopOrders.show' , $newestTransaction->ID)}}"><i class="fa-solid fa-magnifying-glass text-dark me-2" aria-hidden="true"></i>Check</a>
+                                        <a class="btn btn-link text-dark px-3 mb-0" href="{{route('Orders.ShopOrders.show' , $newestTransaction->id)}}"><i class="fa-solid fa-magnifying-glass text-dark me-2" aria-hidden="true"></i>Check</a>
                                     </div>
                                 </li>
                             @endforeach
@@ -175,11 +167,7 @@
                                             <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
                                             <div class="d-flex flex-column">
                                                 <h6 class="mb-1 text-dark text-sm">
-                                                    @if ($newestTransaction->user)
-                                                        {{$newestTransaction->user->Name}}
-                                                    @else
-                                                        {{$newestTransaction->Name}}
-                                                    @endif
+                                                    {{$newestTransaction->user->name ?? '-'}}
                                                 </h6>
                                                 <span class="text-xs">
                                                     {{$transactionDate}}
@@ -187,32 +175,27 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                            {{"+ " . $newestTransaction->TotalAfterSaving . "EGP"}}
+                                            {{"+ " . $newestTransaction->total_amount . "EGP"}}
                                         </div>
                                     </li>
                                 
-                                @elseif($newestTransaction->Status ==  0)
-                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                                            <div class="d-flex align-items-center">
-                                                <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-exclamation"></i></button>
-                                                <div class="d-flex flex-column">
-                                                    <h6 class="mb-1 text-dark text-sm">
-                                                        @if ($newestTransaction->user)
-                                                            {{$newestTransaction->user->Name}}
-                                                        @else
-                                                            {{$newestTransaction->Name}}
-                                                        @endif
-                                                    </h6>
-                                                    <span class="text-xs">
-                                                        {{$transactionDate}}
-                                                    </span>
-                                                </div>
+                                @elseif($newestTransaction->status  === \App\Enums\OrderStatusEnum::PENDING->value)
+                                    <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-exclamation"></i></button>
+                                            <div class="d-flex flex-column">
+                                                <h6 class="mb-1 text-dark text-sm">
+                                                    {{$newestTransaction->user->name ?? '-'}}
+                                                </h6>
+                                                <span class="text-xs">
+                                                    {{$transactionDate}}
+                                                </span>
                                             </div>
-                                            <div class="d-flex align-items-center text-danger text-sm font-weight-bold">
-                                                {{"- " . $newestTransaction->TotalAfterSaving . "EGP"}}
-                                            </div>
-                                        </li>
-
+                                        </div>
+                                        <div class="d-flex align-items-center text-danger text-sm font-weight-bold">
+                                            {{"- " . $newestTransaction->total_amount . "EGP"}}
+                                        </div>
+                                    </li>
                                 @endif
                             @endforeach
                         @else
@@ -242,11 +225,7 @@
                                             <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
                                             <div class="d-flex flex-column">
                                                 <h6 class="mb-1 text-dark text-sm">
-                                                    @if ($pastTransaction->user)
-                                                        {{$pastTransaction->user->Name}}
-                                                    @else
-                                                        {{$pastTransaction->Name}}
-                                                    @endif
+                                                    {{$newestTransaction->user->name ?? '-'}}
                                                 </h6>
                                                 <span class="text-xs">
                                                     {{$transactionDate}}
@@ -254,7 +233,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                                {{"+" . $pastTransaction->TotalAfterSaving . "EGP"}}
+                                                {{"+" . $pastTransaction->total_amount . "EGP"}}
                                         </div>
                                     </li>
                             @endforeach

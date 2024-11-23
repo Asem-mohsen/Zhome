@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('delivery_product_estimations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('country_id')->constrained('countries')->cascadeOnDelete();
+            $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete();
             $table->string('estimation_details');
             $table->date('estimated_delivery_date');
             $table->timestamps();

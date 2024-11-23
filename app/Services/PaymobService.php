@@ -43,7 +43,7 @@ class PaymobService
         $response = $this->client->post('https://accept.paymob.com/api/ecommerce/orders', [
             'headers' => ['Authorization' => "Bearer $token"],
             'json' => [
-                'amount_cents' => $amount * 100, // Paymob requires amount in cents
+                'amount_cents' => $amount,
                 'currency' => 'EGP',
                 'merchant_order_id' => uniqid(),
             ],

@@ -10,29 +10,31 @@
             <p>Thank you for your order with {{ $appName }}. We’re processing your order and will let you know once it’s on its way.</p>
 
             <h2>Order Summary</h2>
-            <p><strong>Order ID:</strong> {{ $order->id }}</p>
-            <p><strong>Total Amount:</strong> {{ number_format($order->total_amount, 2) }} {{ $order->currency }}</p>
 
-            <h3>Items in Your Order:</h3>
-            <table class="order-items" role="presentation" width="100%" style="border-collapse: collapse;">
-                @foreach($order->items as $item)
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td width="15%">
-                            <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" style="max-width: 100%; border-radius: 4px;">
-                        </td>
-                        <td width="60%">
-                            <p style="margin: 0;"><strong>{{ $item->product->name }}</strong></p>
-                            <p style="margin: 0; color: #555;">{{ $item->product->description }}</p>
-                        </td>
-                        <td width="10%" style="text-align: center;">
-                            <p style="margin: 0;">Quantity: {{ $item->quantity }}</p>
-                        </td>
-                        <td width="15%" style="text-align: right;">
-                            <p style="margin: 0;">{{ number_format($item->total_price, 2) }} {{ $order->currency }}</p>
-                        </td>
-                    </tr>
-                @endforeach
-            </table>
+            @foreach($orders as $order)
+                <h2>Order ID: {{ $order->id }}</h2>
+                <p>Total Amount: {{ number_format($order->total_amount, 2) }} {{ $order->currency }}</p>
+                <h3>Items:</h3>
+                <table class="order-items" role="presentation" width="100%" style="border-collapse: collapse;">
+                    @foreach($order->items as $item)
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td width="15%">
+                                <img src="{{ $item->product->image_url }}" alt="{{ $item->product->transaltions->name }}" style="max-width: 100%; border-radius: 4px;">
+                            </td>
+                            <td width="60%">
+                                <p style="margin: 0;"><strong>{{ $item->product->transaltions->name }}</strong></p>
+                                <p style="margin: 0; color: #555;">{{ $item->product->description }}</p>
+                            </td>
+                            <td width="10%" style="text-align: center;">
+                                <p style="margin: 0;">Quantity: {{ $item->quantity }}</p>
+                            </td>
+                            <td width="15%" style="text-align: right;">
+                                <p style="margin: 0;">{{ number_format($item->total_price, 2) }} {{ $order->currency }}</p>
+                            </td>
+                        </tr>
+                    @endforeach
+                </table>
+            @endforeach
 
             <p>If you have any questions, feel free to reach out to us at <a href="mailto:{{ $supportMail }}">{{ $supportMail }}</a>.</p>
 

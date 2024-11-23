@@ -3,8 +3,6 @@
 
 @section('Content')
 
-    @include('Admin.Components.Msg')
-
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -50,11 +48,11 @@
                                         @endif
 
                                     </td>
-                                    <td>{{$order->options->installed}}</td>
-                                    <td>{{$order->options->building_type}}</td>
-                                    <td>{{$order->options->rooms}}</td>
-                                    <td>{{$order->options->system_type}}</td>
-                                    <td>{{$order->options->package}}</td>
+                                    <td>{{$order->option->installed ?? 'empty'}}</td>
+                                    <td>{{$order->option->building_type ?? 'empty'}}</td>
+                                    <td>{{$order->option->rooms ?? 'empty'}}</td>
+                                    <td>{{$order->option->system_type ?? 'empty'}}</td>
+                                    <td>{{$order->option->package ?? 'empty'}}</td>
                                     <td>
                                         @if ($order->status === \App\Enums\OrderStatusEnum::COMPLETED->value)
                                             <span class="badge badge-success">Paid</span>

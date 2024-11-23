@@ -17,6 +17,7 @@
                                 <th>#</th>
                                 <th>Country</th>
                                 <th>City</th>
+                                <th>Delivery Estimations</th>
                                 <th>Fees</th>
                                 <th>Actions</th>
                             </tr>
@@ -34,6 +35,8 @@
                                     <td>{{$shipping->country->country}}</td>
 
                                     <td>{{$shipping->city->name}}</td>
+
+                                    <td>{{$shipping->delivery_estimations ?? "--"}}</td>
 
                                     <td>{{$shipping->shipping_fee . " EGP"}}</td>
 

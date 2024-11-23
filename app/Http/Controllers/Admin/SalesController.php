@@ -47,12 +47,16 @@ class SalesController extends Controller
             foreach ($data['product_id'] as $productId) {
                 Sale::create(array_merge($data, ['product_id' => $productId]));
             }
+            toastr()->success(message: 'Sale created successfully');
+
         } else {
 
             Sale::create($data); // Sigle Sale
+
+            toastr()->success(message: 'Sale created successfully');
         }
 
-        return redirect()->route('Sales.index')->with('success', 'Sale Created Successfully');
+        return redirect()->route('Sales.index');
     }
 
     public function update(UpdateSaleRequest $request, Sale $sale)
@@ -60,6 +64,8 @@ class SalesController extends Controller
         $data = $request->except('_token', '_method');
 
         $sale->update($data);
+
+        toastr()->success(message: 'Sale updated successfully');
 
         return redirect()->route('Sales.index')->with('success', 'Sale Updated Successfully');
     }

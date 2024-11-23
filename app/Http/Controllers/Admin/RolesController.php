@@ -34,12 +34,13 @@ class RolesController extends Controller
 
     public function store(AddRoleRequest $request)
     {
-
         $data = $request->except('_token', '_method');
 
         Role::create($data);
 
-        return redirect()->route('Roles.index')->with('success', 'Role created successfully');
+        toastr()->success(message: 'Role created successfully');
+
+        return redirect()->route('Roles.index');
     }
 
     public function update(Request $request, Role $role)

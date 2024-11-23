@@ -193,7 +193,7 @@
                             <a href="{{ route('Shipping.estimations.index') }}"
                                 class="nav-link {{ request()->routeIs('Shipping.estimations.index') ? 'active' : '' }}">
                                 <i class="fa-solid fa-file-signature"></i>
-                                <p>Delivery Estimations</p>
+                                <p>Exceptions</p>
                             </a>
                         </li>
                     </ul>

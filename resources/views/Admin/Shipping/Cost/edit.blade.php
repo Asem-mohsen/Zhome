@@ -47,7 +47,16 @@
                                     <div class="alert alert-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="delivery_estimations" class="form-control-label">Delivery estimation details</label>
+                                    <input class="form-control" type="text" id="delivery_estimations" name="delivery_estimations" value="{{ $shipping->delivery_estimations}}">
+                                </div>
+                                @error('delivery_estimations')
+                                    <div class="alert alert-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="shipping_fee" class="form-control-label">Fees</label>
                                     <input class="form-control" type="number" id="shipping_fee" inputmode="numeric" name="shipping_fee" value="{{ $shipping->shipping_fee }}">

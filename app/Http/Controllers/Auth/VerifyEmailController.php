@@ -41,7 +41,7 @@ class VerifyEmailController extends Controller
         // send email step
         $user->token = $token;
 
-        return $this->data(compact('user'));
+        return $this->data(compact('user') , 'email verification sent');
 
     }
 
@@ -50,11 +50,13 @@ class VerifyEmailController extends Controller
         if (! $request->hasValidSignature()) {
             abort(403, 'Invalid or expired verification link.');
         }
-
+    
         $user = User::findOrFail($userId);
         $user->update(['email_verified_at' => now()]);
 
-        return $this->success('Your email has been verified successfully');
+        $url = config('app.frontend_url');
+
+        return redirect($url.'/email-verified'); 
     }
 
     public function verify(VerificationCodeRequest $request)
@@ -69,7 +71,7 @@ class VerifyEmailController extends Controller
 
             return $this->data(compact('user'), 'Email verified successfully');
         } else {
-            return $this->error(['Verification code' => 'wrong']);
+            return $this->error(['Verification link' => 'wrong'] , 'verification link has expired');
         }
     }
 }

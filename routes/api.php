@@ -22,7 +22,7 @@ use App\Http\Controllers\API\SalesController;
 use App\Http\Controllers\API\ServicesController;
 use App\Http\Controllers\API\ShopController;
 use App\Http\Controllers\API\ShopOrdersController;
-use App\Http\Controllers\API\StripeWebhook;
+use App\Http\Controllers\API\GlobalController;
 use App\Http\Controllers\API\SubcategoriesController;
 use App\Http\Controllers\API\SubscribersController;
 use App\Http\Controllers\API\ToolsController;
@@ -261,6 +261,8 @@ Route::prefix('shop')->group(function () {
         Route::get('/', 'index');
         Route::get('/nav-data', 'navData');
         Route::get('/shop', 'filterIndex');
+        Route::get('/item', 'getItemByTypeAndId');
+        Route::get('/filter-products', 'filterProducts');
     });
 });
 
@@ -340,6 +342,12 @@ Route::prefix('subscribers')->group(function () {
     });
 });
 
+// global
+Route::controller(GlobalController::class)->group(function () {
+    Route::get('/countries', 'countries');
+    Route::get('/{countryId}/cities', 'cities');
+});
+
 // User Routes
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -361,12 +369,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('payment')->group(function () {
-        Route::controller(PaymobController::class)->group(function () {
+        Route::controller( PaymobController::class)->group(function () {
             Route::post('/create-payment', 'createCheckoutSession');
             Route::post('/cash-payment', 'cashPayment');
             Route::get('/success', 'success');
+            Route::post('/paymob/transaction-processed', 'handleTransactionProcessed')->withoutMiddleware(['auth:sanctum']);
+            Route::get('/paymob/transaction-response',  'handleTransactionResponse')->withoutMiddleware(['auth:sanctum']);
         });
     });
 
-    Route::post('/stripe/webhook', [StripeWebhook::class, 'handleWebhook']);
 });

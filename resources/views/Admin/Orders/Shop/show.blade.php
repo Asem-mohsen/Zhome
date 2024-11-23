@@ -118,12 +118,17 @@
                                                     <td>Email</td>
                                                     <td>{{$order->user->email ?? "Unkown email"}}</td>
                                                 </tr>
-                                                @foreach($order->user->phones as $phone)
+                                                @forelse($order->user->phones as $phone)
                                                     <tr>
                                                         <td>Phone</td>
                                                         <td>{{$phone->phone}}</td>
                                                     </tr>
-                                                @endforeach
+                                                @empty
+                                                    <tr>
+                                                        <td>Phone</td>
+                                                        <td>-</td>
+                                                    </tr>
+                                                @endforelse
                                                 <tr>
                                                     <td>User Address</td>
                                                     <td>{{$order->user->address->street_address}}</td>
@@ -220,7 +225,7 @@
                                                         <div class="d-flex gap-2 align-items-center"> 
                                                             @foreach($order->product->platforms as $platform)
                                                                 <a href="{{route('Platform.edit' , $platform->id )}}">
-                                                                    <div class="platform d-flex align-items-center border pr-1 rounded"></div>
+                                                                    <div class="platform d-flex align-items-center border pr-1 rounded">
                                                                         <img src="{{$platform->getFirstMediaUrl('platform-image')}}" width="60" alt="{{$platform->name}}">
                                                                         <p class="text-black m-0">{{$platform->name}}</p>
                                                                     </div>
@@ -362,7 +367,7 @@
                                                         <td>
                                                             <div class="d-flex px-2 py-1">
                                                                 <div>
-                                                                    <img src="{{ $prevOrder->getFirstMediaUrl('product-featured') }}" class="avatar avatar-sm me-3" alt="{{$prevOrder->product->translations->name}}">
+                                                                    <img src="{{ $prevOrder->product->getFirstMediaUrl('product-feature') }}" class="avatar avatar-sm me-3" alt="{{$prevOrder->product->translations->name}}">
                                                                 </div>
                                                                 <div class="d-flex flex-column justify-content-center">
                                                                     <h6 class="mb-0 text-sm">{{$prevOrder->product->translations->name}}</h6>
@@ -373,15 +378,17 @@
                                                             <p class="text-xs font-weight-bold mb-0">{{$prevOrder->quantity}}</p>
                                                         </td>
                                                         <td class="align-middle text-center">
-                                                            @if ($prevOrder->transaction_id != NULL)
+                                                            @if (!empty($prevOrder->transaction_id))
                                                                 {{-- <td>{{$prevOrder->transaction->source_data_sub_type}}</td> --}}
                                                             @else
                                                                 <span class="badge badge-sm bg-warning">Pending</span>
                                                             @endif
                                                         </td>
                                                         <td class="align-middle text-center">
-                                                            @if ($prevOrder->promotions != NULL)
-                                                                <p class="text-xs font-weight-bold mb-0">{{$prevOrder->promotions->code}}</p>
+                                                            @if (!empty($prevOrder->promotions))
+                                                                @foreach ($prevOrder->promotions as $promotion)
+                                                                    <p class="text-xs font-weight-bold mb-0">{{ $promotion->code ?? 'No code' }}</p>
+                                                                @endforeach
                                                             @else
                                                                 <p class="text-xs font-weight-bold mb-0">No promo code used</p>
                                                             @endif

@@ -11,6 +11,8 @@ use App\Services\PaymobService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymobController extends Controller
 {
@@ -34,7 +36,7 @@ class PaymobController extends Controller
         }
 
         // Step 1: Calculate total amount for unpaid orders
-        $totalAmount = $this->calculateTotalAmount($user);
+        $totalAmount = (integer) $request->amount;
 
         if ($totalAmount <= 0) {
             return response()->json(['message' => 'No amount due for payment'], 400);
@@ -44,7 +46,7 @@ class PaymobController extends Controller
         $authToken = $this->paymobService->authenticate();
 
         // Step 3: Create an order in Paymob with the total amount
-        $orderData = $this->paymobService->createOrder($authToken, $totalAmount);
+        $orderData = $this->paymobService->createOrder($authToken, (int)($totalAmount * 100));
         $orderId = $orderData['id'];
 
         // Step 4: Fetch billing data from user's saved details
@@ -61,11 +63,6 @@ class PaymobController extends Controller
         return response()->json([
             'payment_link' => $paymentLink,
         ]);
-    }
-
-    protected function calculateTotalAmount($user)
-    {
-        return $user->orders()->where('status', $this->pending)->sum('total_amount');
     }
 
     protected function getUserBillingData($user)
@@ -100,7 +97,7 @@ class PaymobController extends Controller
     {
         $user = Auth::guard('sanctum')->user();
 
-        if (! $user) {
+        if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -110,22 +107,28 @@ class PaymobController extends Controller
 
         $amount = $request->input('amount');
 
-        $user->orders()->update(['status' => OrderStatusEnum::COMPLETED->value]);
+        $orders = $user->orders()->where('status', OrderStatusEnum::PENDING->value);
+
+        if (!$orders) {
+            return response()->json(['message' => 'No pending orders found'], 404);
+        }
+
+        foreach( $orders as $order ) {
+            $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value]);
+        }
 
         // Create a record in the Payment table for cash payment
         Payment::create([
-            'OrderID' => $cartID,
-            'TransactionID' => null,
-            'currency' => 'EGP',
+            'payment_token' => uniqid(),
             'amount' => $amount,
-            'status' => '2', // Payment is pending until cash is received
-            'source_data_type' => 'cash',
-            'source_data_sub_type' => 'cash',
+            'currency' => 'EGP',
+            'status' => OrderStatusEnum::CASH_ON_DELIVERY->value,
+            'created_at' => now(),
         ]);
 
         event(new OrderConfirmedEvent($order, $user));
 
-        return $this->success('Cash payment option done');
+        return $this->success('Cash payment done');
     }
 
     public function successPage(Request $request)
@@ -152,5 +155,56 @@ class PaymobController extends Controller
             ]
         );
 
+    }
+
+    public function handleTransactionProcessed(Request $request)
+    {
+        $validated = $request->validate([
+            'order_ids' => 'required|array',
+            'success' => 'required|boolean',
+            'amount_cents' => 'required|integer',
+            'currency' => 'required|string',
+        ]);
+    
+        $orders = Order::whereIn('id', $validated['order_ids'])->get();
+
+        if ($orders->isEmpty()) {
+            return response()->json(['message' => 'Orders not found'], 404);
+        }
+
+        try {
+            $user = Auth::guard('sanctum')->user();
+    
+            $status = $validated['success'] ? OrderStatusEnum::COMPLETED->value : OrderStatusEnum::FAILED->value;
+            $orders->each(fn($order) => $order->update(['status' => $status]));
+    
+            if ($validated['success']) {
+                Payment::create([
+                    'payment_token' => $request->input('hmac'),
+                    'amount' => $validated['amount_cents'] / 100,
+                    'currency' => $validated['currency'],
+                    'status' => $status,
+                    'created_at' => now(),
+                ]);
+    
+                event(new OrderConfirmedEvent($orders, $user));
+    
+                return redirect(env('FRONTEND_SUCCESS_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/success'));
+            }
+    
+            return redirect(env('FRONTEND_FAILURE_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/failed'));
+        } catch (\Exception $e) {
+            Log::error('Payment processing error: ' . $e->getMessage());
+            return response()->json(['message' => 'Payment processing failed'], 500);
+        }
+    }
+
+    public function success()
+    {
+        return redirect(env('FRONTEND_SUCCESS_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/success'));
+    }
+    public function failed()
+    {
+        return redirect(env('FRONTEND_FAILURE_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/failed'));
     }
 }

@@ -15,6 +15,7 @@ class SendContactUsEmail
 
     public function handle(ContactUsEvent $event)
     {
+        $supportMail = config('constants.support_email');
 
         Mail::to($supportMail)->send(new ContactUsMail(
             $event->userName,

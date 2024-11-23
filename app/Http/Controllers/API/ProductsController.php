@@ -271,27 +271,37 @@ class ProductsController extends Controller
     {
         $product->load([
             'translations',
-            'brand',
-            'platforms',
-            'subcategory.category',
-            'faqs.translations',
-            'technologies',
+            'brand:id,name',
+            'platforms:id,name',
+            'subcategory:id,name,category_id',
+            'subcategory.category:id,name',
+            'faqs',
+            'technologies:id,name',
             'features',
             'sale',
             'collections',
             'reviews' => function ($query) {
                 $query->latest()->limit(1);
             },
-            'colors',
+            'colors:product_id,color',
             'dimensions',
         ]);
 
-        $products = Product::with(['brand', 'platforms', 'translations'])->get();
+        $product->cover_image = $product->getFirstMediaUrl('cover_image');
+
+        $products = Product::with(['brand:id,name', 'platforms:id,name', 'translations:product_id,name,ar_name'])->get();
+
+        $otherImages = $product->getMedia('other_product_images')->map(function ($media) {
+            return [
+                'id' => $media->id,
+                'url' => $media->getUrl(),
+            ];
+        })->toArray();
 
         $data = [
             'recommended_products' => $products,
             'product' => $product,
-            'other_images' => $product->other_images,
+            'other_images' => $otherImages,
         ];
 
         return $this->data($data, 'Product data retrieved successfully');

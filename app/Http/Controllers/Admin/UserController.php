@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
@@ -22,11 +23,13 @@ class UserController extends Controller
 
     public function profile(User $user)
     {
+        $completedOrders = Order::where('user_id', $user->id)->where('status', OrderStatusEnum::COMPLETED->value);
+       
+        // Get counts and sums from the query
+        $orderCount = $completedOrders->count();
+        $totalPayments = $completedOrders->sum('total_amount');
 
-        // $orderCount = Order::where('user_id', $user->id)->where('status' , 1)->count();
-        // $totalPayments  = Order::where('user_id', $user->id)->where('status' , 1)->sum('TotalAfterSaving');
-
-        return view('Admin.Users.profile', compact('user'));
+        return view('Admin.Users.profile', get_defined_vars());
     }
 
     public function getUserOrderStatistics($userId)

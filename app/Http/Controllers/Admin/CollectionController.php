@@ -48,7 +48,7 @@ class CollectionController extends Controller
 
         toastr()->success(message: 'Collection added successfully!');
 
-        return redirect()->route('Collections.index')->with('success', 'Collection Added Successfully');
+        return redirect()->route('Collections.index');
     }
 
     public function edit(Collection $collection)
@@ -88,6 +88,8 @@ class CollectionController extends Controller
             $collection->features()->detach();
         }
 
+        toastr()->success(message: 'Collection updated successfully');
+
         return redirect()->route('Collections.edit', $collection->id);
     }
 
@@ -103,7 +105,7 @@ class CollectionController extends Controller
 
         toastr()->success(message: 'Collection deleted successfully!');
 
-        return redirect()->route('Collections.index')->with('success', 'Collection Deleted Successfully');
+        return redirect()->route('Collections.index');
 
     }
 }

@@ -30,49 +30,63 @@
                                                 <tr>
                                                     <td>User</td>
                                                     <td>
-                                                        @if($order->user)
-                                                            {{$order->user->Name}}
-                                                        @else
-                                                            {{$order->Name}}
-                                                        @endif
+                                                        {{$order->name}}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Installed In</td>
-                                                    <td>{{$order->Installed}}</td>
+                                                    <td>{{$order->option->installed ?? " - "}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Building Project Type</td>
-                                                    <td>{{$order->BuildingProject}}</td>
+                                                    <td>{{$order->option->building_type ?? " - "}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Rooms</td>
-                                                    <td>{{$order->Rooms}}</td>
+                                                    <td>{{$order->option->rooms ?? " - "}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>System Type</td>
-                                                    <td>{{$order->SystemType}}</td>
+                                                    <td>{{$order->option->system_type ?? " - "}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Package</td>
-                                                    <td>{{$order->Package}} </td>
+                                                    <td>{{$order->option->package ?? " - "}} </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Platforms</td>
-                                                    <td>{{$order->Platform}}</td>
+                                                    <td>
+                                                        @foreach ($order->platforms as $index => $platform)
+                                                            {{$platform->name . ( ($index + 1) !== count($order->platforms) ? "  -  " : "")}}
+                                                        @endforeach
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Categories</td>
                                                     <td>
-                                                        @foreach ($order->toolsCategories as $index => $category)
-                                                            {{$category->Category . ( ($index + 1) !== count($order->toolsCategories) ? "  -  " : "")}}
+                                                        @foreach ($order->toolCategories as $index => $category)
+                                                            {{$category->name . ( ($index + 1) !== count($order->toolCategories) ? "  -  " : "")}}
                                                         @endforeach
                                                     </td>
                                                 </tr>
-                                                @if($order->PlanHouseDocument)
+                                                <tr>
+                                                    <td>Order Status</td>
+                                                    <td>
+                                                        @if ($order->status === \App\Enums\OrderStatusEnum::COMPLETED->value)
+                                                            <span class="badge badge-success">Paid</span>
+                                                        @elseif ($order->status === \App\Enums\OrderStatusEnum::PENDING->value)
+                                                            <span class="badge badge-warning">Pending</span>
+                                                        @elseif ($order->status === \App\Enums\OrderStatusEnum::CANCELLED->value)
+                                                            <span class="badge badge-danger">Cancelled</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                @if($order->getFirstMediaUrl('house_documents'))
                                                     <tr>
                                                         <td>File Uploaded</td>
-                                                        <td><a href="https://zhome.com.eg/Admin/Proposal/UsersUploads/" target="_blank">View File</a> </td>
+                                                        <td>
+                                                            <a href="{{ $order->getFirstMediaUrl('house_documents') }}" target="_blank">View File</a>
+                                                        </td>
                                                     </tr>
                                                 @endif
                                             </tbody>
@@ -96,77 +110,40 @@
                                                 <tr>
                                                     <td>User</td>
                                                     <td>
-                                                        @if($order->user)
-                                                            {{$order->user->Name}}
-                                                        @else
-                                                            {{$order->Name}}
-                                                        @endif
+                                                        {{$order->name}}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Email</td>
                                                     <td>
-                                                        @if($order->user)
-                                                            {{$order->user->Email}}
-                                                        @else
-                                                            {{$order->Email}}
-                                                        @endif
+                                                        {{$order->email}}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Phone</td>
                                                     <td>
-                                                        @if($order->user)
-                                                            {{$order->user->Phone}}
-                                                        @else
-                                                            {{$order->Phone}}
-                                                        @endif
+                                                        {{$order->phone}}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Address</td>
                                                     <td>
-                                                        @if($order->user)
-                                                            {{$order->user->Address}}
-                                                        @else
-                                                            {{$order->Address}}
-                                                        @endif
+                                                        {{$order->address}}
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td>City</td>
                                                     <td>
-                                                        @if($order->user)
-                                                            {{$order->user->City}}
-                                                        @else
-                                                            {{$order->City}}
-                                                        @endif
+                                                        {{$order->city->name ?? "-"}}
                                                     </td>
                                                 </tr>
                                                     <tr>
                                                     <td>Country</td>
                                                     <td>
-                                                        @if($order->user)
-                                                            {{$order->user->Country}}
-                                                        @else
-                                                            {{$order->Country}}
-                                                        @endif
+                                                        {{$order->country->country ?? "-"}}
                                                     </td>
                                                 </tr>
-                                                    <tr>
-                                                    <td>Status</td>
-                                                    <td>
-                                                        @if($order->user)
-                                                            @if ($order->user->Status == 1)
-                                                                <span class="badge badge-succes">Active</span>
-                                                            @else
-                                                                <span class="badge badge-warning">Inactive</span>
-                                                            @endif
-                                                        @else
-                                                            <span class="badge badge-danger">Not a User</span>
-                                                        @endif
-                                                    </td>
-                                                </tr>
+                                               
                                         </table>
                                     </div>
                                 </div>

@@ -2,24 +2,22 @@
 
 namespace App\Events;
 
-use App\Models\Order;
 use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class OrderConfirmedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $order;
+    public $orders , $user;
 
-    public $user;
-
-    public function __construct(Order $order, User $user)
+    public function __construct(Collection $orders, User $user)
     {
-        $this->order = $order;
+        $this->orders = $orders;
         $this->user = $user;
     }
 

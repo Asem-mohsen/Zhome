@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Carbon\Carbon;
@@ -10,38 +11,33 @@ class PaymentController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['payment', 'user'])->get();
-        $sumOrders = 0;
-        foreach ($orders as $transactions) {
-            $sumOrders += $transactions->TotalAfterSaving;
-        }
+        // Sum Orders
+        $sumOrders = Order::with(['payment', 'user'])->sum('total_amount');
 
-        // Amount In Cart
-        $ordersInCart = Order::whereNull('TransactionID')->where('Status', '2')->get();
-        $sumCart = 0;
-        foreach ($ordersInCart as $cart) {
-            $sumCart += $cart->TotalAfterSaving;
-        }
+        // Sum In Cart
+        $sumCart = Order::where('status', OrderStatusEnum::PENDING->value)->sum('total_amount');
 
-        $totalCash = Order::whereHas('transaction', function ($query) {
-            $query->where('source_data_type', 'Cash On Delivery');
+        $totalCash = Order::whereHas('payment', function ($query) {
+            $query->where('status', 'cash on delivery');
         })->count();
-        $totalCards = Order::whereHas('transaction', function ($query) {
-            $query->where('source_data_type', 'card');
+
+        $totalCards = Order::whereHas('payment', function ($query) {
+            $query->where('status', 'card');
         })->count();
-        $newest = Order::with(['transaction', 'user', 'product'])
-            ->whereIn('Status', [1, 0])
+
+        $newest = Order::with(['payment', 'user', 'product.translations'])
+            ->where('status', OrderStatusEnum::COMPLETED->value)
             ->whereBetween('created_at', [now()->subDays(4), now()])
-            ->orderBy('created_at', 'DESC')
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        $past = Order::with(['transaction', 'user', 'product'])
-            ->where('Status', 1)
+        $past = Order::with(['payment', 'user', 'product'])
+            ->where('Status', OrderStatusEnum::COMPLETED->value)
             ->where('created_at', '>=', Carbon::now()->subDays(7))
             ->orderBy('created_at', 'DESC')
             ->limit(7)
             ->get();
 
-        return view('Admin.Payments.index', compact('orders', 'sumOrders', 'sumCart', 'totalCash', 'totalCards', 'newest', 'past'));
+        return view('Admin.Payments.index', get_defined_vars());
     }
 }

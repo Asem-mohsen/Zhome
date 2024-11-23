@@ -9,22 +9,24 @@ class ToolsOrdersController extends Controller
 {
     public function index()
     {
-        $orders = ToolOrder::with(['user'])->get();
+        $orders = ToolOrder::with(['option'])->get();
 
         return view('Admin.Orders.Tools.index', compact('orders'));
     }
 
     public function show(ToolOrder $toolsorder)
     {
-        $order = $toolsorders->load(['user', 'toolsCategories']);
+        $order = $toolsorder->load(['toolCategories' ,'option' ,'platforms' , 'country', 'city']);
 
         return view('Admin.Orders.Tools.show', compact('order'));
     }
 
-    public function destroy(ToolsOrder $toolsorder)
+    public function destroy(ToolOrder $toolsorder)
     {
         $toolsorder->delete();
 
-        return redirect()->route('Orders.ToolsOrders.index')->with('success', 'Tools Order Deleted Successfully');
+        toastr()->success( 'Tools order deleted successfully!');
+
+        return redirect()->route('Orders.ToolsOrders.index');
     }
 }

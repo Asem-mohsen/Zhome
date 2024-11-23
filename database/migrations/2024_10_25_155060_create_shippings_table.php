@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('country_id')->constrained()->onDelete('cascade'); // Foreign key to countries table
             $table->foreignId('city_id')->constrained()->onDelete('cascade'); // Foreign key to cities table
-            $table->decimal('shipping_fee', 8, 2);
+            $table->decimal('shipping_fee', 10, 2);
+            $table->text('delivery_estimations')->nullable();
             $table->timestamps();
         });
     }

@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('tool_options', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tool_id')->constrained('tools')->cascadeOnDelete(); // links to specific tool
+            $table->foreignId('tool_order_id')->constrained('tool_orders')->cascadeOnDelete();
             $table->string('building_type')->nullable();
-            $table->integer('rooms')->nullable();
-            $table->string('platform')->nullable();
+            $table->string('rooms')->nullable();
             $table->string('system_type')->nullable();
             $table->string('package')->nullable();
             $table->string('installed')->nullable();

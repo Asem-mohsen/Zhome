@@ -8,7 +8,8 @@ enum OrderStatusEnum: string
     case COMPLETED = 'completed';
     case CANCELLED = 'cancelled';
     case REFUNDED = 'refunded';
-
+    case CASH_ON_DELIVERY = 'cash on delivery';
+    case FAILED = 'failed';
     public static function values(): array
     {
         return [
@@ -16,6 +17,8 @@ enum OrderStatusEnum: string
             self::COMPLETED->value,
             self::CANCELLED->value,
             self::REFUNDED->value,
+            self::CASH_ON_DELIVERY->value,
+            self::FAILED->value,
         ];
     }
 }
