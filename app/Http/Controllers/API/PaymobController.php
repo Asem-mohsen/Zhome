@@ -159,14 +159,54 @@ class PaymobController extends Controller
 
     public function handleTransactionProcessed(Request $request)
     {
+        // ?id=237877218
+        // &pending=false
+        // &amount_cents=44000
+        // &success=false
+        // &is_auth=false
+        // &is_capture=false
+        // &is_standalone_payment=true
+        // &is_voided=false
+        // &is_refunded=false
+        // &is_3d_secure=false
+        // &integration_id=4417643
+        // &profile_id=97671
+        // &has_parent_transaction=false
+        // &order=267314090
+        // &created_at=2024-11-23T15%3A48%3A45.145277
+        // &currency=EGP
+        // &merchant_commission=0
+        // &discount_details=%5B%5D
+        // &is_void=false
+        // &is_refund=false
+        // &error_occured=true
+        // &refunded_amount_cents=0
+        // &captured_amount=0
+        // &updated_at=2024-11-23T15%3A48%3A46.982467
+        // &is_settled=false
+        // &bill_balanced=false
+        // &is_bill=false
+        // &owner=159677
+        // &merchant_order_id=6741dc9ecec5a
+        // &data.message=Invalid+Card+Number
+        // &source_data.type=card
+        // &source_data.pan=2424
+        // &source_data.sub_type=Visa
+        // &acq_response_code=-1
+        // &txn_response_code=-1
+        // &hmac=ff72e2f28db8d3dffa84b294f5788fe418bebd5cf7969aefd51f92605934a7fe24e6ee16b88037c244b2f102aa1906f418edddfebd79c8bd5c89d4392b650152
         $validated = $request->validate([
-            'order_ids' => 'required|array',
-            'success' => 'required|boolean',
-            'amount_cents' => 'required|integer',
-            'currency' => 'required|string',
+            'order' => 'required|string', // Paymob order ID
+            'success' => 'required|boolean', // Payment success
+            'amount_cents' => 'required|integer', // Payment amount
+            'currency' => 'required|string', // Payment currency
+            'hmac' => 'required|string', // Hash for callback validation
         ]);
-    
+        Log::error('Request data: ' . json_encode($request->all()));
+        Log::error('Validated request: ' . json_encode($validated));
+
         $orders = Order::whereIn('id', $validated['order_ids'])->get();
+        Log::error('orders: ' .$orders);
 
         if ($orders->isEmpty()) {
             return response()->json(['message' => 'Orders not found'], 404);
@@ -174,7 +214,8 @@ class PaymobController extends Controller
 
         try {
             $user = Auth::guard('sanctum')->user();
-    
+            Log::error('User: ' .$user);
+
             $status = $validated['success'] ? OrderStatusEnum::COMPLETED->value : OrderStatusEnum::FAILED->value;
             $orders->each(fn($order) => $order->update(['status' => $status]));
     

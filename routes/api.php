@@ -372,9 +372,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::controller( PaymobController::class)->group(function () {
             Route::post('/create-payment', 'createCheckoutSession');
             Route::post('/cash-payment', 'cashPayment');
-            Route::get('/success', 'success');
+            // Route::get('/success', 'success');
             Route::post('/paymob/transaction-processed', 'handleTransactionProcessed')->withoutMiddleware(['auth:sanctum']);
-            Route::get('/paymob/transaction-response',  'handleTransactionResponse')->withoutMiddleware(['auth:sanctum']);
         });
     });
 
