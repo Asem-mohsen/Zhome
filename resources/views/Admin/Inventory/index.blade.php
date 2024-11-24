@@ -102,7 +102,7 @@
                                 {{ $product->ordered_by_users_count }} users
                             </td>
                             <td class="align-middle">
-                                <a href="{{ config('app.frontend_url') }}/product/{{ $product->id }}" class="btn bg-info" data-toggle="tooltip">
+                                <a href="{{ config('app.frontend_url') }}/product/{{ $product->id }}" class="btn bg-info" target="_blank" data-toggle="tooltip">
                                     Check
                                 </a>
                                 <button data-quantity-id="{{$product->id}}" class="btn bg-success edit-button" data-toggle="tooltip">

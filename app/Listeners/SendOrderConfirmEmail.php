@@ -15,12 +15,12 @@ class SendOrderConfirmEmail
 
     public function handle(OrderConfirmedEvent $event)
     {
-        $order = $event->order;
+        $orders = $event->orders;
         $user = $event->user;
 
         Mail::to($user->email)->send(new OrderConfirmationMail(
             $user->name,
-            $order,
+            $orders,
         ));
     }
 }
