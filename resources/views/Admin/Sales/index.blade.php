@@ -39,7 +39,7 @@
                                             <td>
                                                 <div class="d-flex px-2 py-1">
                                                     <div class="d-flex flex-column justify-content-center">
-                                                        <a href="{{ config('app.frontend_url') }}/product/{{ $sale->product_id }}">
+                                                        <a href="{{ config('app.frontend_url') }}/product/{{ $sale->product_id }}" target="_blank" >
                                                             <h6 class="mb-0 text-sm">{{$sale->product->translations->name}}</h6>
                                                         </a>
                                                     </div>

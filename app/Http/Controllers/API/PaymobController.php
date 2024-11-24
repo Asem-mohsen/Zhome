@@ -93,44 +93,6 @@ class PaymobController extends Controller
         ];
     }
 
-    public function cashPayment(Request $request)
-    {
-        $user = Auth::guard('sanctum')->user();
-
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        $request->validate([
-            'amount' => 'required',
-        ]);
-
-        $amount = $request->input('amount');
-
-        $orders = $user->orders()->where('status', OrderStatusEnum::PENDING->value);
-
-        if (!$orders) {
-            return response()->json(['message' => 'No pending orders found'], 404);
-        }
-
-        foreach( $orders as $order ) {
-            $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value]);
-        }
-
-        // Create a record in the Payment table for cash payment
-        Payment::create([
-            'payment_token' => uniqid(),
-            'amount' => $amount,
-            'currency' => 'EGP',
-            'status' => OrderStatusEnum::CASH_ON_DELIVERY->value,
-            'created_at' => now(),
-        ]);
-
-        event(new OrderConfirmedEvent($order, $user));
-
-        return $this->success('Cash payment done');
-    }
-
     public function successPage(Request $request)
     {
         $cartID = $request->query('CartID');
@@ -240,12 +202,80 @@ class PaymobController extends Controller
         }
     }
 
-    public function success()
+    public function cashPayment(Request $request)
     {
-        return redirect(env('FRONTEND_SUCCESS_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/success'));
-    }
-    public function failed()
-    {
-        return redirect(env('FRONTEND_FAILURE_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/failed'));
+        $user = Auth::guard('sanctum')->user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $amount = $request->input('amount');
+
+        $orders = $user->orders()->where('status', OrderStatusEnum::PENDING->value)->with(['product.translations'])->get();
+
+        if ($orders->isEmpty()) {
+            return $this->error(['message' => 'No pending orders found'], "No pending orders found",404);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $orderData = [];
+            $processedOrders = collect();
+
+            foreach ($orders as $order) {
+
+                $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value]);
+    
+                $payment = Payment::create([
+                    'order_id' => $order->id,
+                    'payment_token' => uniqid('CASH_') . $order->id,
+                    'amount' => $order->total_amount, // Save order's individual amount
+                    'currency' => 'EGP',
+                    'status' => OrderStatusEnum::CASH_ON_DELIVERY->value,
+                    'created_at' => now(),
+                ]);
+    
+                $orderData[] = [
+                    'order_id' => $order->id,
+                    'total_amount' => $order->total_amount,
+                    'currency' => $payment->currency,
+                    'status' => $order->status,
+                    'product' => [
+                        'product_name' => $order->product->translations->name ?? 'N/A',
+                        'product_image' => $order->product->image_url ?? 'N/A',
+                        'product_description' => $order->product->description ?? 'N/A',
+                        'quantity' => $order->quantity,
+                        'total_price' => $order->total_amount, 
+                    ],
+                ];
+
+                $processedOrders->push($order);
+
+            }
+             // Emit the event with the collection of orders
+            event(new OrderConfirmedEvent($processedOrders, $user));
+
+            DB::commit();
+
+            return $this->data($orderData ,'Order placed successfully');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+    
+            Log::error('Cash payment failed: ' . $e->getMessage(), [
+                'user_id' => $user->id,
+                'amount' => $amount,
+            ]);
+    
+            return $this->error(['message' => 'error happened'], "please try again in few minutes",500);
+        }
+
     }
 }

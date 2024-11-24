@@ -79,7 +79,7 @@
                                     {{$product->price . " EGP"}}
                                 </td>
                                 <td class="d-flex justify-content-around gap-1 align-items-baseline">
-                                    <a href="{{ config('app.frontend_url') }}/product/{{ $product->id }}" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="check">
+                                    <a href="{{ config('app.frontend_url') }}/product/{{ $product->id }}" target="_blank" class="text-success font-weight-bold text-xs" data-toggle="tooltip" data-original-title="check">
                                         Check
                                     </a>
                                     <a href="{{ route('Products.edit',$product->id) }}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit">

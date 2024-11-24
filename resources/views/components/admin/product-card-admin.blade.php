@@ -5,7 +5,7 @@
     <div class="product-one__content">
         <div class="product-one__content-left">
             <h3 class="product-one__title">
-                <a href="{{ config('app.frontend_url') }}/product/{{ $variable->id }}">{{ ucfirst(strtolower($variable->translations->name)) }}</a>
+                <a href="{{ config('app.frontend_url') }}/product/{{ $variable->id }}" target="_blank" >{{ ucfirst(strtolower($variable->translations->name)) }}</a>
             </h3>
             <p class="description-product">
                 {{ 'Brand: ' . $variable->brand->name }} <br>
@@ -29,7 +29,7 @@
                 @if($variable->quantity <= 0)
                     <p class="OutStock">{{ __('OutofStock') }}</p>
                 @else
-                    <a href="{{ config('app.frontend_url') }}/product/{{ $variable->id }}" data-placement="top" class="product-one__cart-btn"><i class="fa-solid fa-search text-white"></i></a>
+                    <a href="{{ config('app.frontend_url') }}/product/{{ $variable->id }}" target="_blank"  data-placement="top" class="product-one__cart-btn"><i class="fa-solid fa-search text-white"></i></a>
                 @endif
             </div>
         </div>
