@@ -61,7 +61,7 @@ class CartController extends Controller
 
         $identifier = $this->getIdentifier($request);
 
-        $cartItem = Order::where($identifier)->where('product_id', $productId)->first();
+        $cartItem = Order::where($identifier)->where('product_id', $productId)->where('status', $this->pending)->first();
 
         if ($cartItem) {
             $cartItem->increment('quantity', $quantity);

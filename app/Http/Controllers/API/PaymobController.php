@@ -230,6 +230,18 @@ class PaymobController extends Controller
 
             foreach ($orders as $order) {
 
+                $product = $order->product;
+                if ($product) {
+                    if ($product->quantity < $order->quantity) {
+                        throw new \Exception("Not enough stock for product ID {$product->id}");
+                    }
+
+                    // Update the product stock quantity
+                    $product->update([
+                        'quantity' => $product->quantity - $order->quantity,
+                    ]);
+                }
+
                 $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value]);
     
                 $payment = Payment::create([

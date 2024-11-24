@@ -27,7 +27,7 @@
                             <p style="margin: 0;">Quantity: {{ $order->quantity }}</p>
                         </td>
                         <td width="15%" style="text-align: right;">
-                            <p style="margin: 0;">{{ number_format($order->total_price, 2) }} {{ $order->currency }}</p>
+                            <p style="margin: 0;">{{ number_format($order->product->total_price, 2) }} {{ $order->currency }}</p>
                         </td>
                     </tr>
                 </table>
