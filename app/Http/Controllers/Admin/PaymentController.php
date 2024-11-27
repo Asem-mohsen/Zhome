@@ -18,7 +18,7 @@ class PaymentController extends Controller
         $sumCart = Order::where('status', OrderStatusEnum::PENDING->value)->sum('total_amount');
 
         $totalCash = Order::whereHas('payment', function ($query) {
-            $query->where('status', 'cash on delivery');
+            $query->where('status', OrderStatusEnum::CASH_ON_DELIVERY->value);
         })->count();
 
         $totalCards = Order::whereHas('payment', function ($query) {

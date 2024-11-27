@@ -306,6 +306,8 @@
                                                             <span class="badge badge-danger">Cancelled</span>
                                                         @elseif ($order->status === \App\Enums\OrderStatusEnum::REFUNDED->value)
                                                             <span class="badge badge-info">Refunded</span>
+                                                        @elseif ($order->status === \App\Enums\OrderStatusEnum::CASH_ON_DELIVERY->value)
+                                                            <span class="badge badge-success">Cash on delivery</span>
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -402,6 +404,8 @@
                                                                 <span class="badge badge-danger">Cancelled</span>
                                                             @elseif ($order->status === \App\Enums\OrderStatusEnum::REFUNDED->value)
                                                                 <span class="badge badge-info">Refunded</span>
+                                                            @elseif ($order->status === \App\Enums\OrderStatusEnum::CASH_ON_DELIVERY->value)
+                                                                <span class="badge badge-success">Cash on delivery</span>
                                                             @endif
                                                         </td>
                                                         <td class="align-middle text-center">

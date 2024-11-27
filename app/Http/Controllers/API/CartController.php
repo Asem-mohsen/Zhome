@@ -7,207 +7,155 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderInstallation;
 use App\Models\Product;
+use App\Services\CartService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
     use ApiResponse;
 
-    protected $pending = OrderStatusEnum::PENDING->value;
+    private $cartService;
 
-    private function getIdentifier(Request $request)
+    public function __construct(CartService $cartService)
     {
-        $user = Auth::guard('sanctum')->user();
-
-        if ($user) {
-            return ['user_id' => $user->id];
-        }
-
-        $sessionId = $request->header('X-Session-ID') ?: Session::getId();
-
-        return ['session_id' => $sessionId];
+        $this->cartService = $cartService;
     }
 
-    public function index(Request $request) // cart page
+    public function index(Request $request)
     {
-        $identifier = $this->getIdentifier($request);
+        $user = Auth::guard('sanctum')->user();
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
 
-        $cartItems = Order::where($identifier)->where('status', $this->pending)->with(['product.brand', 'product.platforms', 'product.translations'])->get();
-
-        $count = $cartItems->sum('quantity');
-
-        return $this->getUpdatedCartResponse($cartItems);
+        $cartItems = $this->cartService->getCartItems($identifier);
+        
+        return $this->data($this->cartService->getCartSummary($cartItems) , 'cart data retrieved successfully');
     }
 
     public function addToCart(Request $request)
     {
-        $sessionId = $request->header('X-Session-ID') ?: Session::getId();
-        $productId = $request->product_id;
-        $quantity = $request->input('quantity', 1);
-        $installationCost = $request->input('installation_cost', 0);
-        $withInstallation = $request->input('with_installation', false);
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'nullable|integer|min:1',
+            'installation_cost' => 'nullable|numeric|min:0',
+            'with_installation' => 'nullable|boolean',
+        ]);
 
-        $product = Product::with('sale')->find($productId);
-        if (! $product) {
-            return $this->error(['error' => 'Product not found'], 'Product not found', 404);
-        }
+        $user = Auth::guard('sanctum')->user();
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
 
-        $is_sale = $product->isOnSale();
+        $cartItem = $this->cartService->addToCart(
+            $identifier,
+            $validated['product_id'],
+            $validated['quantity'] ?? 1,
+            $validated['installation_cost'] ?? 0,
+            $validated['with_installation'] ?? false
+        );
 
-        $price = $product->getCurrentPrice();
-
-        $identifier = $this->getIdentifier($request);
-
-        $cartItem = Order::where($identifier)->where('product_id', $productId)->where('status', $this->pending)->first();
-
-        if ($cartItem) {
-            $cartItem->increment('quantity', $quantity);
-            $cartItem->update([
-                'total_amount' => $cartItem->quantity * $price + ($withInstallation ? $installationCost : 0),
-                'with_installation' => $withInstallation,
-            ]);
-        } else {
-            $cartItem = Order::create([
-                'user_id' => $identifier['user_id'] ?? null,
-                'session_id' => $identifier['session_id'] ?? $sessionId,
-                'product_id' => $productId,
-                'quantity' => $quantity,
-                'price' => $price,
-                'is_on_sale' => $is_sale,
-                'total_amount' => $quantity * $price + ($withInstallation ? $installationCost : 0),
-                'status' => $this->pending,
-                'with_installation' => $withInstallation,
-            ]);
-        }
-
-        $this->updateInstallation($cartItem, $withInstallation, $installationCost);
-
-        return $this->getUpdatedCartResponse(Order::where($identifier)->get());
+        $cartItems = $this->cartService->getCartItems($identifier);
+        return $this->data($this->cartService->getCartSummary($cartItems) , 'item added successfully');
     }
 
     public function updateCartQuantity(Request $request)
     {
-        $identifier = $this->getIdentifier($request);
-        $productId = $request->product_id;
-        $quantity = $request->quantity;
-        $installationCost = $request->installation_cost ?? 0;
-        $withInstallation = $request->input('with_installation', false);
-
-        $cartItem = Order::where($identifier)->where('product_id', $productId)->first();
-        if (! $cartItem) {
-            return $this->error(['error' => 'Cart item not found'], 'Cart item not found', 404);
-        }
-
-        if ($quantity < 1) {
-            return $this->error(['error' => 'Quantity must be at least 1'], 'Invalid quantity', 400);
-        }
-
-        $cartItem->update([
-            'quantity' => $quantity,
-            'total_amount' => $quantity * $cartItem->price + ($withInstallation ? $installationCost : 0),
-            'with_installation' => $withInstallation,
+        $validated = $request->validate([
+            'product_id' => 'required|exists:orders,product_id',
+            'quantity' => 'required|integer|min:1',
+            'installation_cost' => 'nullable|numeric|min:0',
+            'with_installation' => 'nullable|boolean',
         ]);
 
-        $this->updateInstallation($cartItem, $withInstallation, $installationCost);
+        $user = Auth::guard('sanctum')->user();
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
 
-        return $this->getUpdatedCartResponse(Order::where($identifier)->get());
+        $cartItem = Order::where($identifier)
+            ->where('product_id', $validated['product_id'])
+            ->firstOrFail();
+
+        $this->cartService->updateCartQuantity($cartItem, $validated['quantity'], $validated['with_installation'] ?? false, $validated['installation_cost'] ?? 0);
+
+        $cartItems = $this->cartService->getCartItems($identifier);
+        return $this->data($this->cartService->getCartSummary($cartItems) , 'cart data updated successfully');
     }
 
-    private function updateInstallation(Order $cartItem, bool $withInstallation, int $installationCost)
+    public function updateInstallation(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|exists:orders,product_id',
+            'installation_cost' => 'required',
+        ]);
+
+        $user = Auth::guard('sanctum')->user();
+
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
+
+        $cartItem = Order::where($identifier)
+                    ->where('product_id', $request->product_id)
+                    ->first();
+
+        if (!$cartItem) {
+            return $this->error(['message' => 'Cart item not found.'],'Cart item not found.' ,404);
+        }
+
+        $withInstallation = $request->installation_cost > 0;
+
         if ($withInstallation) {
+
+            $cartItem->update(['with_installation' => 1]);
+
             OrderInstallation::updateOrCreate(
                 ['order_id' => $cartItem->id],
-                ['installation_cost' => $installationCost]
+                ['installation_cost' => $request->installation_cost]
             );
         } else {
             OrderInstallation::where('order_id', $cartItem->id)->delete();
+            $cartItem->update(['with_installation' => 0]);
         }
+
+        $cartItems = $this->cartService->getCartItems($identifier);
+
+        return $this->data($this->cartService->getUpdatedCartResponse($cartItems),'Data retrieved successfully');
     }
-
-    // Checkout Update
-    // public function updateCart(Request $request)
-    // {
-    //     $identifier = $this->getIdentifier($request);
-    //     $cartData   = $request->input('cart');
-    //     $totalPrice = $request->input('total_price');
-    //     $savedAmount= $request->input('saved_amount');
-    //     $finalTotal = $request->input('final_total');
-
-    //     foreach ($cartData as $item) {
-    //         Order::updateOrCreate(
-    //             array_merge($identifier, ['ProductID' => $item['product_id']]),
-    //             [
-    //                 'Quantity'         => $item['quantity'],
-    //                 'WithInstallation' => $item['installation_cost'],
-    //                 'Total'            => $item['subtotal'],
-    //                 'Status'           => 2, //User Just CheckedOut and not paid yet
-    //             ]
-    //         );
-    //     }
-
-    //     return $this->success('Cart updated successfully');
-    // }
 
     public function removeFromCart(Request $request, $productId)
     {
-        $identifier = $this->getIdentifier($request);
+        $user = Auth::guard('sanctum')->user();
 
-        $cartItem = Order::where($identifier)
-            ->where('product_id', $productId)
-            ->where('status', $this->pending)
-            ->first();
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
 
-        $cartItem->delete();
+        $this->cartService->removeCartItem($identifier, $productId);
 
-        return $this->getUpdatedCartResponse(Order::where($identifier)->get());
+        $cartItems = $this->cartService->getCartItems($identifier);
+
+        return $this->data($this->cartService->getUpdatedCartResponse($cartItems),'cart item removed successfully');
     }
 
     public function getCartCount(Request $request)
     {
-        $identifier = $this->getIdentifier($request);
+        $user = Auth::guard('sanctum')->user();
 
-        $count = Order::where($identifier)->where('status', $this->pending)->count();
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
 
-        return $this->data(['count' => $count], 'data retrived successfully');
+        $count = $this->cartService->getCartCount($identifier);
+
+        return $this->data(['count' => $count],'Data retrieved successfully');
     }
 
     public function clearCart(Request $request)
     {
-        $identifier = $this->getIdentifier($request);
+        $user = Auth::guard('sanctum')->user();
 
-        Order::where($identifier)
-            ->where('status', $this->pending)
-            ->delete();
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
 
-        return $this->getUpdatedCartResponse(Order::where($identifier)->get());
+        $this->cartService->clearCart($identifier);
+
+        $cartItems = $this->cartService->getCartItems($identifier);
+
+        return $this->data($this->cartService->getUpdatedCartResponse($cartItems),'cart data cleared successfully');
     }
 
-    private function getUpdatedCartResponse($cartItems)
-    {
-        $count = $cartItems->sum('quantity');
-        $total = $cartItems->sum('total_amount');
-
-        $totalSaved = $cartItems->reduce(function ($carry, $item) {
-            $savingsPerItem = 0;
-
-            if ($item->product && $item->product->isOnSale()) {
-                $originalPrice = $item->product->price;
-                $salePrice = $item->product->getCurrentPrice();
-                $savingsPerItem = ($originalPrice - $salePrice) * $item->quantity;
-            }
-
-            return $carry + $savingsPerItem;
-        }, 0);
-
-        return response()->json([
-            'items' => $cartItems,
-            'count' => $count,
-            'total_amount' => $total,
-            'total_saved' => $totalSaved,
-        ]);
-    }
 }

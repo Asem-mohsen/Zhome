@@ -21,7 +21,7 @@
                     <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Paid in cash</span>
-                        {{-- <span class="info-box-number">{{$totalCash}}</span> --}}
+                        <span class="info-box-number">{{$totalCash}}</span>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
 
                     <div class="info-box-content">
                         <span class="info-box-text">Paid with cards</span>
-                        {{-- <span class="info-box-number">{{$totalCards}}</span> --}}
+                        <span class="info-box-number">{{$totalCards}}</span>
                     </div>
                 </div>
             </div>
@@ -107,6 +107,8 @@
                                         <span class="badge badge-danger">Cancelled</span>
                                     @elseif ($order->status === \App\Enums\OrderStatusEnum::REFUNDED->value)
                                         <span class="badge badge-info">Refunded</span>
+                                    @elseif ($order->status === \App\Enums\OrderStatusEnum::CASH_ON_DELIVERY->value)
+                                        <span class="badge badge-success">Cash on delivery</span>
                                     @endif
                                 </td>
                                 <td class="d-flex justify-content-around gap-1 align-items-baseline">
