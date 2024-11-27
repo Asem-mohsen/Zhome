@@ -35,7 +35,7 @@
 
                                     <td>
                                         @foreach($exception->products->take(2) as $product)
-                                            <span>{{ $product->translations->name }}</span>
+                                            <span>{{ $product->product->translations->name }}</span>
                                             @if(!$loop->last)
                                                 <span>-</span>
                                             @endif

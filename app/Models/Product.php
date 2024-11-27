@@ -81,9 +81,9 @@ class Product extends Model implements HasMedia
     }
 
     public function deliveryEstimations()
-{
-    return $this->hasManyThrough(DeliveryProductEstimation::class,DeliveryProduct::class,'product_id', 'id', 'id', 'delivery_product_estimation_id' );
-}
+    {
+        return $this->hasManyThrough(DeliveryProductEstimation::class,DeliveryProduct::class,'product_id', 'id', 'id', 'delivery_product_estimation_id' );
+    }
     
     public function isOnSale()
     {
