@@ -216,11 +216,16 @@ class PaymobController extends Controller
 
         $amount = $request->input('amount');
 
-        $orders = $user->orders()->where('status', OrderStatusEnum::PENDING->value)->with(['product.translations'])->get();
+        // Fetch pending orders
+        $orders = $user->orders()
+            ->where('status', OrderStatusEnum::PENDING->value)
+            ->with(['product.translations'])
+            ->get();
 
         if ($orders->isEmpty()) {
-            return $this->error(['message' => 'No pending orders found'], "No pending orders found",404);
+            return $this->error(['message' => 'No pending orders found'], "No pending orders found", 404);
         }
+
 
         DB::beginTransaction();
 
@@ -229,65 +234,78 @@ class PaymobController extends Controller
             $processedOrders = collect();
 
             foreach ($orders as $order) {
-
-                $product = $order->product;
-                if ($product) {
-                    if ($product->quantity < $order->quantity) {
-                        throw new \Exception("Not enough stock for product ID {$product->id}");
-                    }
-
-                    // Update the product stock quantity
-                    $product->update([
-                        'quantity' => $product->quantity - $order->quantity,
-                    ]);
-                }
-
-                $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value]);
+                $this->processOrder($order);
     
-                $payment = Payment::create([
-                    'order_id' => $order->id,
-                    'payment_token' => uniqid('CASH_') . $order->id,
-                    'amount' => $order->total_amount, // Save order's individual amount
-                    'currency' => 'EGP',
-                    'status' => OrderStatusEnum::CASH_ON_DELIVERY->value,
-                    'created_at' => now(),
-                ]);
-    
-                $orderData[] = [
-                    'order_id' => $order->id,
-                    'total_amount' => $order->total_amount,
-                    'currency' => $payment->currency,
-                    'status' => $order->status,
-                    'product' => [
-                        'product_name' => $order->product->translations->name ?? 'N/A',
-                        'product_image' => $order->product->image_url ?? 'N/A',
-                        'product_description' => $order->product->description ?? 'N/A',
-                        'quantity' => $order->quantity,
-                        'total_price' => $order->total_amount, 
-                    ],
-                ];
-
                 $processedOrders->push($order);
-
             }
-             // Emit the event with the collection of orders
+
             event(new OrderConfirmedEvent($processedOrders, $user));
 
             DB::commit();
 
-            return $this->data($orderData ,'Order placed successfully');
+            $responseData = $this->prepareOrderResponse($processedOrders);
+
+            return $this->data($responseData, 'Order placed successfully');
 
         } catch (\Exception $e) {
 
             DB::rollBack();
-    
+
             Log::error('Cash payment failed: ' . $e->getMessage(), [
                 'user_id' => $user->id,
                 'amount' => $amount,
             ]);
-    
-            return $this->error(['message' => 'error happened'], "please try again in few minutes",500);
+
+            return $this->error(['message' => 'An error occurred'], "Please try again in a few minutes", 500);
         }
 
+    }
+
+
+    private function processOrder($order)
+    {
+        $product = $order->product;
+
+        if (!$product) {
+            throw new \Exception("Product not found for order ID {$order->id}");
+        }
+
+        if ($product->quantity < $order->quantity) {
+            throw new \Exception("Not enough stock for product ID {$product->id}");
+        }
+
+        $product->update([
+            'quantity' => $product->quantity - $order->quantity,
+        ]);
+
+        $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value]);
+
+        Payment::create([
+            'order_id' => $order->id,
+            'payment_token' => uniqid('CASH_') . $order->id,
+            'amount' => $order->total_amount,
+            'currency' => 'EGP',
+            'status' => OrderStatusEnum::CASH_ON_DELIVERY->value,
+            'created_at' => now(),
+        ]);
+    }
+
+    private function prepareOrderResponse($orders)
+    {
+        return $orders->map(function ($order) {
+            return [
+                'order_id' => $order->id,
+                'total_amount' => $order->total_amount,
+                'currency' => 'EGP',
+                'status' => $order->status,
+                'product' => [
+                    'product_name' => $order->product->translations->name ?? 'N/A',
+                    'product_image' => $order->product->image_url ?? 'N/A',
+                    'product_description' => $order->product->description ?? 'N/A',
+                    'quantity' => $order->quantity,
+                    'total_price' => $order->total_amount,
+                ],
+            ];
+        })->toArray();
     }
 }

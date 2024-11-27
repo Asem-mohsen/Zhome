@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\{ Order , Payment } ;
 
 class ShopOrdersController extends Controller
 {
@@ -15,6 +15,10 @@ class ShopOrdersController extends Controller
         $totalOrdersCount = $orders->count();
 
         $pendingOrdersCount = Order::where('status', OrderStatusEnum::PENDING->value)->count();
+
+        $totalCash = Payment::where('status', OrderStatusEnum::CASH_ON_DELIVERY->value)->count();
+
+        $totalCards = Payment::where('status', OrderStatusEnum::CARD->value)->count();
 
         return view('Admin.Orders.Shop.index', get_defined_vars());
     }

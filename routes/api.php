@@ -290,9 +290,8 @@ Route::prefix('cart')->group(function () {
         Route::get('/', 'index');
         Route::post('/add', 'addToCart');
         Route::get('/count', 'getCartCount');
-        // Route::post('/update', 'updateCart');  //checkout update
         Route::post('/updateQuantity', 'updateCartQuantity');  //update cart quantity
-        Route::post('/update-Installtion', 'updateCartQuantity');  //update cart installtion price
+        Route::post('/update-Installtion', 'updateInstallation');  //update cart installtion price
         Route::delete('/remove/{productId}', 'removeFromCart');
         Route::delete('/clearCart', 'clearCart');
     });
@@ -332,6 +331,7 @@ Route::prefix('checkout')->group(function () {
     Route::controller(CheckoutController::class)->group(function () {
         Route::get('/', 'index');
         Route::post('/get-delivery-cost', 'getDeliveryCost');
+        Route::post('/get-delivery-estimations', 'getDeliveryEstimations');
     });
 });
 

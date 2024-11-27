@@ -12,9 +12,9 @@ class DeliveryProductEstimation extends Model
     protected $fillable = ['estimation_details', 'estimated_delivery_date' ,'country_id' , 'city_id'];
 
     protected $casts = ['estimated_delivery_date' => 'date'];
-    public function products()
+    public function product()
     {
-        return $this->belongsToMany(Product::class, 'delivery_product', 'delivery_product_estimation_id', 'product_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 
     public function country()

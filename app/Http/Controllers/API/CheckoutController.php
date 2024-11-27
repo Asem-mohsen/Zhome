@@ -5,7 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\SaveUserInfoCheckout;
-use App\Models\{Order , Promotion , Shipping , UserAddress ,UserPhone};
+use App\Models\{Order , Product, Promotion , Shipping , UserAddress ,UserPhone};
+use App\Services\CartService;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,6 +17,13 @@ class CheckoutController extends Controller
     use ApiResponse;
 
     protected $pending = OrderStatusEnum::PENDING->value;
+
+    private $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
 
     private function getIdentifier(Request $request)
     {
@@ -38,7 +46,7 @@ class CheckoutController extends Controller
 
         $total = $orders->sum(function ($order) {
             return ($order->quantity * $order->price) +
-                ($order->with_installation ? $order->product->InstallationCost : 0);
+                ($order->with_installation ?  $order->product->installation_cost : 0);
         });
 
         $user = null;
@@ -142,5 +150,45 @@ class CheckoutController extends Controller
         } else {
             return response()->json(['deliveryCost' => 0], 400);
         }
+    }
+
+    public function getDeliveryEstimations(Request $request)
+    {
+        $request->validate([
+            'country_id' => 'required|exists:countries,id',
+            'city_id' => 'required|exists:cities,id',
+        ]);
+
+        $user = Auth::guard('sanctum')->user();
+
+        $identifier = $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
+
+        $cartItems = $this->cartService->getCartItems($identifier);
+
+        $products = Product::whereIn('id', $cartItems->pluck('product_id'))
+            ->with(['deliveryEstimations' => function ($query) use ($request) {
+                $query->where('country_id', $request->country_id)
+                    ->where('city_id', $request->city_id);
+            }])
+            ->get();
+
+
+            $response = $products->map(function ($product) {
+                $estimation = $product->deliveryEstimations->first();
+                if ($estimation) {
+                    return [
+                        'product_id' => $product->id,
+                        'estimation_details' => $estimation->estimation_details,
+                        'estimated_delivery_date' => $estimation->estimated_delivery_date,
+                    ];
+                }
+        
+                return [
+                    'code' => 404,
+                    'message' => 'No estimations available for this product.',
+                ];
+            });
+
+        return $this->data(['data' => $response],'estimation for the products found' ,200);
     }
 }
