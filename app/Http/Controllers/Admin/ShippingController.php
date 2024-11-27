@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\{AddShippingCostRequest , AddEstimationRequest };
-use App\Models\{City, Country , Shipping ,DeliveryProductEstimation , Product};
+use App\Models\{City, Country , Shipping ,DeliveryProductEstimation , Product , DeliveryProduct};
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ShippingController extends Controller
 {
@@ -23,7 +25,7 @@ class ShippingController extends Controller
 
     public function estimations()
     {
-        $exceptions = DeliveryProductEstimation::with('products.translations' , 'country' ,'city')->get();
+        $exceptions = DeliveryProductEstimation::with(['products.product.translations', 'country', 'city'])->get();
 
         return view("Admin.Shipping.Estimation.index" , compact("exceptions"));
     }
@@ -67,9 +69,11 @@ class ShippingController extends Controller
 
     public function estimationStore(AddEstimationRequest $request)
     {
+        DB::beginTransaction();
+
         try {
             $validated = $request->validated();
-    
+        
             if (empty($request->product_id)) {
                 toastr()->error('Please select at least one product.');
                 return redirect()->back();
@@ -79,14 +83,25 @@ class ShippingController extends Controller
                 'country_id' => $validated['country_id'],
                 'city_id'    => $validated['city_id'],
                 'estimation_details' => $validated['estimation_details'],
-                'estimated_delivery_date' =>$validated['estimated_delivery_date'],
+                'estimated_delivery_date' => $validated['estimated_delivery_date'],
             ]);
 
-            $deliveryEstimation->products()->attach($request->product_id);
+            foreach ($request->product_id as $productId) {
+                DeliveryProduct::create([
+                    'delivery_product_estimation_id' => $deliveryEstimation->id,
+                    'product_id' => $productId, 
+                ]);
+            }
+
+            DB::commit();
 
             toastr()->success('Estimation data saved successfully.');
             
         } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error saving estimation data: ' . $e->getMessage());
+
             toastr()->error('An error occurred while saving the estimation data. Please try again.');
         }
 
