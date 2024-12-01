@@ -39,7 +39,7 @@
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
-                                            <img src="{{ $product->getFirstMediaUrl('product-image') }}" class="avatar avatar-sm me-3" alt="{{$product->translations->name}}">
+                                            <img src="{{ $product->getFirstMediaUrl('product_featured_image') }}" class="avatar avatar-sm me-3" alt="{{$product->translations->name}}">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h5 class="mb-0 text-sm">{{$product->translations->name}}</h5>
