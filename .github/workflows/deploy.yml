@@ -10,18 +10,18 @@ on:
     deploy:
       runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
 
-      - name: Deploy via SSH
-            uses: appleboy/ssh-action@v0.1.4
-            with:
-              host: ${{ secrets.IP }}
-              username: ${{ secrets.USER_NAME }}
-              key: ${{ secrets.SSH_PRIVATE_KEY }}
-              port: ${{ secrets.PORT }}
-              script: |
-                cd ~/public_html
-                chmod u+x build-script.sh 
-                ./build-script.sh
+        - name: Deploy via SSH
+              uses: appleboy/ssh-action@v0.1.4
+              with:
+                host: ${{ secrets.IP }}
+                username: ${{ secrets.USER_NAME }}
+                key: ${{ secrets.SSH_PRIVATE_KEY }}
+                port: ${{ secrets.PORT }}
+                script: |
+                  cd ~/public_html
+                  chmod u+x build-script.sh 
+                  ./build-script.sh
