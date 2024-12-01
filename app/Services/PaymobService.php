@@ -38,14 +38,15 @@ class PaymobService
         return $data['token'];
     }
 
-    public function createOrder($token, $amount)
+    public function createOrder($token, $amount, array $orderIds)
     {
         $response = $this->client->post('https://accept.paymob.com/api/ecommerce/orders', [
             'headers' => ['Authorization' => "Bearer $token"],
             'json' => [
                 'amount_cents' => $amount,
                 'currency' => 'EGP',
-                'merchant_order_id' => uniqid(),
+                'merchant_order_id' => implode(',', $orderIds),
+                // 'merchant_order_id' => uniqid(),
             ],
         ]);
 

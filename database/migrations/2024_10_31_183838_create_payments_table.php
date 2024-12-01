@@ -15,10 +15,11 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
-            $table->string('payment_token')->unique();
+            $table->string('payment_token');
             $table->decimal('amount', 10, 2); // Amount charged
             $table->string('currency', 3);
-            $table->enum('status', OrderStatusEnum::values())->default(OrderStatusEnum::PENDING->value);
+            $table->string('type');
+            $table->enum('payment_status', OrderStatusEnum::values())->default(OrderStatusEnum::PENDING->value);
             $table->timestamps();
         });
     }

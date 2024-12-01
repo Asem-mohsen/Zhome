@@ -161,7 +161,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         });
     });
 
-    Route::prefix('contact')->group(function () { //Zhome Contact
+    Route::prefix('contact')->group(function () { //Smarven Contact
         Route::controller(ContactController::class)->group(function () {
             Route::get('/{site}/edit', 'edit');
             Route::put('/{site}/update', 'update');
@@ -372,8 +372,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::controller( PaymobController::class)->group(function () {
             Route::post('/create-payment', 'createCheckoutSession');
             Route::post('/cash-payment', 'cashPayment');
-            // Route::get('/success', 'success');
-            Route::post('/paymob/transaction-processed', 'handleTransactionProcessed')->withoutMiddleware(['auth:sanctum']);
+            Route::match(['GET', 'POST'], '/paymob/transaction-processed',  'handleTransactionProcessed')->name('paymob.transaction.processed')->withoutMiddleware('auth:sanctum');
         });
     });
 

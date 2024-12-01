@@ -16,9 +16,9 @@ class ShopOrdersController extends Controller
 
         $pendingOrdersCount = Order::where('status', OrderStatusEnum::PENDING->value)->count();
 
-        $totalCash = Payment::where('status', OrderStatusEnum::CASH_ON_DELIVERY->value)->count();
+        $totalCash = Payment::where('payment_status', OrderStatusEnum::CASH_ON_DELIVERY->value)->count();
 
-        $totalCards = Payment::where('status', OrderStatusEnum::CARD->value)->count();
+        $totalCards = Payment::where('payment_status', OrderStatusEnum::CARD->value)->count();
 
         return view('Admin.Orders.Shop.index', get_defined_vars());
     }

@@ -207,7 +207,7 @@
                                 @endforelse
                             </div>
                             <div class="h6 mt-4">
-                            <i class="ni business_briefcase-24 mr-2"></i>{{$user->role->role}} - Zhome
+                            <i class="ni business_briefcase-24 mr-2"></i>{{$user->role->role}} - Smarven
                             </div>
                             <div>
                             <i class="ni education_hat mr-2"></i>{{$user->email}}

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class PaymobController extends Controller
 {
@@ -35,8 +36,14 @@ class PaymobController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
+        $orderIds = $request->input('order_ids', []); 
+
+        if (empty($orderIds)) {
+            return response()->json(['message' => 'No orders provided for payment'], 400);
+        }
+
         // Step 1: Calculate total amount for unpaid orders
-        $totalAmount = (integer) $request->amount;
+        $totalAmount = Order::whereIn('id', $orderIds)->sum('total_amount');
 
         if ($totalAmount <= 0) {
             return response()->json(['message' => 'No amount due for payment'], 400);
@@ -46,7 +53,7 @@ class PaymobController extends Controller
         $authToken = $this->paymobService->authenticate();
 
         // Step 3: Create an order in Paymob with the total amount
-        $orderData = $this->paymobService->createOrder($authToken, (int)($totalAmount * 100));
+        $orderData = $this->paymobService->createOrder($authToken, (int)($totalAmount * 100), $orderIds);
         $orderId = $orderData['id'];
 
         // Step 4: Fetch billing data from user's saved details
@@ -93,113 +100,86 @@ class PaymobController extends Controller
         ];
     }
 
-    public function successPage(Request $request)
-    {
-        $cartID = $request->query('CartID');
-        $transactionID = $request->query('transactionID');
-
-        // Update the ShopOrders table
-        $orders = Order::where('CartID', $cartID)->get();
-
-        foreach ($orders as $order) {
-            $order->Status = 1;
-            $order->TransactionID = $transactionID;
-            $order->save();
-        }
-
-        // Insert or update the Payment table
-        Payment::updateOrCreate(
-            ['OrderID' => $cartID],
-            [
-                'TransactionID' => $transactionID,
-                'source_data_type' => 'card',
-                'source_data_sub_type' => 'visa',
-            ]
-        );
-
-    }
-
     public function handleTransactionProcessed(Request $request)
     {
-        // ?id=237877218
-        // &pending=false
-        // &amount_cents=44000
-        // &success=false
-        // &is_auth=false
-        // &is_capture=false
-        // &is_standalone_payment=true
-        // &is_voided=false
-        // &is_refunded=false
-        // &is_3d_secure=false
-        // &integration_id=4417643
-        // &profile_id=97671
-        // &has_parent_transaction=false
-        // &order=267314090
-        // &created_at=2024-11-23T15%3A48%3A45.145277
-        // &currency=EGP
-        // &merchant_commission=0
-        // &discount_details=%5B%5D
-        // &is_void=false
-        // &is_refund=false
-        // &error_occured=true
-        // &refunded_amount_cents=0
-        // &captured_amount=0
-        // &updated_at=2024-11-23T15%3A48%3A46.982467
-        // &is_settled=false
-        // &bill_balanced=false
-        // &is_bill=false
-        // &owner=159677
-        // &merchant_order_id=6741dc9ecec5a
-        // &data.message=Invalid+Card+Number
-        // &source_data.type=card
-        // &source_data.pan=2424
-        // &source_data.sub_type=Visa
-        // &acq_response_code=-1
-        // &txn_response_code=-1
-        // &hmac=ff72e2f28db8d3dffa84b294f5788fe418bebd5cf7969aefd51f92605934a7fe24e6ee16b88037c244b2f102aa1906f418edddfebd79c8bd5c89d4392b650152
-        $validated = $request->validate([
-            'order' => 'required|string', // Paymob order ID
-            'success' => 'required|boolean', // Payment success
-            'amount_cents' => 'required|integer', // Payment amount
-            'currency' => 'required|string', // Payment currency
-            'hmac' => 'required|string', // Hash for callback validation
-        ]);
-        Log::error('Request data: ' . json_encode($request->all()));
-        Log::error('Validated request: ' . json_encode($validated));
+        $data = $request->all();
 
-        $orders = Order::whereIn('id', $validated['order_ids'])->get();
-        Log::error('orders: ' .$orders);
-
-        if ($orders->isEmpty()) {
-            return response()->json(['message' => 'Orders not found'], 404);
+        // Step 1: Verify HMAC signature
+        if (!$this->verifyHmac($data)) {
+            return response()->json(['message' => 'Invalid HMAC signature'], 403);
         }
 
+        $orderIds = explode(',', $request->input('merchant_order_id', ''));
+        if (empty($orderIds)) {
+            return redirect(env('FRONTEND_FAILURE_URL', 'http://localhost:4200/payment/failed'));
+        }
+
+        DB::beginTransaction();
         try {
-            $user = Auth::guard('sanctum')->user();
-            Log::error('User: ' .$user);
-
-            $status = $validated['success'] ? OrderStatusEnum::COMPLETED->value : OrderStatusEnum::FAILED->value;
-            $orders->each(fn($order) => $order->update(['status' => $status]));
-    
-            if ($validated['success']) {
-                Payment::create([
-                    'payment_token' => $request->input('hmac'),
-                    'amount' => $validated['amount_cents'] / 100,
-                    'currency' => $validated['currency'],
-                    'status' => $status,
-                    'created_at' => now(),
-                ]);
-    
-                event(new OrderConfirmedEvent($orders, $user));
-    
-                return redirect(env('FRONTEND_SUCCESS_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/success'));
+            // Step 2: Retrieve orders
+            $orders = Order::whereIn('id', $orderIds)->get();
+            if ($orders->isEmpty()) {
+                Log::error('Orders not found', ['order_ids' => $orderIds, 'data' => $data]);
+                return redirect(env('FRONTEND_FAILURE_URL', 'http://localhost:4200/payment/failed'));
             }
-    
-            return redirect(env('FRONTEND_FAILURE_URL', 'https://orangered-curlew-529745.hostingersite.com/payment/failed'));
+
+            // Step 3: Determine transaction success
+            $isSuccess = filter_var($request->input('success'), FILTER_VALIDATE_BOOLEAN);
+            $status = $isSuccess ? OrderStatusEnum::COMPLETED->value : OrderStatusEnum::FAILED->value;
+
+            // Step 4: Process each order
+            foreach ($orders as $order) {
+                $this->processTransaction($order, $request, $status);
+            }
+
+            DB::commit();
+
+            return $isSuccess
+            ? redirect(env('FRONTEND_SUCCESS_URL', 'http://localhost:4200/payment/success'))
+            : redirect(env('FRONTEND_FAILURE_URL', 'http://localhost:4200/payment/failed'));
+
         } catch (\Exception $e) {
-            Log::error('Payment processing error: ' . $e->getMessage());
-            return response()->json(['message' => 'Payment processing failed'], 500);
+            DB::rollBack();
+            Log::error('Error processing Paymob callback', [
+                'error' => $e->getMessage(),
+                'data' => $data,
+            ]);
+            return redirect(env('FRONTEND_FAILURE_URL', 'http://localhost:4200/payment/failed'));
         }
+    }
+
+    private function processTransaction(Order $order, Request $request, string $status)
+    {
+        $product = $order->product;
+
+        if (!$product) {
+            throw new \Exception("Product not found for order ID {$order->id}");
+        }
+
+        if ($status === OrderStatusEnum::COMPLETED->value) {
+            if ($product->quantity < $order->quantity) {
+                throw new \Exception("Not enough stock for product ID {$product->id}");
+            }
+            $product->update([
+                'quantity' => $product->quantity - $order->quantity,
+            ]);
+        }
+
+        $order->update([
+            'status' => $status,
+            'transaction_id' => $request->input('hmac'),
+        ]);
+
+        Payment::create([
+            'payment_token' => $request->input('hmac'),
+            'order_id' => $order->id,
+            'amount' => $order->total_amount,
+            'currency' => $request->input('currency', 'EGP'),
+            'type' => $request->input('source_data_sub_type'),
+            'payment_status' => $status,
+        ]);
+
+        Log::info("Order ID {$order->id} processed with status: {$status}");
     }
 
     public function cashPayment(Request $request)
@@ -230,7 +210,6 @@ class PaymobController extends Controller
         DB::beginTransaction();
 
         try {
-            $orderData = [];
             $processedOrders = collect();
 
             foreach ($orders as $order) {
@@ -260,8 +239,6 @@ class PaymobController extends Controller
         }
 
     }
-
-
     private function processOrder($order)
     {
         $product = $order->product;
@@ -278,18 +255,19 @@ class PaymobController extends Controller
             'quantity' => $product->quantity - $order->quantity,
         ]);
 
-        $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value]);
+        $uniqueId  = uniqid('CASH_') . $order->id;
+        $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value ,'transaction_id' => $uniqueId] );
 
         Payment::create([
             'order_id' => $order->id,
-            'payment_token' => uniqid('CASH_') . $order->id,
+            'payment_token' => $uniqueId,
             'amount' => $order->total_amount,
             'currency' => 'EGP',
-            'status' => OrderStatusEnum::CASH_ON_DELIVERY->value,
+            'type'=> OrderStatusEnum::CASH_ON_DELIVERY->value,
+            'payment_status' => OrderStatusEnum::CASH_ON_DELIVERY->value,
             'created_at' => now(),
         ]);
     }
-
     private function prepareOrderResponse($orders)
     {
         return $orders->map(function ($order) {
@@ -307,5 +285,56 @@ class PaymobController extends Controller
                 ],
             ];
         })->toArray();
+    }
+
+    private function verifyHmac(array $data): bool
+    {
+        $secretKey = env('PAYMOB_HMAC_SECRET');
+    
+        $receivedHmac = $data['hmac'] ?? null;
+        unset($data['hmac']);
+    
+        $requiredFields = [
+            'amount_cents',
+            'created_at',
+            'currency',
+            'error_occured',
+            'has_parent_transaction',
+            'id',
+            'integration_id',
+            'is_3d_secure',
+            'is_auth',
+            'is_capture',
+            'is_refunded',
+            'is_standalone_payment',
+            'is_voided',
+            'order',
+            'owner',
+            'pending',
+            'source_data_pan',
+            'source_data_sub_type',
+            'source_data_type',
+            'success',
+        ];
+    
+        $concatenatedString = '';
+        foreach ($requiredFields as $field) {
+            $value = $data[$field] ?? null;
+    
+            if ($value === null) {
+                if (in_array($field, ['source_data_pan', 'source_data_sub_type', 'source_data_type'])) {
+                    $value = ''; 
+                } else {
+                    Log::error("Missing required field: $field");
+                    return false; 
+                }
+            }
+    
+            $concatenatedString .= $value;
+        }
+    
+        $calculatedHmac = hash_hmac('sha512', $concatenatedString, $secretKey);
+    
+        return hash_equals($calculatedHmac, $receivedHmac);
     }
 }

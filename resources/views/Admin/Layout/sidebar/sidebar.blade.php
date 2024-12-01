@@ -1,9 +1,9 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="{{ route('Dashboard.index') }}" class="brand-link">
-        <img src="{{ asset('Admin/dist/img/web/Logo/Icon.png') }}" alt="Zhome Logo"
+        <img src="{{ asset('Admin/dist/img/web/Logo/Icon.png') }}" alt="Smarven Logo"
             class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">Zhome</span>
+        <span class="brand-text font-weight-light">Smarven</span>
     </a>
 
     <!-- Sidebar -->
