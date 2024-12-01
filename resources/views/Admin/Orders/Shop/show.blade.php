@@ -280,7 +280,7 @@
                                                 <tr>
                                                     <td>Payment Type</td>
                                                     @if ($order->transaction_id != NULL)
-                                                        {{-- <td>{{$order->transaction->source_data_sub_type}}</td> --}}
+                                                        <td>{{$order->transaction->source_data_sub_type}}</td>
                                                     @else
                                                         <td>
                                                             <span class="badge badge-sm bg-warning">Pending</span>

@@ -1,5 +1,5 @@
 @extends('Admin.Layout.Master')
-@section('Title' , 'Zhome Contact')
+@section('Title' , 'Smarven Contact')
 
 @section('Content')
 
@@ -10,7 +10,7 @@
                     <div class="wrapper">
                         <div class="card">
                             <div class="d-flex justify-content-between align-items-center card-header pb-0">
-                                <h6>About Zhome</h6>
+                                <h6>About Smarven</h6>
                                 <div class="mb-1">
                                     <a class="btn btn-success" href="{{route('Contact.edit' , $siteSetting->id)}}"><i class="fas fa-pen"></i>&nbsp;&nbsp;Edit Information</a>
                                 </div>

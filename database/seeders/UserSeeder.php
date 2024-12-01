@@ -32,8 +32,8 @@ class UserSeeder extends Seeder
         $role = Role::where('role', 'master admin')->first();
 
         $adminUser = User::factory()->create([
-            'name' => 'Zhome Admin',
-            'email' => 'zhome-admin@zhome.com',
+            'name' => 'Smarven Admin',
+            'email' => 'smarven-admin@smarven.com',
             'email_verified_at' => now(),
             'password' => Hash::make('123456789'),
             'is_admin' => true,

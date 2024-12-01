@@ -13,7 +13,7 @@
                     <div class="col-md-5 box">
                         <div class="form">
                             <div class="content">
-                                <a href="{{route('index')}}" class="ZhomeName">Zhome</a>
+                                <a href="{{route('index')}}" class="ZhomeName">Smarven</a>
                                 <h3 class="login-form__title">{{ __('messages.LoginToYourAccount') }}</h3>
                             </div>
 
@@ -55,7 +55,7 @@
                         <ul class="small-sidenav-ul">
                             <li><a href="{{ config('app.frontend_url') }}" title="Website"><i class="fa-solid fa-house"></i></a></li>
                             <li><a href="{{ config('app.frontend_url') . '/shop'}}" title="Shop"><i class="fa-solid fa-store"></i></a></li>
-                            <li><a href="{{ config('app.frontend_url') . '/about'}}" title="Zhome"><i class="fa-solid fa-circle-info"></i></a></li>
+                            <li><a href="{{ config('app.frontend_url') . '/about'}}" title="Smarven"><i class="fa-solid fa-circle-info"></i></a></li>
                         </ul>
                     </div>
                 </div>
