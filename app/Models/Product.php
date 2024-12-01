@@ -102,7 +102,7 @@ class Product extends Model implements HasMedia
 
     public function getImageUrlAttribute()
     {
-        return $this->getFirstMediaUrl('product-featured-image');
+        return $this->getFirstMediaUrl('product_featured_image');
     }
 
     public function getOtherImagesAttribute()

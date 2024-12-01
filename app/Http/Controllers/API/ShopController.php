@@ -11,14 +11,6 @@ class ShopController extends Controller
 {
     use ApiResponse , NavigationTrait;
 
-    // protected $filterableFields = [
-    //     'CategoryIDs' => 'array',
-    //     'BrandIDs' => 'array',
-    //     'PlatformIDs' => 'array',
-    //     'TechnologyIDs' => 'array',
-    //     'PriceBetween' => 'array',
-    // ];
-
     public function index()
     {
         $data = [
@@ -125,32 +117,11 @@ class ShopController extends Controller
         ];
     }
 
-    // protected function getCurrentFilters(Request $request)
-    // {
-    //     $currentFilters = [];
-    //     $filterData = $this->getFilterData();
-
-    //     foreach ($this->filterableFields as $field => $type) {
-    //         if ($type === 'array') {
-    //             $currentFilters[$field] = $request->input($field)
-    //                 ? explode(',', $request->input($field))
-    //                 : [];
-    //         } elseif ($field === 'PriceBetween') {
-    //             $currentFilters[$field] = $request->input($field)
-    //                 ? explode(',', $request->input($field))
-    //                 : [$filterData['minPrice'], $filterData['maxPrice']];
-    //         }
-    //     }
-
-    //     return $currentFilters;
-    // }
     public function filterIndex(Request $request)
     {
         $filterData = $this->getFilterData();
-        // $currentFilters = $this->getCurrentFilters($request);
 
         $query = Product::with(['brand:name,id', 'platforms:name,id', 'subcategory:name,id,category_id,ar_name','subcategory:name,id,category_id,ar_name', 'translations:name,ar_name,product_id,id', 'sale', 'technologies:name,ar_name,id']);
-        // $query = $this->applyFilters($query, $currentFilters);
         $products = $query->paginate(12);
         $data = [
             'Filter_Data' => $filterData,
@@ -159,81 +130,6 @@ class ShopController extends Controller
 
         return $this->data($data, 'data retrieved successfully');
     }
-
-    // public function fetchFilter($type, $id)
-    // {
-    //     if ($type === 'brand') {
-            
-    //         $brand = Brand::find($id);
-            
-    //         if ($brand) {
-                                
-    //             return $this->data(compact('brand'), 'data retrieved successfully');
- 
-    //         } else {
-                
-    //             return $this->error(['error' => 'Brand not found'], 404);
-                
-    //         }
-    //     } elseif ($type === 'category') {
-
-    //         $category = Category::with('subcategories:name,ar_name,id,category_id')->find($id);
-           
-    //         if ($category) {
-                                
-    //             return $this->data(compact('category'), 'data retrieved successfully');
-                
-    //         } else {
-    //            return $this->error(['error' => 'category not found'], 404);
-    //         }
-    //     } elseif ($type === 'platform') {
-
-    //         $platform = Platform::find($id);
-           
-    //         if ($platform) {
-                                
-    //             return $this->data(compact('platform'), 'data retrieved successfully');
-                
-    //         } else {
-    //            return $this->error(['error' => 'Platform not found'], 404);
-    //         }
-            
-    //     } else {
-    //         return response()->json(['error' => 'Invalid type'], 400);
-    //     }
-    
-    // }
-
-    // protected function applyFilters($query, $currentFilters)
-    // {
-    //     if (!empty($currentFilters['CategoryIDs'])) {
-    //         $query->whereHas('subcategory', function ($q) use ($currentFilters) {
-    //             $q->whereIn('MainCategoryID', $currentFilters['CategoryIDs']);
-    //         });
-    //     }
-
-    //     if (!empty($currentFilters['BrandIDs'])) {
-    //         $query->whereIn('BrandID', $currentFilters['BrandIDs']);
-    //     }
-
-    //     if (!empty($currentFilters['PlatformIDs'])) {
-    //         $query->whereHas('platforms', function ($q) use ($currentFilters) {
-    //             $q->whereIn('PlatformID', $currentFilters['PlatformIDs']);
-    //         });
-    //     }
-
-    //     if (!empty($currentFilters['TechnologyIDs'])) {
-    //         $query->whereHas('technologies', function ($q) use ($currentFilters) {
-    //             $q->whereIn('Technology', $currentFilters['TechnologyIDs']);
-    //         });
-    //     }
-
-    //     if (!empty($currentFilters['PriceBetween'])) {
-    //         $query->whereBetween('Price', $currentFilters['PriceBetween']);
-    //     }
-
-    //     return $query;
-    // }
 
     public function filterProducts(Request $request)
     {
