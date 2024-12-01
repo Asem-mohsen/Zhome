@@ -41,7 +41,7 @@
                                                 <tr>
                                                     <td>Site name</td>
                                                     <td>
-                                                        <input class="form-control" type="number" name="title" value="{{$site->title}}">
+                                                        <input class="form-control" type="text" name="title" value="{{$site->title}}">
                                                         @error('title')
                                                             <div class="alert alert-danger">{{$message}}</div>
                                                         @enderror
