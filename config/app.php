@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Smarven'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,8 +52,8 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
-    'frontend_url' => env('FRONTEND_URL', 'https://orangered-curlew-529745.hostingersite.com'),
+    'url' => env('APP_URL', 'https://smarven.com'),
+    'frontend_url' => env('FRONTEND_URL', 'https://smarven.com/'),
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

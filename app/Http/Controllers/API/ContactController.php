@@ -27,13 +27,25 @@ class ContactController extends Controller
 
     public function update(UpdateContactRequest $request, SiteSetting $site)
     {
-
-        $data = $request->except('_method', '_token');
+        $data = $request->except('_method', '_token', 'phones', 'markets');
 
         $site->update($data);
 
-        return $this->success('Site Settings data Updated successfully');
+        if ($request->has('phones')) {
+            $site->phones()->delete();
+            foreach ($request->input('phones') as $phoneData) {
+                $site->phones()->create($phoneData);
+            }
+        }
+    
+        if ($request->has('markets')) {
+            $site->markets()->delete();
+            foreach ($request->input('markets') as $marketData) {
+                $site->markets()->create($marketData); 
+            }
+        }
 
+        return $this->success('Site Settings data Updated successfully');
     }
 
     public function contact()

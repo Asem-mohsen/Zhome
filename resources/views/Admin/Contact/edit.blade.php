@@ -50,7 +50,7 @@
                                                 <tr>
                                                     <td>tagline</td>
                                                     <td>
-                                                        <input class="form-control" type="number" name="tagline" value="{{$site->tagline}}">
+                                                        <input class="form-control" type="text" name="tagline" value="{{$site->tagline}}">
                                                         @error('tagline')
                                                             <div class="alert alert-danger">{{$message}}</div>
                                                         @enderror
@@ -59,7 +59,7 @@
                                                 <tr>
                                                     <td>Meta Title</td>
                                                     <td>
-                                                        <input class="form-control" type="number" name="meta_title" value="{{$site->meta_title}}">
+                                                        <input class="form-control" type="text" name="meta_title" value="{{$site->meta_title}}">
                                                         @error('meta_title')
                                                             <div class="alert alert-danger">{{$message}}</div>
                                                         @enderror
