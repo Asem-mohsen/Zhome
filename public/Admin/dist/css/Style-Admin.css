@@ -383,7 +383,29 @@
     color: black;
     font-size: 15px;
 }
+#phone-container , #market-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+   
+}
+#phone-container{
+    width: 50%;
+}
+#market-container{
+    width: 100%;
+}
+.market-item{
+    display: flex;
+    gap: 10px;
+}
+.market-item input{
+    width: 40%;
+}
 
+.remove-phone , .remove-market{
+    margin: 10px 0;
+}
 /* Product.Show */
 .product-page{
 
