@@ -369,7 +369,7 @@
                                                         <td>
                                                             <div class="d-flex px-2 py-1">
                                                                 <div>
-                                                                    <img src="{{ $prevOrder->product->getFirstMediaUrl('product-feature') }}" class="avatar avatar-sm me-3" alt="{{$prevOrder->product->translations->name}}">
+                                                                    <img src="{{ $prevOrder->product->getFirstMediaUrl('product_featured_image') }}" class="avatar avatar-sm me-3" alt="{{$prevOrder->product->translations->name}}">
                                                                 </div>
                                                                 <div class="d-flex flex-column justify-content-center">
                                                                     <h6 class="mb-0 text-sm">{{$prevOrder->product->translations->name}}</h6>

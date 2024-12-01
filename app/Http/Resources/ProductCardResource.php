@@ -11,7 +11,7 @@ class ProductCardResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'image_url' => $this->getFirstMediaUrl('product-image'),
+            'image_url' => $this->getFirstMediaUrl('product_featured_image'),
             'price' => $this->price,
             'is_on_sale' => $this->is_on_sale ? 1 : 0,
             'sale_price' => $this->sale_price ? $this->sale_price : 0,
