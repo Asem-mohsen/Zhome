@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\AddSubcategoryRequest;
 use App\Http\Requests\Admin\UpdateSubCategoryRequest;
 use App\Models\Category;
 use App\Models\Subcategory;
+use Exception;
 
 class SubcategoryController extends Controller
 {
@@ -24,35 +25,47 @@ class SubcategoryController extends Controller
     {
         $data = $request->except('_method', '_token', 'image');
 
-        $data['category_id'] = $category->id;
+        try {
+            $data['category_id'] = $category->id;
+            $subcategory = Subcategory::create($data);
 
-        $subcategory = Subcategory::create($data);
+            if ($request->hasFile('image')) {
+                $subcategory->addMediaFromRequest('image')->toMediaCollection('subcategory-image');
+            }
 
-        if ($request->hasFile('image')) {
-            $subcategory->addMediaFromRequest('image')->toMediaCollection('subcategory-image');
+            toastr()->success(message: 'subcategory created successfully!');
+
+            return redirect()->route('Category.show', $category->id);
+
+        } catch (Exception $e) {
+            toastr()->error('An error occurred while adding the subcategory');
+            return back()->withInput();
         }
-
-        toastr()->success(message: 'subcategory created successfully!');
-
-        return redirect()->route('Category.show', $category->id);
+        
     }
 
     public function update(UpdateSubCategoryRequest $request, Subcategory $subcategory)
     {
         $data = $request->except('image', '_token', '_method');
 
-        $subcategory->update($data);
+        try {
+            $subcategory->update($data);
 
-        if ($request->hasFile('image')) {
+            if ($request->hasFile('image')) {
 
-            $subcategory->clearMediaCollection('subcategory-image');
+                $subcategory->clearMediaCollection('subcategory-image');
+    
+                $subcategory->addMediaFromRequest('image')->toMediaCollection('subcategory-image');
+            }
 
-            $subcategory->addMediaFromRequest('image')->toMediaCollection('subcategory-image');
+            toastr()->success(message: 'subcategory created successfully!');
+
+             return redirect()->back();
+
+        } catch (Exception $e) {
+            toastr()->error('An error occurred while updating the subcategory');
+            return back()->withInput();
         }
-
-        toastr()->success(message: 'subcategory updated successfully!');
-
-        return redirect()->back();
     }
 
     public function destroy(Subcategory $subcategory)

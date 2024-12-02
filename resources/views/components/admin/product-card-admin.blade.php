@@ -1,6 +1,6 @@
 <div class="item product-one__single" style="height:390px" id="Product-{{ $variable->id }}">
     <div class="product-one__image">
-        <img src=" {{ $variable->getFirstMediaUrl('product-featured-image') }}" height="270px" alt="{{$variable->translations->name}}" />
+        <img src=" {{ $variable->getFirstMediaUrl('product_featured_image') }}" height="270px" alt="{{$variable->translations->name}}" />
     </div>
     <div class="product-one__content">
         <div class="product-one__content-left">

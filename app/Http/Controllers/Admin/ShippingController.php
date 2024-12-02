@@ -32,7 +32,7 @@ class ShippingController extends Controller
 
     public function costCreate()
     {
-        $countries = Country::all();
+        $countries = Country::whereIn('country_code' , ['EG'])->get();
 
         return view("Admin.Shipping.Cost.create" , compact("countries"));
     }
@@ -41,7 +41,7 @@ class ShippingController extends Controller
     {
         $products = Product::with('translations')->whereDoesntHave('deliveryEstimations')->get();
 
-        $countries = Country::all();
+        $countries = Country::whereIn('country_code' , ['EG'])->get();
 
         return view("Admin.Shipping.Estimation.create" , compact("products", "countries"));
     }

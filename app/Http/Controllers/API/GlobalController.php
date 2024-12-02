@@ -13,12 +13,12 @@ class GlobalController extends Controller
 
     public function countries()
     {
-        $countries = Country::select('id' , 'country', 'country_code')->get();
+        $countries = Country::whereIn('country_code' , ['EG'])->get();
 
         return $this->data(compact('countries') , 'countries retrieved successfully');
     }
 
-    public function cities($countryId )
+    public function cities($countryId)
     {
         $cities = City::select('id' , 'name', 'country_id')->where('country_id' , $countryId)->get();
 

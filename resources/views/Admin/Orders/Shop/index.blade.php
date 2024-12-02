@@ -87,7 +87,7 @@
                                 <td>
                                     <div class="d-flex px-2 py-1">
                                         <div>
-                                            <img src="{{$order->product->getFirstMediaUrl()}}" class="avatar avatar-sm me-3" alt="{{$order->product->translations->name}}">
+                                            <img src="{{$order->product->getFirstMediaUrl('product_featured_image')}}" class="avatar avatar-sm me-3" alt="{{$order->product->translations->name}}">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="mb-0">{{$order->product->translations->name}}</h6>
