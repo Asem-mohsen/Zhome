@@ -36,15 +36,15 @@ class PaymobController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $orderIds = $request->input('order_ids', []); 
+        $orderIds = $request->input('order_ids', []);
+        $totalAmount = $request->input('amount', 0);
+
 
         if (empty($orderIds)) {
             return response()->json(['message' => 'No orders provided for payment'], 400);
         }
 
-        // Step 1: Calculate total amount for unpaid orders
-        $totalAmount = Order::whereIn('id', $orderIds)->sum('total_amount');
-
+        // Step 1: total amount for unpaid orders
         if ($totalAmount <= 0) {
             return response()->json(['message' => 'No amount due for payment'], 400);
         }
@@ -53,7 +53,7 @@ class PaymobController extends Controller
         $authToken = $this->paymobService->authenticate();
 
         // Step 3: Create an order in Paymob with the total amount
-        $orderData = $this->paymobService->createOrder($authToken, (int)($totalAmount * 100), $orderIds);
+        $orderData = $this->paymobService->createOrder($authToken,(int)($totalAmount * 100), $orderIds);
         $orderId = $orderData['id'];
 
         // Step 4: Fetch billing data from user's saved details

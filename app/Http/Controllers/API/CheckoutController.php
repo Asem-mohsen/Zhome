@@ -52,7 +52,26 @@ class CheckoutController extends Controller
         $user = null;
 
         if (Auth::guard('sanctum')->check()) {
-            $user = Auth::guard('sanctum')->user()->load(['address', 'phones']);
+            $authUser = Auth::guard('sanctum')->user()->load(['address', 'phones']);
+
+            $firstPhone = $authUser->phones->first()?->phone ?? null;
+            $fullName = $authUser->name ?? '';
+            $nameParts = explode(' ', trim($fullName), 2);
+            $firstName = $nameParts[0] ?? '';
+            $lastName = $nameParts[1] ?? ''; 
+            $user = [
+                'name' => $fullName ,
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email' => $authUser->email,
+                'phone' => $firstPhone ,
+                'address' => $authUser->address->street_address,
+                'city' => $authUser->address->city_id,
+                'country' => $authUser->address->country_id,
+                'floor' => $authUser->address->floor,
+                'building' => $authUser->address->building,
+                'apartment' => $authUser->address->apartment,
+            ];
         }
 
         $data = [
@@ -67,12 +86,18 @@ class CheckoutController extends Controller
     public function saveUserInfo(SaveUserInfoCheckout $request)
     {
         $user = Auth::guard('sanctum')->user();
+        $cityData = $request->input('city');
+        if (is_string($cityData)) {
+            $cityData = json_decode($cityData, true);
+        }
+    
+        $cityId = is_array($cityData) && isset($cityData['id']) ? $cityData['id'] : $cityData;
 
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phones' => $request->input('phone'),
-            'city' => $request->input('city'),
+            'city' => $cityId,
             'country' => $request->input('country'),
             'street_address' => $request->input('street_address'),
             'floor' => $request->input('floor'),
@@ -92,8 +117,8 @@ class CheckoutController extends Controller
             UserAddress::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'city' => $data['city'],
-                    'country' => $data['country'],
+                    'city_id' => $data['city'],
+                    'country_id' => $data['country'],
                     'street_address' => $data['street_address'],
                     'floor' => $data['floor'],
                     'apartment' => $data['apartment'],
@@ -138,18 +163,30 @@ class CheckoutController extends Controller
     public function getDeliveryCost(Request $request)
     {
         $request->validate([
-            'cityId' => 'required|string',
+            'cityId' => 'required|exists:cities,id',
         ]);
 
-        $city = $request->cityId;
+        $cityData = Shipping::where('city_id', $request->cityId)->first();
+        $deliveryCost = $cityData ? $cityData->shipping_fee : 0;
 
-        $cityData = Shipping::where('city_id', $city)->first();
+        $user = Auth::guard('sanctum')->user();
 
-        if ($cityData) {
-            return response()->json(['deliveryCost' => $cityData->shipping_fee]);
-        } else {
-            return response()->json(['deliveryCost' => 0], 400);
-        }
+        $identifier =  $this->cartService->getCartIdentifier($user, $request->header('X-Session-ID') ?: Session::getId());
+
+        $cartItems =  $this->cartService->getCartItems($identifier);
+
+        $cartTotal = $cartItems->sum(function ($order) {
+            return ($order->quantity * $order->price) +
+                ($order->with_installation ? $order->product->installation_cost : 0);
+        });
+
+        $updatedTotal = $cartTotal + $deliveryCost;
+
+        return response()->json([
+            'deliveryCost' => $deliveryCost,
+            'cartTotal' => $cartTotal,
+            'updatedTotal' => $updatedTotal,
+        ]);
     }
 
     public function getDeliveryEstimations(Request $request)
