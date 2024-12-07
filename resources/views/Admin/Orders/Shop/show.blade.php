@@ -118,7 +118,7 @@
                                                     <td>Email</td>
                                                     <td>{{$order->user->email ?? "Unkown email"}}</td>
                                                 </tr>
-                                                @forelse($order->user->phones as $phone)
+                                                @forelse($order->user->phones->take(2) as $phone)
                                                     <tr>
                                                         <td>Phone</td>
                                                         <td>{{$phone->phone}}</td>
@@ -135,11 +135,11 @@
                                                 </tr>
                                                     <tr>
                                                     <td>City</td>
-                                                    <td>{{$order->user->address->city}}</td>
+                                                    <td>{{$order->user->address->city->name}}</td>
                                                 </tr>
                                                     <tr>
                                                     <td>Country</td>
-                                                    <td>{{$order->user->address->country}}</td>
+                                                    <td>{{$order->user->address->country->country}}</td>
                                                 </tr>
                                                     <tr>
                                                     <td>Building</td>
@@ -280,7 +280,7 @@
                                                 <tr>
                                                     <td>Payment Type</td>
                                                     @if ($order->transaction_id != NULL)
-                                                        <td>{{$order->transaction->source_data_sub_type}}</td>
+                                                        <td>{{$order->payment->type}}</td>
                                                     @else
                                                         <td>
                                                             <span class="badge badge-sm bg-warning">Pending</span>
@@ -290,7 +290,6 @@
                                                 </tr>
                                                 <tr>
                                                     @if ($order->transaction_id != NULL)
-                                                        {{-- <td>{{$order->transaction->source_data_sub_type}}</td> --}}
                                                         <td>Transaction ID </td>
                                                         <td>{{$order->transaction_id}}</td>
                                                     @endif

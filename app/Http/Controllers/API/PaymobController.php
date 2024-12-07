@@ -212,8 +212,10 @@ class PaymobController extends Controller
         try {
             $processedOrders = collect();
 
+            $uniqueToken = uniqid('CASH_PAYMENT_');
+
             foreach ($orders as $order) {
-                $this->processOrder($order);
+               $this->processOrder($order, $uniqueToken);
     
                 $processedOrders->push($order);
             }
@@ -222,7 +224,7 @@ class PaymobController extends Controller
 
             DB::commit();
 
-            $responseData = $this->prepareOrderResponse($processedOrders);
+            $responseData = $this->prepareOrderResponse($processedOrders, $uniqueToken);
 
             return $this->data($responseData, 'Order placed successfully');
 
@@ -239,7 +241,7 @@ class PaymobController extends Controller
         }
 
     }
-    private function processOrder($order)
+    private function processOrder($order, $uniqueToken)
     {
         $product = $order->product;
 
@@ -255,12 +257,11 @@ class PaymobController extends Controller
             'quantity' => $product->quantity - $order->quantity,
         ]);
 
-        $uniqueId  = uniqid('CASH_') . $order->id;
-        $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value ,'transaction_id' => $uniqueId] );
+        $order->update(['status' => OrderStatusEnum::CASH_ON_DELIVERY->value ,'transaction_id' => $uniqueToken] );
 
         Payment::create([
             'order_id' => $order->id,
-            'payment_token' => $uniqueId,
+            'payment_token' => $uniqueToken,
             'amount' => $order->total_amount,
             'currency' => 'EGP',
             'type'=> OrderStatusEnum::CASH_ON_DELIVERY->value,
@@ -268,23 +269,26 @@ class PaymobController extends Controller
             'created_at' => now(),
         ]);
     }
-    private function prepareOrderResponse($orders)
+    private function prepareOrderResponse($orders,$uniqueToken)
     {
-        return $orders->map(function ($order) {
-            return [
-                'order_id' => $order->id,
-                'total_amount' => $order->total_amount,
-                'currency' => 'EGP',
-                'status' => $order->status,
-                'product' => [
-                    'product_name' => $order->product->translations->name ?? 'N/A',
-                    'product_image' => $order->product->image_url ?? 'N/A',
-                    'product_description' => $order->product->description ?? 'N/A',
-                    'quantity' => $order->quantity,
-                    'total_price' => $order->total_amount,
-                ],
-            ];
-        })->toArray();
+        return [
+            'payment_token' => $uniqueToken,
+            'orders' => $orders->map(function ($order) {
+                return [
+                    'order_id' => $order->id,
+                    'total_amount' => $order->total_amount,
+                    'currency' => 'EGP',
+                    'status' => $order->status,
+                    'product' => [
+                        'product_name' => $order->product->translations->name ?? 'N/A',
+                        'product_image' => $order->product->image_url ?? 'N/A',
+                        'product_description' => $order->product->description ?? 'N/A',
+                        'quantity' => $order->quantity,
+                        'total_price' => $order->total_amount,
+                    ],
+                ];
+            })->toArray(),
+        ];
     }
 
     private function verifyHmac(array $data): bool
