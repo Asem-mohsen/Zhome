@@ -74,6 +74,7 @@ class CartController extends Controller
 
         $cartItem = Order::where($identifier)
             ->where('product_id', $validated['product_id'])
+            ->where('status' , OrderStatusEnum::PENDING->value)
             ->firstOrFail();
 
         $this->cartService->updateCartQuantity($cartItem, $validated['quantity'], $validated['with_installation'] ?? false, $validated['installation_cost'] ?? 0);
@@ -95,6 +96,7 @@ class CartController extends Controller
 
         $cartItem = Order::where($identifier)
                     ->where('product_id', $request->product_id)
+                    ->where('status' , OrderStatusEnum::PENDING->value)
                     ->first();
 
         if (!$cartItem) {
