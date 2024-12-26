@@ -3,35 +3,27 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Auth\{ ResetPasswordRequest ,SendCodeRequest , VerifyCodeRequest};
 use App\Mail\PasswordResetMail;
-use App\Models\PasswordReset;
-use App\Models\User;
-use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Models\{ User , PasswordReset};
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
-    use ApiResponse;
-
-    public function sendCode(Request $request)
+    public function sendCode(SendCodeRequest $request)
     {
+        $validated = $request->validated();
 
-        $request->validate([
-            'email' => 'required|email|exists:user,email',
-        ]);
-
-        $email = $request->input('email');
+        $email = $validated['email'];
 
         $code = Str::random(6);
 
         $user = User::where('email', $email)->first();
 
         if (! $user) {
-            return $this->error(['message' => 'Email not found'], 'Email not found please create a new account', 404);
+            return failureResponse(message:'Email not found please create a new account' , code: 404);
         }
 
         PasswordReset::updateOrCreate(
@@ -41,40 +33,32 @@ class ForgotPasswordController extends Controller
 
         Mail::to($email)->send(new PasswordResetMail($code));
 
-        return $this->success('Verification code sent to your email');
+        return successResponse(message:'Verification code sent to your email');
     }
 
-    public function verifyCode(Request $request)
+    public function verifyCode(VerifyCodeRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'code' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        $record = PasswordReset::where('email', $request->input('email'))
-            ->where('code', $request->input('code'))
+        $record = PasswordReset::where('email', $validated['email'])
+            ->where('code', $validated['code'])
             ->where('expires_at', '>', now())
             ->first();
 
         if (! $record) {
-            return $this->error(['message' => 'Invalid or expired code'], 'Invalid or expired code', 400);
+            return failureResponse(message:'Invalid or expired code' , code: 400);
         }
 
-        // Code is valid, proceed to password reset
-        return $this->success('Code is valid, proceed to reset password');
+        return successResponse(message:'Code is valid, proceed to reset password');
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:user,email',
-            'code' => 'required',
-            'password' => 'required|min:8',
-        ]);
+        $validated = $request->validated();
 
-        $email = $request->input('email');
-        $code = $request->input('code');
-        $password = $request->input('password');
+        $email = $validated['email'];
+        $code = $validated['code'];
+        $password = $validated['password'];
 
         $passwordReset = PasswordReset::where('email', $email)
             ->where('code', $code)
@@ -82,16 +66,15 @@ class ForgotPasswordController extends Controller
             ->first();
 
         if (! $passwordReset) {
-            return $this->error(['message' => 'Invalid or expired code'], 'Invalid or expired code', 400);
+            return failureResponse(message:'Invalid or expired code' , code: 400);
         }
 
         $user = User::where('email', $email)->first();
         $user->password = Hash::make($password);
         $user->save();
 
-        // Delete the used reset code
         $passwordReset->delete();
 
-        return $this->success('Password reset successfully');
+        return successResponse(message:'Password reset successfully');
     }
 }

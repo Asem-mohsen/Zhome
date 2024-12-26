@@ -6,17 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AddPromocodeRequest;
 use App\Http\Requests\Admin\UpdatePromocodeRequest;
 use App\Models\{Promotion ,Order } ;
-use App\Traits\ApiResponse;
 
 class PromocodesController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
         $promotions = Promotion::withCount('orders')->get();
 
-        return $this->data(compact('promotions'), 'Promocode data retrieved successfully');
+        return successResponse( compact('promotions'), 'Promocode data retrieved successfully');
     }
 
     public function store(AddPromocodeRequest $request)
@@ -25,15 +22,12 @@ class PromocodesController extends Controller
 
         Promotion::create($data);
 
-        return $this->success('Promocode Created Successfully');
-
+        return successResponse( message:'Promocode Created Successfully');
     }
 
     public function edit(Promotion $promotion)
     {
-
-        return $this->data(compact('promotion'), 'promocode for editing retrieved successfully');
-
+        return successResponse(compact('promotion'), 'promocode for editing retrieved successfully');
     }
 
     public function update(UpdatePromocodeRequest $request, Promotion $promotion)
@@ -42,7 +36,7 @@ class PromocodesController extends Controller
 
         $promotion->update($data);
 
-        return $this->success('Promocode Updated Successfully');
+        return successResponse(message: 'Promocode Updated Successfully');
     }
 
     public function destroy(Promotion $promotion)
@@ -50,14 +44,12 @@ class PromocodesController extends Controller
 
         if ($promotion->valid_until > now()) {
 
-            return $this->error(['error' => 'Cannot delete a promocode that has not expired yet. Expires on: '.$promotion->valid_until->format('Y-m-d H:i:s')], 'Eror');
+            return failureResponse(message: 'Cannot delete a promocode that has not expired yet. Expires on: ' . $promotion->valid_until->format('Y-m-d H:i:s'));
 
         } else {
-
             $promotion->delete();
 
-            return $this->success('Promocode Deleted Successfully');
-
+            return successResponse(message: 'Promocode Deleted Successfully');
         }
     }
 }

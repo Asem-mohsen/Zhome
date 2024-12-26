@@ -41,8 +41,7 @@ class VerifyEmailController extends Controller
         // send email step
         $user->token = $token;
 
-        return $this->data(compact('user') , 'email verification sent');
-
+        return successResponse(compact('user') , 'email verification sent');
     }
 
     public function verifyEmailLink(Request $request, $userId)
@@ -69,9 +68,9 @@ class VerifyEmailController extends Controller
             $user->save;
             $user->token = $token;
 
-            return $this->data(compact('user'), 'Email verified successfully');
+            return successResponse(compact('user'), 'Email verified successfully');
         } else {
-            return $this->error(['Verification link' => 'wrong'] , 'verification link has expired');
+            return failureResponse('verification link has expired');
         }
     }
 }

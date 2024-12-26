@@ -56,8 +56,7 @@
                         <tr>
                             <th>#</th>
                             <th>User</th>
-                            <th>Product</th>
-                            <th>Quantity</th>
+                            <th>Num of Products</th>
                             <th>Total</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -86,28 +85,22 @@
                                 </td>
                                 <td>
                                     <div class="d-flex px-2 py-1">
-                                        <div>
-                                            <img src="{{$order->product->getFirstMediaUrl('product_featured_image')}}" class="avatar avatar-sm me-3" alt="{{$order->product->translations->name}}">
-                                        </div>
                                         <div class="d-flex flex-column justify-content-center">
-                                            <h6 class="mb-0">{{$order->product->translations->name}}</h6>
-                                            <span class="text-sm">Unit Price :{{$order->product->getCurrentPrice()}} EGP</span>
-                                            <span class="text-sm">Available : {{$order->product->quantity}}</span>
+                                            <h6 class="mb-0">{{$order->products->count()}}</h6>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{{$order->quantity}}</td>
                                 <td>{{$order->total_amount . " EGP"}}</td>
                                 <td>
-                                    @if ($order->status === \App\Enums\OrderStatusEnum::COMPLETED->value)
+                                    @if ($order->status == \App\Enums\OrderStatusEnum::COMPLETED->value)
                                         <span class="badge badge-success">Paid</span>
-                                    @elseif ($order->status === \App\Enums\OrderStatusEnum::PENDING->value)
+                                    @elseif ($order->status == \App\Enums\OrderStatusEnum::PENDING->value)
                                         <span class="badge badge-warning">Pending</span>
-                                    @elseif ($order->status === \App\Enums\OrderStatusEnum::CANCELLED->value)
+                                    @elseif ($order->status == \App\Enums\OrderStatusEnum::CANCELLED->value)
                                         <span class="badge badge-danger">Cancelled</span>
-                                    @elseif ($order->status === \App\Enums\OrderStatusEnum::REFUNDED->value)
+                                    @elseif ($order->status == \App\Enums\OrderStatusEnum::REFUNDED->value)
                                         <span class="badge badge-info">Refunded</span>
-                                    @elseif ($order->status === \App\Enums\OrderStatusEnum::CASH_ON_DELIVERY->value)
+                                    @elseif ($order->status == \App\Enums\OrderStatusEnum::CASH_ON_DELIVERY->value)
                                         <span class="badge badge-success">Cash on delivery</span>
                                     @endif
                                 </td>

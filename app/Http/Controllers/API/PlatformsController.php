@@ -3,17 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\AddPlatformRequest;
-use App\Http\Requests\Admin\UpdatePlatfromRequest;
+use App\Http\Requests\Admin\{ AddPlatformRequest , UpdatePlatfromRequest};
 use App\Http\Resources\PlatformResource;
-use App\Models\Platform;
-use App\Models\PlatformFAQ;
-use App\Traits\ApiResponse;
+use App\Models\{ Platform , PlatformFAQ} ;
 
 class PlatformsController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
         $platforms = Platform::with(['products', 'faqs', 'media'])->whereHas('products')->get();
@@ -22,7 +17,7 @@ class PlatformsController extends Controller
             'platforms' => PlatformResource::collection($platforms),
         ];
 
-        return $this->data($data, 'platforms retrieved successfully');
+        return successResponse($data, 'platforms retrieved successfully');
     }
 
     public function store(AddPlatformRequest $request)
@@ -49,14 +44,14 @@ class PlatformsController extends Controller
             }
         }
 
-        return $this->success('Platform Added Successfully');
+        return successResponse(message: 'Platform Added Successfully');
     }
 
     public function edit(Platform $platform)
     {
         $platform->load('faqs');
 
-        return $this->data($platform->toArray(), 'platform data for editing retrieved successfully');
+        return successResponse($platform->toArray(), 'platform data for editing retrieved successfully');
     }
 
     public function update(UpdatePlatfromRequest $request, Platform $platform)
@@ -76,23 +71,22 @@ class PlatformsController extends Controller
 
         $platform->faqs()->update($faqData);
 
-        return $this->success('Platform UpdatedSuccessfully');
+        return successResponse(message: 'Platform Updated Successfully');
+
     }
 
     public function destroy(Platform $platform)
     {
-
         try {
-
             $platform->clearMediaCollection('platform-image');
 
             $platform->delete();
 
-            return $this->success('Platform Deleted Successfully');
+            return successResponse(message: 'Platform Deleted Successfully');
 
         } catch (\Exception $e) {
 
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Platform');
+            return failureResponse(message: 'Failed to delete Platform');
 
         }
 

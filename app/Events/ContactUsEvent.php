@@ -11,13 +11,7 @@ class ContactUsEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $userName;
-
-    public $userEmail;
-
-    public $subject;
-
-    public $messageContent;
+    public $userName , $userEmail , $subject, $messageContent;
 
     public function __construct($userName, $userEmail, $subject, $messageContent)
     {

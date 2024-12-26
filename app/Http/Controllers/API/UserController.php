@@ -5,17 +5,13 @@ namespace App\Http\Controllers\API;
 use App\Enums\StatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateUserProfileRequest;
-use App\Models\Product;
-use App\Models\User;
-use App\Traits\ApiResponse;
+use App\Models\{ Product, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
         $users = User::with(['address', 'phones', 'role'])
@@ -23,7 +19,7 @@ class UserController extends Controller
                 $query->where('role', 'user');
             })->get();
 
-        return $this->data(compact('users'), 'Users data retrieved successfully');
+        return successResponse(compact('users'), 'Users data retrieved successfully');
     }
 
     public function profile(Request $request)
@@ -40,15 +36,14 @@ class UserController extends Controller
             'orderCount' => $orderCount,
             'recommended-products' => $products,
         ];
-
-        return $this->data($data, 'User Retrived Successfully');
+        return successResponse($data, 'User Retrived Successfully');
     }
 
     public function edit(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
 
-        return $this->data(compact('user'), 'user retrieved successfully');
+        return successResponse(compact('user'), 'user retrieved successfully');
     }
 
     public function update(UpdateUserProfileRequest $request)
@@ -65,7 +60,7 @@ class UserController extends Controller
 
         $user = User::where('id', $userData->id)->first();
 
-        return $this->data(compact('user'), 'user updated successfully');
+        return successResponse(compact('user'), 'user updated successfully');
     }
 
     public function deactivate(Request $request)
@@ -82,7 +77,7 @@ class UserController extends Controller
 
         User::where('id', $user->id)->update($updated);
 
-        return $this->success('User Account Deactivated Successfully, It will be reactivated on '.$expirationDate->toDateString());
+        return successResponse(message:'User Account Deactivated Successfully, It will be reactivated on '.$expirationDate->toDateString());
     }
 
     public function destroy(Request $request)
@@ -96,6 +91,6 @@ class UserController extends Controller
 
         User::where('id', $user->id)->update($updated);
 
-        return $this->success('User Account Deleted Successfully');
+        return successResponse(message:'User Account Deleted Successfully');
     }
 }

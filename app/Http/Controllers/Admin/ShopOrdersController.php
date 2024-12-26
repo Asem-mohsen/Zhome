@@ -10,7 +10,7 @@ class ShopOrdersController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['promotions', 'user', 'product'])->get();
+        $orders = Order::with(['promotions', 'user', 'products'])->get();
 
         $totalOrdersCount = $orders->count();
 
@@ -25,7 +25,7 @@ class ShopOrdersController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['promotions', 'user', 'product', 'orderInstallation']);
+        $order->load(['promotions', 'user', 'products']);
 
         $previousOrders = Order::where('user_id', $order->user_id)
             ->where('id', '<>', $order->id)
