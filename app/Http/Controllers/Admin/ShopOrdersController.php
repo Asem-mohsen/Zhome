@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\{ Order , Payment } ;
+use Illuminate\Support\Facades\DB;
 
 class ShopOrdersController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['promotions', 'user', 'product'])->get();
+        $orders = Order::with(['promotions', 'user', 'products'])->get();
 
         $totalOrdersCount = $orders->count();
 
@@ -25,7 +26,7 @@ class ShopOrdersController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['promotions', 'user', 'product', 'orderInstallation']);
+        $order->load(['promotions', 'user', 'products']);
 
         $previousOrders = Order::where('user_id', $order->user_id)
             ->where('id', '<>', $order->id)
@@ -37,10 +38,29 @@ class ShopOrdersController extends Controller
 
     public function destroy(Order $order)
     {
-        $order->delete();
-
-        toastr()->success(message: 'order deleted successfully!');
-
-        return redirect()->route('Orders.Order.index');
+        try {
+            DB::beginTransaction();
+            
+            $order->products()->delete();
+            
+            if ($order->payment) {
+                $order->payment->delete();
+            }
+            
+            $order->delete();
+            
+            DB::commit();
+            
+            toastr()->success(message: 'Order deleted successfully!');
+            
+            return redirect()->route('Orders.ShopOrders.index');
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            toastr()->error(message: 'Error deleting order. Please try again.');
+            
+            return redirect()->back();
+        }
     }
 }
