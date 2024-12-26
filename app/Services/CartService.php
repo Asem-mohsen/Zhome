@@ -2,12 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Order;
-use App\Models\OrderInstallation;
-use App\Models\Product;
+use App\Models\{Order,Product};
 use App\Enums\OrderStatusEnum;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Database\Eloquent\Collection;
 
 class CartService
 {
@@ -23,148 +20,187 @@ class CartService
         if ($user) {
             return ['user_id' => $user->id];
         }
-    
+
         $sessionId = $sessionId ?: Session::getId();
-    
+
         if (!$sessionId) {
             throw new \Exception('Session ID could not be determined.');
         }
-    
+
         return ['session_id' => $sessionId];
     }
 
-    public function getCartItems(array $identifier): Collection
+    public function getCart(array $identifier): ?array
     {
-        return Order::where($identifier)
+        $order = Order::where($identifier)
             ->where('status', $this->pendingStatus)
-            ->with(['product.translations', 'product.brand', 'product.platforms'])
-            ->get();
-    }
-
-    public function addToCart(array $identifier, $productId, $quantity, $installationCost, $withInstallation): Order
-    {
-        $product = Product::find($productId);
-
-        $cartItem = Order::where($identifier)
-            ->where('product_id', $productId)
-            ->where('status', $this->pendingStatus)
+            ->with(['products.product.translations'])
             ->first();
 
-        $price = $product->getCurrentPrice();
-        $isSale = $product->isOnSale();
+        return $this->formatCartData($order);
+    }
 
-        if ($cartItem) {
-            $cartItem->increment('quantity', $quantity);
+    public function addToCart(array $identifier, array $data): array
+    {
+        $order = Order::firstOrCreate(
+            array_merge($identifier, ['status' => $this->pendingStatus]),
+            ['total_amount' => 0]
+        );
+    
+        $product = Product::findOrFail($data['product_id']);
+        $quantity = $data['quantity'] ?? 1;
+    
+        $orderProduct = $order->products()->where('product_id', $data['product_id'])->first();
+    
+        if ($orderProduct) {
+            $orderProduct->quantity += $quantity;
+            $orderProduct->with_installation = $data['with_installation'] ?? $orderProduct->with_installation;
+            $orderProduct->save();
         } else {
-            $cartItem = Order::create([
-                'user_id' => $identifier['user_id'] ?? null,
-                'session_id' => $identifier['session_id'] ?? Session::getId(),
-                'product_id' => $productId,
+            $order->products()->create([
+                'product_id' => $data['product_id'],
                 'quantity' => $quantity,
-                'price' => $price,
-                'with_installation' => $withInstallation,
-                'is_on_sale' => $isSale,
-                'total_amount' => $quantity * $price,
-                'status' => $this->pendingStatus,
+                'with_installation' => $data['with_installation'] ?? false,
             ]);
         }
-
-        $this->updateInstallation($cartItem, $withInstallation, $installationCost);
-
-        return $cartItem;
+    
+        $this->updateOrderTotal($order);
+    
+        return $this->formatCartData($order);
     }
 
-    public function updateCartQuantity(Order $cartItem, int $quantity, bool $withInstallation, int $installationCost)
+    public function updateCartQuantity(array $identifier, array $data): array
     {
-        $cartItem->update([
-            'quantity' => $quantity,
-            'total_amount' => $quantity * $cartItem->price + ($withInstallation ? $installationCost : 0),
-            'with_installation' => $withInstallation,
+        $order = Order::where($identifier)
+            ->where('status', $this->pendingStatus)
+            ->firstOrFail();
+
+        $orderProduct = $order->products()->where('product_id', $data['product_id'])->firstOrFail();
+
+        $orderProduct->update([
+            'quantity' => $data['quantity'],
         ]);
 
-        $this->updateInstallation($cartItem, $withInstallation, $installationCost);
+        $this->updateOrderTotal($order);
+
+        return $this->formatCartData($order);
     }
 
-    public function updateInstallation(Order $cartItem, bool $withInstallation, int $installationCost)
+    public function updateInstallation(array $identifier, array $data): array
     {
-        if ($withInstallation) {
-            OrderInstallation::updateOrCreate(
-                ['order_id' => $cartItem->id],
-                ['installation_cost' => $installationCost]
-            );
-        } else {
-            OrderInstallation::where('order_id', $cartItem->id)->delete();
-        }
+        $order = Order::where($identifier)
+        ->where('status', $this->pendingStatus)
+        ->firstOrFail();
+
+        $orderProduct = $order->products()->where('product_id', $data['product_id'])->firstOrFail();
+
+        $orderProduct->update([
+            'with_installation' => $data['with_installation'],
+        ]);
+
+        $this->updateOrderTotal($order);
+
+        return $this->formatCartData($order);
     }
 
-    public function getCartSummary(Collection $cartItems): array
+    public function removeFromCart(array $identifier, $productId): array
     {
-        $totalAmount = $cartItems->sum('total_amount');
-        $totalSaved = $cartItems->reduce(function ($carry, $item) {
-            if ($item->product && $item->product->isOnSale()) {
-                $originalPrice = $item->product->price;
-                $salePrice = $item->product->getCurrentPrice();
-                return $carry + (($originalPrice - $salePrice) * $item->quantity);
-            }
-            return $carry;
-        }, 0);
+        $order = Order::where($identifier)
+            ->where('status', $this->pendingStatus)
+            ->firstOrFail();
 
-        return [
-            'items' => $cartItems,
-            'count' => $cartItems->sum('quantity'),
-            'total_amount' => $totalAmount,
-            'total_saved' => $totalSaved,
-        ];
+        $order->products()->where('product_id', $productId)->delete();
+
+        $this->updateOrderTotal($order);
+
+        return $this->formatCartData($order);
     }
 
-    public function removeCartItem($identifier, $productId)
+    public function clearCart(array $identifier): array
     {
-        $cartItem = Order::where($identifier)
-            ->where('product_id', $productId)
+        $order = Order::where($identifier)
             ->where('status', $this->pendingStatus)
             ->first();
 
-        if ($cartItem) {
-            $cartItem->delete();
+        if ($order) {
+            $order->products()->delete();
+            $order->delete();
         }
+
+        return $this->formatCartData(null);
     }
 
-    public function clearCart($identifier)
+    public function getCartCount(array $identifier): int
     {
-        Order::where($identifier)
+        $order = Order::where($identifier)
             ->where('status', $this->pendingStatus)
-            ->delete();
+            ->with('products')
+            ->first();
+
+        if (!$order) {
+            return 0;
+        }
+
+        return $order->products->count();
     }
 
-    public function getCartCount($identifier)
+    private function updateOrderTotal(Order $order): void
     {
-        return Order::where($identifier)
-            ->where('status', $this->pendingStatus)
-            ->count();
+        $totalAmount = $order->products->sum(function ($orderProduct) {
+            $basePrice = $orderProduct->quantity * $orderProduct->product->getCurrentPrice();
+
+            $installationCost = $orderProduct->with_installation
+                ? $orderProduct->product->installation_cost
+                : 0;
+
+            return $basePrice + $installationCost;
+        });
+
+        $order->update(['total_amount' => $totalAmount]);
     }
 
-    public function getUpdatedCartResponse($cartItems)
+    private function formatCartData(?Order $order): ?array
     {
-        $count = $cartItems->sum('quantity');
-        $total = $cartItems->sum('total_amount');
+        if (!$order) {
+            return ['order' => null];
+        }
 
-        $totalSaved = $cartItems->reduce(function ($carry, $item) {
-            $savingsPerItem = 0;
+        $totalSaved = 0;
 
-            if ($item->product && $item->product->isOnSale()) {
-                $originalPrice = $item->product->price;
-                $salePrice = $item->product->getCurrentPrice();
-                $savingsPerItem = ($originalPrice - $salePrice) * $item->quantity;
-            }
+        $orderData = [
+            'id' => $order->id,
+            'total_amount' => $order->total_amount,
+            'products' => $order->products->map(function ($orderProduct) use (&$totalSaved) {
+                $product = $orderProduct->product;
+                $installationCost = $orderProduct->with_installation ? $product->installation_cost : 0;
 
-            return $carry + $savingsPerItem;
-        }, 0);
+                $isOnSale = $product->isOnSale();
+                $currentPrice = $product->getCurrentPrice();
+                $originalPrice = $product->price;
+    
+                // Calculate savings for this product
+                if ($isOnSale) {
+                    $savedAmount = ($originalPrice - $currentPrice) * $orderProduct->quantity;
+                    $totalSaved += $savedAmount;
+                }
 
-        return [
-            'items' => $cartItems,
-            'count' => $count,
-            'total_amount' => $total,
+                return [
+                    'product_id' => $product->id,
+                    'product_quantity' => $product->quantity,
+                    'image_url' => $product->getFirstMediaUrl('product_featured_image'),
+                    'installation_cost' => $product->installation_cost,
+                    'translations' => $product->translations,
+                    'quantity' => $orderProduct->quantity,
+                    'with_installation' => $orderProduct->with_installation,
+                    'price' => $product->getCurrentPrice(),
+                    'old_price' => $isOnSale ? $product->price : null,
+                    'total' => $orderProduct->quantity * $product->getCurrentPrice() + $installationCost,
+                ];
+            }),
             'total_saved' => $totalSaved,
+
         ];
+
+        return ['order' => $orderData];
     }
 }

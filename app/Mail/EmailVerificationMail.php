@@ -15,13 +15,7 @@ class EmailVerificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $userName;
-
-    public $appName;
-
-    public $supportMail;
-
-    public $verificationLink;
+    public $userName , $appName, $supportMail , $verificationLink;
 
     public function __construct($user)
     {

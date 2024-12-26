@@ -24,7 +24,6 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:user,email,except,id'],
@@ -37,7 +36,7 @@ class RegisteredUserController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        event(new UserRegistered($user));
+        event(new UserRegisteredEvent($user));
 
         Auth::guard('web')->login($user);
 
@@ -73,8 +72,6 @@ class RegisteredUserController extends Controller
             'operating_system' => $validated['operating_system'],
             'verification_email' => $verificationEmailStatus,
         ];
-
-        return $this->data($data, 'User registered successfully');
-
+        return successResponse($data, 'User registered successfully');
     }
 }

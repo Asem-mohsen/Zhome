@@ -7,15 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\{ AddProductRequest , UpdateProductRequest};
 use App\Models\{ Brand ,Category , Feature , Platform ,Product ,Subcategory ,Technology};
 use App\Services\ProductService;
-use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProductsController extends Controller
 {
-    use ApiResponse;
-
     protected $productService;
 
     public function __construct(ProductService $productService)
@@ -23,18 +20,22 @@ class ProductsController extends Controller
         $this->productService = $productService;
     }
 
-    public function index() // all products for admin
+    public function index() 
     {
         $products = Product::with(['translations', 'brand', 'platforms', 'subcategory.category', 'sale'])->get();
 
-        return $this->data($data = ['products' => $products], 'All Products data retrieved successfully');
+        $data = ['products' => $products];
+
+        return successResponse($data  , message:'All Products data retrieved successfully');
     }
 
     public function productCards(Request $request) // a products card api for only the prodicts
     {
         $products = Product::with(['translations', 'brand', 'platforms'])->get();
 
-        return $this->data($data = ['products' => $products], 'Products data retrieved successfully');
+        $data = ['products' => $products];
+
+        return successResponse($data  , message:'Products data retrieved successfully');
     }
 
     public function create()
@@ -47,7 +48,7 @@ class ProductsController extends Controller
             'subs' => Subcategory::all(),
         ];
 
-        return $this->data($data, 'All Products data retrieved successfully');
+        return successResponse($data  , message:'All Products data retrieved successfully');
     }
 
     public function getSubcategories($categoryId) //for creation
@@ -152,7 +153,7 @@ class ProductsController extends Controller
 
         });
 
-        return $this->success('Product Added Successfully');
+        return successResponse(message:'Product Added Successfully');
     }
 
     public function update(UpdateProductRequest $request, Product $product)
@@ -264,7 +265,7 @@ class ProductsController extends Controller
             );
         });
 
-        return $this->success('Product Updated Successfully');
+        return successResponse(message:'Product Updated Successfully');
     }
 
     public function show(Product $product)
@@ -304,7 +305,7 @@ class ProductsController extends Controller
             'other_images' => $otherImages,
         ];
 
-        return $this->data($data, 'Product data retrieved successfully');
+        return successResponse(message:'Product data retrieved Successfully');
     }
 
     public function edit(Product $product)
@@ -321,8 +322,7 @@ class ProductsController extends Controller
             'features' => Feature::all(),
         ];
 
-        return $this->data($data, 'Product data for editing retrieved successfully');
-
+        return successResponse($data , message:'Product data for editing retrieved successfully');
     }
 
     public function destroy(Product $product)
@@ -348,12 +348,9 @@ class ProductsController extends Controller
 
             });
 
-            return $this->success('Product Deleted Successfully');
-
+            return successResponse(message:'Product Deleted Successfully');
         } catch (\Exception $e) {
-
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Product');
-
+            return failureResponse(message:'Failed to delete Product');
         }
 
     }

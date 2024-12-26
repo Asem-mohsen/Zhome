@@ -2,21 +2,25 @@
 
 namespace App\Listeners;
 
+use App\Events\ProposalOrderEvent;
+use App\Mail\ProposalOrderMail;
+use Illuminate\Support\Facades\Mail;
+
 class SendProposalOrderEmail
 {
-    /**
-     * Create the event listener.
-     */
     public function __construct()
     {
         //
     }
 
-    /**
-     * Handle the event.
-     */
-    public function handle(object $event): void
+    public function handle(ProposalOrderEvent $event)
     {
-        //
+        $order = $event->order;
+        $user = $event->user;
+
+        Mail::to($user->email)->send(new ProposalOrderMail(
+            $user->name,
+            $order,
+        ));
     }
 }

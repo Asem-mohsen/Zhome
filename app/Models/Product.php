@@ -72,9 +72,9 @@ class Product extends Model implements HasMedia
 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsToMany(Order::class, 'order_product')->withPivot('with_installation', 'is_on_sale', 'quantity')->withTimestamps();
     }
-
+    
     public function users()
     {
         return $this->belongsToMany(User::class, 'orders', 'user_id');

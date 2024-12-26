@@ -7,12 +7,10 @@ use App\Http\Requests\Admin\AddBrandRequest;
 use App\Http\Requests\Admin\UpdateBrandRequest;
 use App\Http\Resources\BrandResource;
 use App\Models\Brand;
-use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Log;
 
 class BrandsController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
         $brands = Brand::with(['products'])->whereHas('products')->get();
@@ -21,7 +19,7 @@ class BrandsController extends Controller
             'brands' => BrandResource::collection($brands),
         ];
 
-        return $this->data($data, 'Brands retrieved successfully');
+        return successResponse($data, 'Brands retrieved successfully');
     }
 
     public function store(AddBrandRequest $request)
@@ -34,7 +32,7 @@ class BrandsController extends Controller
             $brand->addMediaFromRequest('image')->toMediaCollection('brand-image');
         }
 
-        return $this->success('Brand Added Successfully');
+        return successResponse(message:'Brands Added successfully');
     }
 
     public function edit(Brand $brand)
@@ -42,8 +40,7 @@ class BrandsController extends Controller
 
         $brand->load('media');
 
-        return $this->data(compact('brand'), 'Brand data for editing retrieved successfully');
-
+        return successResponse(compact('brand') , 'Brand data for editing retrieved successfully');
     }
 
     public function update(UpdateBrandRequest $request, Brand $brand)
@@ -59,23 +56,24 @@ class BrandsController extends Controller
             $brand->addMediaFromRequest('image')->toMediaCollection('brand-image');
         }
 
-        return $this->success('Brand Updated Successfully');
+        return successResponse(compact('brand') , 'Brand Updated Successfully');
     }
 
     public function destroy(Brand $brand)
     {
 
         try {
-
             $brand->clearMediaCollection('brand-image');
 
             $brand->delete();
 
-            return $this->success('Brand Deleted Successfully');
+            return successResponse(message:'Brand Deleted Successfully');
 
         } catch (\Exception $e) {
 
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Brand');
+            Log::error('error deleting brand : ' . $e->getMessage() );
+
+            return failureResponse('Failed to delete Brand');
 
         }
 

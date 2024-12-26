@@ -7,13 +7,10 @@ use App\Http\Requests\Admin\AddAdminRequest;
 use App\Http\Requests\Admin\AdminUpdateRequest;
 use App\Models\Role;
 use App\Models\User;
-use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
 
@@ -23,21 +20,21 @@ class AdminController extends Controller
             })
             ->get();
 
-        return $this->data($admins->toArray(), 'Admins retrieved successfully');
+        return successResponse($admins->toArray() , message:'Admins retrieved successfully');
     }
 
     public function profile(User $user)
     {
         $user->load(['role', 'address', 'phones']);
 
-        return $this->data($user->toArray(), 'Admin profile retrieved successfully');
+        return successResponse($user->toArray() , message:'Admin profile retrieved successfully');
     }
 
     public function create()
     {
         $roles = Role::all();
 
-        return $this->data($roles->toArray(), 'Roles for admin creation retrieved successfully');
+        return successResponse($roles->toArray() , message:'Roles for admin creation retrieved successfully');
     }
 
     public function store(AddAdminRequest $request)
@@ -67,7 +64,7 @@ class AdminController extends Controller
             'city' => $data['city'],
         ]);
 
-        return $this->success('Admin Added Successfully');
+        return successResponse(message:'Admin Added Successfully');
     }
 
     public function edit(User $user)
@@ -81,7 +78,7 @@ class AdminController extends Controller
             'roles' => $roles,
         ];
 
-        return $this->data($data, 'Admin data for editing retrieved successfully');
+        return successResponse($data, message:'Admin data for editing retrieved successfully');
     }
 
     public function update(AdminUpdateRequest $request, User $user)
@@ -114,8 +111,7 @@ class AdminController extends Controller
             }
         }
 
-        return $this->success('Admin Updated Successfully');
-
+        return successResponse(message:'Admin Updated Successfully');
     }
 
     public function destroy(Request $request, User $user)
@@ -124,12 +120,10 @@ class AdminController extends Controller
         try {
             $user->delete();
 
-            return $this->success('Admin Deleted Successfully');
+            return successResponse(message:'Admin Deleted Successfully');
 
         } catch (\Exception $e) {
-
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Admin');
-
+            return failureResponse(message:'Failed to delete Admin');
         }
 
     }

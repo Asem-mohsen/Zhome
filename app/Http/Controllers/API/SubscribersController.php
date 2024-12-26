@@ -3,37 +3,29 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Subscription\CreatSubscriptionRequest;
 use App\Models\Subscription;
-use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
 
 class SubscribersController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
-
         $subscribers = Subscription::all();
 
-        return $this->data(compact('subscribers'), 'All Subscribers Retrieved Successfully');
-
+        return successResponse(compact('subscribers'), 'All Subscribers Retrieved Successfully');
     }
 
-    public function newSubscriber(Request $request)
+    public function newSubscriber(CreatSubscriptionRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
-
-        $data = $request->only('email');
+        $validated = $request->validated();
 
         try {
-            Subscription::create($data);
+            Subscription::create($validated['email']);
 
-            return $this->success('Email Subscribed Successfully', 200);
+            return successResponse(message: 'Email Subscribed Successfully');
+
         } catch (\Exception $e) {
-            return $this->error([], 'An error occured');
+            return failureResponse(message: 'An error occured please try again later');
         }
 
     }

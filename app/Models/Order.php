@@ -19,9 +19,9 @@ class Order extends Model
         return $this->hasOne(Payment::class);
     }
 
-    public function product(): BelongsTo
+    public function products()
     {
-        return $this->belongsTo(Product::class);
+        return $this->hasMany(OrderProduct::class, 'order_id')->with('product.translations');
     }
 
     public function user(): BelongsTo
@@ -37,5 +37,17 @@ class Order extends Model
     public function orderInstallation(): HasOne
     {
         return $this->hasOne(OrderInstallation::class);
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->products->sum(function ($product) {
+            return $product->subtotal;
+        });
+    }
+
+    public function setStatusAttribute($value)
+    {
+        $this->attributes['status'] = strtolower($value);
     }
 }

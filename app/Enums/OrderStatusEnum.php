@@ -13,7 +13,7 @@ enum OrderStatusEnum: string
     case FAILED = 'failed';
     public static function values(): array
     {
-        return [
+        return array_map('strtolower', [
             self::PENDING->value,
             self::COMPLETED->value,
             self::CANCELLED->value,
@@ -21,6 +21,6 @@ enum OrderStatusEnum: string
             self::CASH_ON_DELIVERY->value,
             self::FAILED->value,
             self::CARD->value,
-        ];
+        ]);
     }
 }

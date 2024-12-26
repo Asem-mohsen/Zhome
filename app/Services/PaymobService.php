@@ -6,15 +6,7 @@ use GuzzleHttp\Client;
 
 class PaymobService
 {
-    protected $client;
-
-    protected $apiKey;
-
-    protected $integrationId;
-
-    protected $iframeId;
-
-    protected $hmacSecret;
+    protected $client, $apiKey ,$integrationId, $iframeId , $hmacSecret;
 
     public function __construct()
     {
@@ -38,15 +30,16 @@ class PaymobService
         return $data['token'];
     }
 
-    public function createOrder($token, $amount, array $orderIds)
+    public function createOrder($token, $amount, int $orderId)
     {
+        $uniqueOrderId = 'order_' . $orderId . '_' . time();
+
         $response = $this->client->post('https://accept.paymob.com/api/ecommerce/orders', [
             'headers' => ['Authorization' => "Bearer $token"],
             'json' => [
                 'amount_cents' => $amount,
                 'currency' => 'EGP',
-                'merchant_order_id' => implode(',', $orderIds),
-                // 'merchant_order_id' => uniqid(),
+                'merchant_order_id' => $uniqueOrderId,
             ],
         ]);
 

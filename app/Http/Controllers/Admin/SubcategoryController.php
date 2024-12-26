@@ -41,7 +41,6 @@ class SubcategoryController extends Controller
             toastr()->error('An error occurred while adding the subcategory');
             return back()->withInput();
         }
-        
     }
 
     public function update(UpdateSubCategoryRequest $request, Subcategory $subcategory)
@@ -58,7 +57,7 @@ class SubcategoryController extends Controller
                 $subcategory->addMediaFromRequest('image')->toMediaCollection('subcategory-image');
             }
 
-            toastr()->success(message: 'subcategory created successfully!');
+            toastr()->success(message: 'subcategory updated successfully!');
 
              return redirect()->back();
 
@@ -70,7 +69,6 @@ class SubcategoryController extends Controller
 
     public function destroy(Subcategory $subcategory)
     {
-
         $subcategory->clearMediaCollection('subcategory-image');
 
         $subcategory->delete();
