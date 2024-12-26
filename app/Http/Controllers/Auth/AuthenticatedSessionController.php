@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use App\Http\Requests\API\Auth\{ LoginRequest };
+use App\Http\Requests\Auth\{ LoginRequest };
 
 class AuthenticatedSessionController extends Controller
 {
@@ -44,9 +44,13 @@ class AuthenticatedSessionController extends Controller
     }
 
     // New method for API login
-    public function apiLogin(LoginRequest $request)
+    public function apiLogin(Request $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+            'password' => 'required',
+            'device_name' => 'required',
+        ]);
 
         $email = $validated['email'];
         $password = $validated['password'];
