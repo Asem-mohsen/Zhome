@@ -3,90 +3,68 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\AddSubcategoryRequest;
-use App\Http\Requests\Admin\UpdateSubCategoryRequest;
-use App\Http\Services\Media;
-use App\Models\Category;
-use App\Models\Subcategory;
-use App\Traits\ApiResponse;
+use App\Http\Requests\Admin\{ AddSubcategoryRequest , UpdateSubCategoryRequest};
+use App\Models\{ Category , Subcategory};
+use Exception;
 
 class SubcategoriesController extends Controller
 {
-    use ApiResponse;
-
     public function create(Category $category)
     {
-
-        return $this->data($category->toArray(), 'categories for creating subcategory retrieved successfully');
-
+        return successResponse($category->toArray(), 'categories for creating subcategory retrieved successfully');
     }
 
     public function edit(Subcategory $subcategory)
     {
-
-        return $this->data($subcategory->toArray(), 'subcategory for editing retrieved successfully');
-
+        return successResponse($subcategory->toArray(), 'subcategory for editing retrieved successfully');
     }
 
     public function store(AddSubcategoryRequest $request, Category $category)
     {
-
-        $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Categories\SubCategory');
-
         $data = $request->except('_method', '_token', 'image');
 
-        $data['MainCategoryID'] = $category->ID;
+        try {
+            $data['category_id'] = $category->id;
+            $subcategory = Subcategory::create($data);
 
-        $data['image'] = $newImageName;
+            if ($request->hasFile('image')) {
+                $subcategory->addMediaFromRequest('image')->toMediaCollection('subcategory-image');
+            }
+            return successResponse(message: 'subcategory created successfully!');
 
-        Subcategory::create($data);
-
-        return $this->success('Subcategory Added Successfully');
+        } catch (Exception $e) {
+            return failureResponse(message: 'An error occurred while adding the subcategory');
+        }
 
     }
 
     public function update(UpdateSubCategoryRequest $request, Subcategory $subcategory)
     {
-
         $data = $request->except('image', '_token', '_method');
 
-        if ($request->hasFile('image')) {
+        try {
+            $subcategory->update($data);
 
-            $newImageName = Media::upload($request->file('image'), 'Admin\dist\img\web\Categories\SubCategory');
+            if ($request->hasFile('image')) {
 
-            $data['image'] = $newImageName;
-
-            $oldImagePath = public_path("Admin/dist/img/web/Categories/SubCategory/{$subcategory->image}");
-
-            if (is_file($oldImagePath)) {
-
-                Media::delete($oldImagePath);
-
+                $subcategory->clearMediaCollection('subcategory-image');
+    
+                $subcategory->addMediaFromRequest('image')->toMediaCollection('subcategory-image');
             }
 
+            return successResponse(message: 'subcategory updated successfully!');
+
+        } catch (Exception $e) {
+            return failureResponse(message: 'An error occurred while updating the subcategory');
         }
-
-        Subcategory::where('ID', $subcategory->ID)->update($data);
-
-        return $this->success('Subcategory Updated Successfully');
     }
 
     public function destroy(Subcategory $subcategory)
     {
+        $subcategory->clearMediaCollection('subcategory-image');
 
-        try {
+        $subcategory->delete();
 
-            Media::delete(public_path("Admin\dist\img\web\Categories\SubCategory\\{$subcategory->image}"));
-
-            Subcategory::where('ID', $subcategory->ID)->delete();
-
-            return $this->success('Subcategory Deleted Successfully');
-
-        } catch (\Exception $e) {
-
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Subcategory');
-
-        }
-
+        return successResponse(message: 'subcategory deleted successfully!');
     }
 }

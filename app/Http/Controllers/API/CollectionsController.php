@@ -5,18 +5,14 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\{ AddCollectionRequest , UpdateCollectionRequest};
 use App\Models\{ Collection , Feature , Product };
-use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
 
 class CollectionsController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
         $collections = Collection::withCount('products')->get();
 
-        return $this->data($collections->toArray(), 'Collection retrieved successfully');
+        return successResponse($collections->toArray(), 'Collection retrieved successfully');
     }
 
     public function create()
@@ -24,7 +20,12 @@ class CollectionsController extends Controller
         $products = Product::all();
         $features = Feature::all();
 
-        return $this->data($products->toArray(), 'Products retrieved successfully');
+        $data = [
+            'products ' => $products ,
+            'features ' => $features ,
+        ];
+
+        return successResponse($data, 'Products retrieved successfully');
     }
 
     public function store(AddCollectionRequest $request)
@@ -45,7 +46,7 @@ class CollectionsController extends Controller
             $collection->features()->sync($request->input('feature_id'));
         }
 
-        return $this->success('Collection Added successfully');
+        return successResponse(message:'Collection Added successfully');
     }
 
     public function edit(Collection $collection)
@@ -61,7 +62,7 @@ class CollectionsController extends Controller
             'features' => $features,
         ];
 
-        return $this->data($data, 'data retrieved successfully');
+        return successResponse($data , message:'data retrieved successfully');
     }
 
     public function update(UpdateCollectionRequest $request, Collection $collection)
@@ -89,7 +90,7 @@ class CollectionsController extends Controller
             $collection->features()->detach();
         }
 
-        return $this->success('Collection updated successfully');
+        return successResponse(message:'Collection updated successfully');
     }
 
     public function destroy(Collection $collection)
@@ -103,12 +104,10 @@ class CollectionsController extends Controller
     
             $collection->delete();
 
-            return $this->success('Collection Deleted Successfully');
+            return successResponse(message:'Collection deleted successfully');
 
         } catch (\Exception $e) {
-
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Collection');
-
+            return failureResponse(message:'Failed to delete Collection');
         }
 
     }

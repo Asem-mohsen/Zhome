@@ -13,10 +13,16 @@ class ProposalOrderMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct()
+    public $userName , $supportMail , $appName , $order;
+
+    public function __construct($userName, $order)
     {
-        //
+        $this->userName = $userName;
+        $this->order = $order;
+        $this->appName = config('app.name');
+        $this->supportMail = config('constants.support_email');
     }
+
 
     public function envelope(): Envelope
     {
@@ -33,11 +39,6 @@ class ProposalOrderMail extends Mailable
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

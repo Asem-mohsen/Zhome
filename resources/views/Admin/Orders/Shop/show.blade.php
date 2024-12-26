@@ -43,27 +43,8 @@
                                                     <td>{{$order->user->name ?? "Unkown User"}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Product</td>
-                                                    <td>{{$order->product->translations->name}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Quantity Ordered</td>
-                                                    <td>{{$order->quantity}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Unit Price</td>
-
-                                                    @if ($order->product->isOnSale())
-                                                        <td>
-                                                            <p style="text-decoration:line-through;">
-                                                                {{$order->product->price . " EGP"}}
-                                                            </p>
-                                                            {{$order->product->sale->sale_price . " EGP"}}
-                                                        </td>
-                                                    @else
-                                                        <td> {{$order->product->price . " EGP"}} </td>
-                                                    @endif
-
+                                                    <td>Number of Products</td>
+                                                    <td>{{$order->products->count()}}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Placed Date</td>
@@ -177,77 +158,73 @@
                                     <div class="table-responsive">
                                         <table id="example2" class="table table-striped table-bordered">
                                             <thead>
-                                                <th scope="col" width="10%">#</th>
-                                                <th scope="col" width="20%">Data</th>
+                                                <tr>
+                                                    <th scope="col" width="5%">#</th>
+                                                    <th scope="col" width="20%">Product</th>
+                                                    <th scope="col" width="20%">Quantity</th>
+                                                    <th scope="col" width="20%">Category</th>
+                                                    <th scope="col" width="20%">Price</th>
+                                                    <th scope="col" width="15%">Stock</th>
+                                                    <th scope="col" width="20%">Platform</th>
+                                                    <th scope="col" width="20%">Brand</th>
+                                                    <th scope="col" width="10%">Bundle</th>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Product</td>
-                                                    <td>{{$order->product->translations->name}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Category</td>
-                                                    <td>{{$order->product->subcategory->category->name}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Sub Category</td>
-                                                    <td>{{$order->product->subcategory->name}}</td>
-                                                </tr>
-                                                <!-- Sale -->
-                                                @if ($order->product->isOnSale())
+                                                @foreach($order->products as $index => $orderProduct)
+                                                    @php
+                                                        $product = $orderProduct->product;
+                                                    @endphp
                                                     <tr>
-                                                        <td>In Sale</td>
-                                                        <td>YES</td>
+                                                        <td>{{ $index + 1 }}</td>
+                                                        <td>{{ $product->translations->name }}</td>
+                                                        <td>{{ $orderProduct->quantity }}</td>
+                                                        <td>
+                                                            <div class="d-flex px-2 py-1">
+                                                                <div class="d-flex flex-column justify-content-center">
+                                                                    <h6 class="mb-0">{{ $product->subcategory->category->name }}</h6>
+                                                                    <span class="text-sm">{{ $product->subcategory->name }}</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            @if ($product->isOnSale())
+                                                                <div>
+                                                                    <span class="text-decoration-line-through">
+                                                                        {{ $product->price . ' EGP' }}
+                                                                    </span>
+                                                                    <br>
+                                                                    <span>
+                                                                        {{ $product->sale->sale_price . ' EGP' }}
+                                                                    </span>
+                                                                </div>
+                                                            @else
+                                                                {{ $product->price . ' EGP' }}
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ $product->quantity }}</td>
+                                                        <td class="Platforms-orders">
+                                                            <div class="d-flex gap-2 align-items-center">
+                                                                @foreach($product->platforms as $platform)
+                                                                    <a href="{{ route('Platform.edit', $platform->id) }}">
+                                                                        <div class="platform d-flex align-items-center border pr-1 rounded">
+                                                                            <img src="{{ $platform->getFirstMediaUrl('platform-image') }}" width="60" alt="{{ $platform->name }}">
+                                                                            <p class="text-black m-0">{{ $platform->name }}</p>
+                                                                        </div>
+                                                                    </a>
+                                                                @endforeach
+                                                            </div>
+                                                        </td>
+                                                        <td>{{ $product->brand->name }}</td>
+                                                        <td>
+                                                            @if ($product->is_bundle)
+                                                                Bundle
+                                                            @else
+                                                                Not a Bundle
+                                                            @endif
+                                                        </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>Price Before Sale</td>
-                                                        <td>{{$order->product->price . " EGP"}}  </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Price After Sale</td>
-                                                        <td>{{$order->product->sale->sale_price . " EGP"}} </td>
-                                                    </tr>
-
-                                                @else
-                                                    <tr>
-                                                        <td>Price</td>
-                                                        <td> {{$order->product->price . " EGP"}} </td>
-                                                    </tr>
-                                                @endif
-
-                                                <tr>
-                                                    <td>In Stock</td>
-                                                    <td>{{$order->product->quantity }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Platform</td>
-                                                    <td class="Platforms-orders">
-                                                        <div class="d-flex gap-2 align-items-center"> 
-                                                            @foreach($order->product->platforms as $platform)
-                                                                <a href="{{route('Platform.edit' , $platform->id )}}">
-                                                                    <div class="platform d-flex align-items-center border pr-1 rounded">
-                                                                        <img src="{{$platform->getFirstMediaUrl('platform-image')}}" width="60" alt="{{$platform->name}}">
-                                                                        <p class="text-black m-0">{{$platform->name}}</p>
-                                                                    </div>
-                                                                </a>
-                                                            @endforeach
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Brand</td>
-                                                    <td>{{$order->product->brand->name }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Is Bundle ?</td>
-                                                    <td>
-                                                        @if ($order->product->is_bundle == 1)
-                                                            Bundle
-                                                        @else
-                                                            Not a Bundle
-                                                        @endif
-                                                    </td>
-                                                </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -349,10 +326,9 @@
                                             <thead>
                                                 <tr>
                                                     <th>OrderID</th>
-                                                    <th>Product</td>
-                                                    <th>Quantity</td>
+                                                    <th>Num of products</td>
                                                     <th>Paid With</th>
-                                                    <th>Promo code</th>
+                                                    <th>Promocode</th>
                                                     <th>Status</th>
                                                     <th>Total</th>
                                                     <th>Action</th>
@@ -366,17 +342,7 @@
                                                             {{$prevOrder->id}}
                                                         </td>
                                                         <td>
-                                                            <div class="d-flex px-2 py-1">
-                                                                <div>
-                                                                    <img src="{{ $prevOrder->product->getFirstMediaUrl('product_featured_image') }}" class="avatar avatar-sm me-3" alt="{{$prevOrder->product->translations->name}}">
-                                                                </div>
-                                                                <div class="d-flex flex-column justify-content-center">
-                                                                    <h6 class="mb-0 text-sm">{{$prevOrder->product->translations->name}}</h6>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td class="align-middle text-center">
-                                                            <p class="text-xs font-weight-bold mb-0">{{$prevOrder->quantity}}</p>
+                                                            {{$prevOrder->products->count()}}
                                                         </td>
                                                         <td class="align-middle text-center">
                                                             @if (!empty($prevOrder->transaction_id))

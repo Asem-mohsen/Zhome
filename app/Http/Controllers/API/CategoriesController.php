@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\AddCategoryReqeust;
-use App\Http\Requests\Admin\UpdateCategoryRequest;
+use App\Http\Requests\Admin\{ AddCategoryReqeust , UpdateCategoryRequest};
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use App\Traits\ApiResponse;
 
 class CategoriesController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
         $categories = Category::with(['subcategories', 'products'])->get();
@@ -21,19 +17,19 @@ class CategoriesController extends Controller
             'categories' => CategoryResource::collection($categories),
         ];
 
-        return $this->data($data, 'Categories retrieved successfully');
+        return successResponse($data ,'Categories retrieved successfully');
     }
 
     public function edit(Category $category)
     {
-        return $this->data($category->toArray(), 'category retrieved successfully');
+        return successResponse($category->toArray() ,'category retrieved successfully');
     }
 
     public function show(Category $category)
     {
         $category->load('subcategories');
 
-        return $this->data($category->toArray(), 'category retrieved successfully');
+        return successResponse($category->toArray() ,'category retrieved successfully');
     }
 
     public function update(UpdateCategoryRequest $request, Category $category)
@@ -49,7 +45,7 @@ class CategoriesController extends Controller
             $category->addMediaFromRequest('image')->toMediaCollection('category-image');
         }
 
-        return $this->success('Category Updated Successfully');
+        return successResponse(message:'Category Updated Successfully');
     }
 
     public function store(AddCategoryReqeust $request)
@@ -64,23 +60,22 @@ class CategoriesController extends Controller
             $category->addMediaFromRequest('image')->toMediaCollection('category-image');
         }
 
-        return $this->success('Category Added Successfully');
+        return successResponse(message:'Category Added Successfully');
     }
 
     public function destroy(Category $category)
     {
-
         try {
 
             $category->clearMediaCollection('category-image');
 
             $category->delete();
 
-            return $this->success('Category Deleted Successfully');
+            return successResponse(message:'Category Deleted Successfully');
 
         } catch (\Exception $e) {
 
-            return $this->error(['delete_error' => $e->getMessage()], 'Failed to delete Category');
+            return failureResponse(message:'Failed to delete Category');
 
         }
 

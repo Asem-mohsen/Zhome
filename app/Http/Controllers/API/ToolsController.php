@@ -5,26 +5,22 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\AddNewToolRequest;
 use App\Models\{ Platform, ToolOrder};
-use App\Traits\ApiResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ToolsController extends Controller
 {
-    use ApiResponse ;
-
     public function index()
     {
         $platforms = Platform::all();
 
-        return $this->data(compact('platforms'), 'Platforms Retrieved Successfully');
+        return successResponse(compact('platforms'), 'Platforms Retrieved Successfully');
     }
 
     public function interior()
     {
         $platforms = Platform::all();
 
-        return $this->data(compact('platforms'), 'Platforms Retrieved Successfully');
+        return successResponse(compact('platforms'), 'Platforms Retrieved Successfully');
     }
 
     public function store(AddNewToolRequest $request)
@@ -61,13 +57,12 @@ class ToolsController extends Controller
                 $toolOrder->addMediaFromRequest('file')->toMediaCollection('house_documents');
             }
     
-            return $this->success('Design selected successfully. We will contact you as soon as possible.');
-    
-        } catch (\Exception $e) {
+            return successResponse(message:'Design selected successfully. We will contact you as soon as possible.');
 
+        } catch (\Exception $e) {
             Log::error('Tool Order Creation Error: ' . $e->getMessage());
     
-            return $this->error(['message'=>'Ann error occurred while processing your request. Please try again later.'],'An error occurred while processing your request. Please try again later.');
+            return failureResponse(message:'An error occurred while processing your request. Please try again later.');
         }
     }
     
