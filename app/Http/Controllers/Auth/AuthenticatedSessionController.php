@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
-use App\Traits\ApiResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Http\Requests\API\Auth\{ LoginRequest };
 
 class AuthenticatedSessionController extends Controller
 {
-    use ApiResponse;
-
     public function create(): View
     {
         return view('auth.login');
@@ -47,33 +44,32 @@ class AuthenticatedSessionController extends Controller
     }
 
     // New method for API login
-    public function apiLogin(Request $request)
+    public function apiLogin(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email|max:255',
-            'password' => 'required',
-            'device_name' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        $userData = User::where('email', $request->email)->first();
+        $email = $validated['email'];
+        $password = $validated['password'];
+        $deviceName = $validated['device_name'];
+
+        $userData = User::where('email', $email)->first();
 
         if ($userData->is_admin != 1 && $userData->role->role == 'user') {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 $user = Auth::guard('sanctum')->user();
-                $accessToken = $user->createToken($request->device_name)->plainTextToken;
+                $accessToken = $user->createToken($deviceName)->plainTextToken;
 
-                return response(['user' => $user, 'token' => $accessToken]);
+                return successResponse(['user' => $user, 'token' => $accessToken] , 'logged In successfully');
             }
         } elseif ($userData->is_admin == 1 && $userData->role->role != 'user') {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (Auth::attempt(['email' => $email, 'password' => $password])) {
                 $user = Auth::guard('sanctum')->user();
-                $accessToken = $user->createToken($request->device_name)->plainTextToken;
+                $accessToken = $user->createToken($deviceName)->plainTextToken;
 
-                return response(['admin' => $user, 'token' => $accessToken]);
+                return successResponse(['admin' => $user, 'token' => $accessToken] , 'logged In successfully');
             }
         }
 
-        // If both checks fail, return an error response
-        return $this->error(['message' => 'Authentication failed'], 'Please make sure that your data is valid', 401);
+        return failureResponse('Please make sure that your data is valid' , code:401);
     }
 }

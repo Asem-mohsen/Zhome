@@ -4,12 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\{ Brand , Category , Platform , Product , Promotion , Technology };
-use App\Traits\ApiResponse;
 use App\Traits\NavigationTrait;
 use Illuminate\Http\Request;
 class ShopController extends Controller
 {
-    use ApiResponse , NavigationTrait;
+    use  NavigationTrait;
 
     public function index()
     {
@@ -26,7 +25,7 @@ class ShopController extends Controller
             'Category2_to_show' => $this->getCategoryWithSubcategories(3),
         ];
 
-        return $this->data($data, 'Data retrieved successfully');
+        return successResponse($data, 'Data retrieved successfully');
     }
 
     protected function getCategoriesWithSubcategories()
@@ -128,7 +127,7 @@ class ShopController extends Controller
             'products' => $products,
         ];
 
-        return $this->data($data, 'data retrieved successfully');
+        return successResponse($data , message: 'data retrieved successfully');
     }
 
     public function filterProducts(Request $request)
@@ -187,10 +186,10 @@ class ShopController extends Controller
     
         $data = [
             'products'    => $products,
-            'Filter_Data' => $filterData,
+            'filter_data' => $filterData,
         ];
 
-        return $this->data($data , 'filtered data retrived successfully');
+        return successResponse($data , message: 'iltered data retrived successfully');
     }
 
     public function getItemByTypeAndId(Request $request)
@@ -199,7 +198,7 @@ class ShopController extends Controller
         $id = $request->input('id');
 
         if (!$type || !$id) {
-            return $this->error(['error' => 'Type and ID are required'], "Type and ID are required");
+            return failureResponse('Type and ID are required');
         }
 
         $data = null;
@@ -215,14 +214,14 @@ class ShopController extends Controller
                 $data = Category::with('subcategories')->find($id);
                 break;
             default:
-                return response()->json(['error' => 'Invalid type'], 400);
+                return failureResponse('Invalid type' , 400);
         }
 
         if (!$data) {
-            return response()->json(['error' => ucfirst($type) . ' not found'], 404);
+            return failureResponse(ucfirst($type)  .' not found' , 404);
         }
 
-        return $this->data(['type' => $type, 'data' => $data], 'data retrieved successfully');
+        return successResponse(['type' => $type, 'data' => $data] , message: 'data retrieved successfully');
     }
 
     public function navData()
@@ -231,6 +230,6 @@ class ShopController extends Controller
             'navbar_data' => $this->getNavigationData(),
         ];
 
-        return $this->data($data, 'data retrieved successfully');
+        return successResponse( $data , message: 'data retrieved successfully');
     }
 }

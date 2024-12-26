@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Inventory\UpdateInventoryRequest;
 use App\Models\Product;
-use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
 
@@ -29,8 +27,7 @@ class InventoryController extends Controller
                             COUNT(CASE WHEN quantity = 0 THEN 1 END) as sold_out,
                             COUNT(CASE WHEN quantity <= 3 THEN 1 END) as about_to_end,
                             COUNT(CASE WHEN created_at >= ? THEN 1 END) as newest
-                        ', [Carbon::now()])
-            ->first();
+                        ', [Carbon::now()])->first();
 
         $totalProducts = $inventoryStats->total_products;
         $soldOut = $inventoryStats->sold_out;
@@ -46,41 +43,23 @@ class InventoryController extends Controller
             'soldOut' => $soldOut,
         ];
 
-        return $this->data($data, 'data retrieved successfully');
-
+        return successResponse($data, 'data retrieved successfully');
     }
 
-    public function update(Request $request)
+    public function update(UpdateInventoryRequest $request)
     {
-        $request->validate([
+        $validated = $request->validated();
 
-            'quantityId' => 'required|integer|exists:product,ID',
-
-            'updatedQuantity' => 'required|integer|min:0',
-
-        ]);
-
-        $request->validate([
-            'quantityId' => 'required|integer|exists:products,id',
-            'updatedQuantity' => 'required|integer|min:0',
-        ]);
-
-        $product = Product::findOrFail($request->quantityId);
+        $product = Product::findOrFail($validated['product_id']);
         $product->quantity = $request->updatedQuantity;
-        $product->save();
-
-        $product = Product::findOrFail($request->quantityId);
-
-        $product->quantity = $request->updatedQuantity;
-
         $product->save();
 
         if ($product->save()) {
 
-            return $this->success('Inventory Updated Successfully');
+            return successResponse(message: 'Inventory Updated Successfully');
 
         } else {
-            return $this->error(["error" => 'Failed to update quantity'] , 'Failed to update quantity');
+            return failureResponse(message: 'Failed to update quantity');
         }
     }
 }

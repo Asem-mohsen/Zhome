@@ -13,15 +13,7 @@ class ContactUsMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $userName;
-
-    public $userEmail;
-
-    public $subject;
-
-    public $messageContent;
-
-    public $appName;
+    public $userName , $userEmail , $subject, $messageContent , $appName;
 
     public function __construct($userName, $userEmail, $subject, $messageContent)
     {

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\Inventory\UpdateInventoryRequest;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
@@ -37,14 +37,11 @@ class InventoryController extends Controller
         return view('Admin.Inventory.index', get_defined_vars());
     }
 
-    public function update(Request $request)
+    public function update(UpdateInventoryRequest $request)
     {
-        $request->validate([
-            'quantityId' => 'required|integer|exists:products,id',
-            'updatedQuantity' => 'required|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
-        $product = Product::findOrFail($request->quantityId);
+        $product = Product::findOrFail($validated['product_id']);
         $product->quantity = $request->updatedQuantity;
         $product->save();
 

@@ -3,18 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BrandResource;
-use App\Http\Resources\PlatformResource;
-use App\Http\Resources\ProductCardResource;
-use App\Models\Brand;
-use App\Models\Platform;
-use App\Models\Product;
-use App\Traits\ApiResponse;
+use App\Http\Resources\{BrandResource, ProductCardResource, PlatformResource};
+use App\Models\{Brand, Platform ,Product};
 
 class HomeController extends Controller
 {
-    use ApiResponse;
-
     public function index()
     {
         $brands = Brand::all();
@@ -27,6 +20,6 @@ class HomeController extends Controller
             'platforms' => PlatformResource::collection($platforms),
         ];
 
-        return $this->data($data, 'Home data retrived successfully');
+        return successResponse($data, 'Home data retrived successfully');
     }
 }
