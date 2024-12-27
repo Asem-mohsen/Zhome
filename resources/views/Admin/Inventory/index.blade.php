@@ -178,8 +178,8 @@
             const updatedQuantity = quantityCell.querySelector('input').value;
 
             // Send an AJAX request to the Laravel route to update the quantity
-            const url = '/Inventory/update-quantity';
-            const method = 'PATCH';
+            const url = '/inventory/update-quantity';
+            const method = 'PUT';
             const data = {
                 quantityId: quantityId,
                 updatedQuantity: updatedQuantity
