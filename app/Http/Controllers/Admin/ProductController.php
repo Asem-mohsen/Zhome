@@ -55,7 +55,13 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('Admin.Products.edit', compact('product'));
+        $categories = Category::all();
+        $platforms = Platform::all();
+        $brands = Brand::all();
+        $features = Feature::all();
+        $technologies = Technology::all();
+
+        return view('Admin.Products.edit', get_defined_vars());
     }
 
     public function update(UpdateProductRequest $request, Product $product)

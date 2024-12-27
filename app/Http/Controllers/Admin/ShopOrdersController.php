@@ -30,7 +30,7 @@ class ShopOrdersController extends Controller
 
         $previousOrders = Order::where('user_id', $order->user_id)
             ->where('id', '<>', $order->id)
-            ->with(['promotions', 'product', 'user'])
+            ->with(['promotions', 'products', 'user'])
             ->get();
 
         return view('Admin.Orders.Shop.show', get_defined_vars());
