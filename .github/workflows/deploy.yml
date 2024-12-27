@@ -21,6 +21,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/public_html
+            cd ~/domains/slategrey-falcon-219814.hostingersite.com/public_html
             chmod u+x build-script.sh 
             ./build-script.sh
