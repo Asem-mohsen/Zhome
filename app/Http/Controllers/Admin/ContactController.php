@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\UpdateContactRequest;
+use App\Http\Requests\API\Contact\UpdateContactRequest;
 use App\Models\SiteSetting;
 use App\Models\User;
 
@@ -27,7 +27,6 @@ class ContactController extends Controller
 
     public function update(UpdateContactRequest $request, SiteSetting $site)
     {
-
         $data = $request->except('_method', '_token', 'phones', 'markets');
 
         $site->update($data);
