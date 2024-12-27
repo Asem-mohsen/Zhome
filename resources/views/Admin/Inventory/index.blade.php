@@ -178,7 +178,7 @@
             const updatedQuantity = quantityCell.querySelector('input').value;
 
             // Send an AJAX request to the Laravel route to update the quantity
-            const url = '/inventory/update-quantity';
+            const url = '/api/inventory/update-quantity';
             const method = 'PUT';
             const data = {
                 product_id: productId,
