@@ -290,7 +290,7 @@ class ProductsController extends Controller
 
         $product->cover_image = $product->getFirstMediaUrl('cover_image');
 
-        $products = Product::with(['brand:id,name', 'platforms:id,name', 'translations:product_id,name,ar_name'])->get();
+        $products = Product::with(['brand:id,name', 'platforms:id,name', 'translations:product_id,name,ar_name'])->limit(10)->get();
 
         $otherImages = $product->getMedia('other_product_images')->map(function ($media) {
             return [
@@ -305,7 +305,7 @@ class ProductsController extends Controller
             'other_images' => $otherImages,
         ];
 
-        return successResponse(message:'Product data retrieved Successfully');
+        return successResponse($data , message:'Product data retrieved Successfully' );
     }
 
     public function edit(Product $product)
