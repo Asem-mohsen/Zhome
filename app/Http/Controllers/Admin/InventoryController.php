@@ -42,7 +42,7 @@ class InventoryController extends Controller
         $validated = $request->validated();
 
         $product = Product::findOrFail($validated['product_id']);
-        $product->quantity = $request->updatedQuantity;
+        $product->quantity = $validated['updatedQuantity'];
         $product->save();
 
         if ($product->save()) {
