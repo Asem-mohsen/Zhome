@@ -130,8 +130,8 @@
         const editButtons = document.querySelectorAll('.edit-button');
             editButtons.forEach(function(button) {
                 button.addEventListener('click', function(event) {
-                const quantityId = event.target.getAttribute('data-quantity-id');
-                enableEditing(quantityId);
+                const productId = event.target.getAttribute('data-quantity-id');
+                enableEditing(productId);
             });
         });
 
@@ -139,14 +139,14 @@
         const updateButtons = document.querySelectorAll('.update-button');
             updateButtons.forEach(function(button) {
                 button.addEventListener('click', function(event) {
-                const quantityId = event.target.getAttribute('data-quantity-id');
-                updateQuantity(quantityId);
+                const productId = event.target.getAttribute('data-quantity-id');
+                updateQuantity(productId);
             });
         });
 
         // Function to enable editing for a specific product
-        function enableEditing(quantityId) {
-            const quantityCell = document.getElementById(`quantity-${quantityId}`);
+        function enableEditing(productId) {
+            const quantityCell = document.getElementById(`quantity-${productId}`);
             if (quantityCell) {
                 const quantityText = quantityCell.textContent;
 
@@ -161,27 +161,27 @@
                 quantityCell.appendChild(inputElement);
 
                 // Change button visibility
-                const editButton = document.querySelector(`.edit-button[data-quantity-id="${quantityId}"]`);
-                const updateButton = document.querySelector(`.update-button[data-quantity-id="${quantityId}"]`);
+                const editButton = document.querySelector(`.edit-button[data-quantity-id="${productId}"]`);
+                const updateButton = document.querySelector(`.update-button[data-quantity-id="${productId}"]`);
                 if (editButton && updateButton) {
                 editButton.classList.add('d-none');
                 updateButton.classList.remove('d-none');
                 }
             } else {
-                console.error(`Quantity cell with ID 'quantity-${quantityId}' not found.`);
+                console.error(`Quantity cell with ID 'quantity-${productId}' not found.`);
             }
         }
 
         // Function to update the product in the database
-        function updateQuantity(quantityId) {
-            const quantityCell = document.getElementById(`quantity-${quantityId}`);
+        function updateQuantity(productId) {
+            const quantityCell = document.getElementById(`quantity-${productId}`);
             const updatedQuantity = quantityCell.querySelector('input').value;
 
             // Send an AJAX request to the Laravel route to update the quantity
             const url = '/inventory/update-quantity';
             const method = 'PUT';
             const data = {
-                quantityId: quantityId,
+                product_id: productId,
                 updatedQuantity: updatedQuantity
             };
 
@@ -200,18 +200,18 @@
                 if (response.status == 200) {
                     // Update the quantity text in the table based on the value
                     if (updatedQuantity >= 20) { // Greater than 20
-                        quantityCell.innerHTML = `<span id="quantity-${quantityId}" class="badge badge-sm bg-success">${updatedQuantity}</span>`;
+                        quantityCell.innerHTML = `<span id="quantity-${productId}" class="badge badge-sm bg-success">${updatedQuantity}</span>`;
                     } else if (updatedQuantity == 0) { // Equal to 0
-                        quantityCell.innerHTML = `<span id="quantity-${quantityId}" class="badge badge-sm bg-danger">${updatedQuantity}</span>`;
+                        quantityCell.innerHTML = `<span id="quantity-${productId}" class="badge badge-sm bg-danger">${updatedQuantity}</span>`;
                     } else if (updatedQuantity >= 10 && updatedQuantity < 20) { // Between 10 and 20
-                        quantityCell.innerHTML = `<span id="quantity-${quantityId}" class="badge badge-sm b-warning">${updatedQuantity}</span>`;
+                        quantityCell.innerHTML = `<span id="quantity-${productId}" class="badge badge-sm b-warning">${updatedQuantity}</span>`;
                     } else if (updatedQuantity < 10) { // Less than 10
-                        quantityCell.innerHTML = `<span id="quantity-${quantityId}" class="badge badge-sm bg-danger">${updatedQuantity}</span>`;
+                        quantityCell.innerHTML = `<span id="quantity-${productId}" class="badge badge-sm bg-danger">${updatedQuantity}</span>`;
                     }
 
                     // Change button visibility
-                    const editButton = document.querySelector(`.edit-button[data-quantity-id="${quantityId}"]`);
-                    const updateButton = document.querySelector(`.update-button[data-quantity-id="${quantityId}"]`);
+                    const editButton = document.querySelector(`.edit-button[data-quantity-id="${productId}"]`);
+                    const updateButton = document.querySelector(`.update-button[data-quantity-id="${productId}"]`);
                     editButton.classList.remove('d-none');
                     updateButton.classList.add('d-none');
                 } else {
